@@ -7,9 +7,13 @@ FOR MANUAL INSTALL FOLLOW: http://emanual.robotis.com/docs/en/platform/turtlebot
 ## FOR AUTOMATIC INSTALL:
 
 cd into /setup and:
+
 STEP 1: chmod 755 on install_ros_kinetic.sh, install_ros_pkgs.sh and install_vu_battsim.sh
+
 STEP 2: run install_ros_kinetic.sh to install the correct ROS version
+
 STEP 3: run install_ros_pkgs.sh to install all necessary pkgs
+
 STEP 4: run install_vu_battsim.sh to install everything necessary to launch the test environment
 
 ## LAUNCH TEST ENVIRONMENT:
