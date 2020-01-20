@@ -1,0 +1,25 @@
+{
+  "type": "sim",
+  "devices": ["turtlebot3"],
+  "replications": 5,
+  "duration": 30000,
+  "browsers": ["chrome"],
+  "paths": [
+    "{subject}"
+  ],
+  "gazebo_plugins": [
+    
+  ],
+  "profilers": {
+  },
+  "scripts": {
+    "before_experiment": "../Scripts/before_experiment.py",
+    "before_run": "../Scripts/before_run.py",
+    "after_launch": "../Scripts/after_launch.py",
+    "interaction": [],
+    "before_close": "../Scripts/before_close.py",
+    "after_run": "../Scripts/after_run.py",
+    "after_experiment": "../Scripts/after_experiment.py"
+  },
+  "time_between_run": 120000
+}

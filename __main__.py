@@ -1,5 +1,4 @@
-from examples.GoForward import GoForward
-from examples.DrawSquare import DrawSquare
+import sys
 
 if __name__ == "__main__":
-    DrawSquare()
+    print(f'number of arguments: {len(sys.argv)}')

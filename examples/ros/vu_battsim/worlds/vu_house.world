@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<sdf version='1.5'>
+  <world name='default'>
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- A battery model -->
+	<model name="battery_demo_model">
+	    <pose>1 0 0 0 0 0</pose>
+	    <static>false</static>
+	    <link name="body">
+		<pose>1 -1 0.5 0 0 0</pose>
+		<inertial>
+		    <inertia>
+		        <ixx>1.8</ixx>
+		        <ixy>0.0</ixy>
+		        <ixz>0.0</ixz>
+		        <iyy>1.8</iyy>
+		        <iyz>0.0</iyz>
+		        <izz>1.8</izz>
+		    </inertia>
+		    <mass>10.0</mass>
+		</inertial>
+		<collision name="collision">
+		    <geometry>
+		        <box>
+		            <size>0.2 0.2 0.2</size>
+		        </box>
+		    </geometry>
+		    <surface>
+		        <friction>
+		            <ode>
+		                <mu>0.1</mu>
+		                <mu2>0.1</mu2>
+		            </ode>
+		        </friction>
+		    </surface>
+		</collision>
+		<visual name="visual">
+		    <geometry>
+		        <box>
+		            <size>1 1 1</size>
+		        </box>
+		    </geometry>
+		</visual>
+		<battery name="linear_battery">
+		    <voltage>12.592</voltage>
+		</battery>
+	    </link>
+	    <plugin name="battery" filename="libbattery_discharge.so">
+		<ros_node>battery_monitor_client</ros_node>
+		<link_name>body</link_name>
+		<battery_name>linear_battery</battery_name>
+		<constant_coef>12.694</constant_coef>
+		<linear_coef>-100.1424</linear_coef>
+		<initial_charge>1.1665</initial_charge>
+		<capacity>1.2009</capacity>
+		<resistance>0.061523</resistance>
+		<smooth_current_tau>1.9499</smooth_current_tau>
+		<charge_rate>0.2</charge_rate>
+	    </plugin>
+	    <plugin name="consumer" filename="libbattery_consumer.so">
+		<link_name>body</link_name>
+		<battery_name>linear_battery</battery_name>
+		<power_load>6.6</power_load>
+	    </plugin>
+	</model>
+
+
+
+    <physics type="ode">
+      <real_time_update_rate>1000.0</real_time_update_rate>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>150</iters>
+          <precon_iters>0</precon_iters>
+          <sor>1.400000</sor>
+          <use_dynamic_moi_rescaling>1</use_dynamic_moi_rescaling>
+        </solver>
+        <constraints>
+          <cfm>0.00001</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>2000.000000</contact_max_correcting_vel>
+          <contact_surface_layer>0.01000</contact_surface_layer>
+        </constraints>
+      </ode>
+    </physics>
+
+    <!-- A turtlebot symbol -->
+    <include>
+      <uri>model://turtlebot3_house</uri>
+    </include>
+
+
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>0.0 0.0 17.0 0 1.5708 0</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+  </world>
+</sdf>
