@@ -7,9 +7,6 @@
   "paths": [
     "{subject}"
   ],
-  "gazebo_plugins": [
-    
-  ],
   "profilers": {
   },
   "scripts": {
