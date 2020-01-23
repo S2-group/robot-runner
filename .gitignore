@@ -1,2 +1,4 @@
 .idea
 */__pycache__/*
+examples/ros/__pycache__/*
+**/__pycache__/

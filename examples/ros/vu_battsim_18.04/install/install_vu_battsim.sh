@@ -21,3 +21,8 @@ sudo make install
 
 echo "[VU_INSTALL] >> Catkin_make..."
 cd ~/catkin_ws && catkin_make
+
+echo export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:~/catkin_ws/src/vu_gazebo_battery/build/devel/lib >> ~/.bashrc
+echo source ~/catkin_ws/devel/setup.bash >> ~/.bashrc
+source ~/.bashrc
+
