@@ -1,60 +1,56 @@
 import os
+import sys
 import rospy
 import signal
 import subprocess
 from pathlib import Path
-from std_msgs.msg import Bool
+from rospy import Subscriber
+from roslaunch import RLException
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 
 
 class ROS1Controller(IROSController):
-    tmp_roslaunch_pid: str = "/tmp/roslaunch.pid"
-    # def __init__(self, launch_file: Path): # add log_file
+    roslaunch_pid: str = "/tmp/roslaunch.pid"
+    subscribed_topics = []
 
-    def roslaunch_launch_file(self, launch_file: Path):  # add log_file to output roslaunch pipe to
+    def roslaunch_launch_file(self, launch_file: Path):  # TODO: add log_file to output roslaunch pipe to
+        output.console_log(f"roslaunch {launch_file}")
         try:
-            # TODO: If not /tmp/robot_runner then mkdir /tmp/robot_runner
-            FNULL = open(os.devnull, 'w')
-            self.process = subprocess.Popen(
-                f"roslaunch --pid={self.tmp_roslaunch_pid} {launch_file}",
-                shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+            FNULL = open(os.devnull, 'w')   # block output from showing in terminal
+            self.process = subprocess.Popen(f"roslaunch --pid={self.roslaunch_pid} {launch_file}",
+                                            shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        except RLException:
+            output.console_log("Something went wrong launching the launch file.")
+            sys.exit(1)
 
-            # TODO: Wait for ROS Master to be up and running
-            # TODO: In case of sim: wait for Gazebo
-            self.listen_for_run_completion()
-        except Exception as e:
-            output.console_log(e)
-
-    def listen_for_run_completion(self):
+    def rosinit_robot_runner_node(self):
         try:
             rospy.init_node("robot_runner")
-            self.run_sub = rospy.Subscriber("/robot_runner/run_completed", Bool, self.run_completed)
-
-            # rospy.on_shutdown(self.ros_shutdown())
-            while not rospy.is_shutdown():
-                output.console_log_loading_animated("Waiting for run to complete...")
-
-            self.ros_shutdown()
+            rospy.on_shutdown(self.ros_shutdown)
         except:
-            output.console_log("Could not initialise ROS node...")
+            output.console_log("Could not initialise robot_runner ROS node...")
 
-    def run_completed(self, completed: Bool):
-        if completed:
-            output.console_log("Run completed")
-            rospy.signal_shutdown("Run completed")
+    def subscribe_to_topic(self, topic, datatype, callback):
+        output.console_log(f"Subscribed to topic: {topic}")
+        sub = rospy.Subscriber(topic, datatype, callback)
+        self.subscribed_topics.append(sub)
+        return sub
 
     def ros_shutdown(self):
-        # TODO: Change from 'terminated' to: 'terminating...' and wait for
-        # TODO: actual confirmation everything has closed down gracefully
-        self.run_sub.unregister()
-        output.console_log("ROS Node terminated...")
+        output.console_log("Complete shutdown of all ROS instances initiated...")
+        output.console_log("Unregistering all subscribed topics...")
+        sub: Subscriber
+        for sub in self.subscribed_topics:
+            sub.unregister()
+
+        output.console_log("Terminating roslaunch launch file...")
         self.process.send_signal(signal.SIGINT)
-        with open(self.tmp_roslaunch_pid, 'r') as myfile:
+        with open(self.roslaunch_pid, 'r') as myfile:
             pid = int(myfile.read())
             os.kill(pid, signal.SIGINT)
 
         while self.process.poll() is None:
-            output.console_log_loading_animated("Waiting for graceful exit...")
+            output.console_log_animated("Waiting for graceful exit...")
 
-        output.console_log("Experiment run instance (roslaunch) terminated")
+        output.console_log("Roslaunch launch file successfully terminated!")
