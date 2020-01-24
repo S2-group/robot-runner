@@ -27,7 +27,6 @@ class SimExperimentController(IExperimentController):
 
         # Init ROS node for Robot Runner and wait for
         # ROS Master and Gazebo Simulator to be running
-        self.ros.rosinit_robot_runner_node()
         self.wait_for_simulation()
 
         # Set programmatic or timed run stop based on config

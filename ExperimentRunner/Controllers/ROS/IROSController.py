@@ -12,6 +12,10 @@ class IROSController(ABC):
         pass
 
     @abstractmethod
+    def roscore(self):
+        pass
+
+    @abstractmethod
     def rosinit_robot_runner_node(self):
         pass
 
