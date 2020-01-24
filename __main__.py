@@ -1,21 +1,22 @@
 import sys
 from pathlib import Path
-from ExperimentRunner.Controllers.ExperimentController import ExperimentController
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
+from ExperimentRunner.Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
 
 
 def main(config_path):
     config = Path(config_path)
     output.console_log(f"Initialising experiment for {config.absolute()}")
-    ExperimentController(config)
+    RobotRunner(config)
 
 
 if __name__ == "__main__":
     argv_count = len(sys.argv)
-    if argv_count == 2 and sys.argv[1] == "--help":
+    if argv_count == 2 and sys.argv[1] == "--help":     # Help CLI
         output.console_log("usage: python3.7 %s [PATH_TO_CONFIG.JSON]" % __file__)
         sys.exit(0)
-    elif argv_count == 2:
+    elif argv_count == 2:                               # Correct usage, continue to program
         main(sys.argv[1])
-    else:
+    else:                                               # Incorrect usage, display error and exit
         output.console_log("Incorrect usage, please run with --help to view possible arguments")
+        sys.exit(0)

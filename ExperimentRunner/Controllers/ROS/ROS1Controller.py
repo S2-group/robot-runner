@@ -4,20 +4,21 @@ import signal
 import subprocess
 from pathlib import Path
 from std_msgs.msg import Bool
+from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 
 
-class ROSController:
-    #def __init__(self, launch_file: Path): # add log_file
+class ROS1Controller(IROSController):
+    tmp_roslaunch_pid: str = "/tmp/roslaunch.pid"
+    # def __init__(self, launch_file: Path): # add log_file
 
-    def start_fresh_run(self, launch_file: Path): # add log_file to output roslaunch pipe to
+    def roslaunch_launch_file(self, launch_file: Path):  # add log_file to output roslaunch pipe to
         try:
-            # TODO: Make sure /tmp/robot_runner exists
+            # TODO: If not /tmp/robot_runner then mkdir /tmp/robot_runner
             FNULL = open(os.devnull, 'w')
             self.process = subprocess.Popen(
-                                f"roslaunch --pid=/tmp/robot_runner/roslaunch.pid {launch_file}",
-                                shell=True, stdout=FNULL, stderr=subprocess.STDOUT
-                            )
+                f"roslaunch --pid={self.tmp_roslaunch_pid} {launch_file}",
+                shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
             # TODO: Wait for ROS Master to be up and running
             # TODO: In case of sim: wait for Gazebo
@@ -49,8 +50,11 @@ class ROSController:
         self.run_sub.unregister()
         output.console_log("ROS Node terminated...")
         self.process.send_signal(signal.SIGINT)
-        with open('/tmp/robot_runner/roslaunch.pid', 'r') as myfile:
+        with open(self.tmp_roslaunch_pid, 'r') as myfile:
             pid = int(myfile.read())
             os.kill(pid, signal.SIGINT)
+
+        while self.process.poll() is None:
+            output.console_log_loading_animated("Waiting for graceful exit...")
 
         output.console_log("Experiment run instance (roslaunch) terminated")

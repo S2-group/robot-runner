@@ -1,5 +1,7 @@
 {
-  "type": "sim",
+  "name": "vu_battsim",
+  "ros_version": 1,
+  "use_simulator": "true",
   "replications": 5,
   "duration": 30000,
   "launch_file_path": "/home/stanswanborn/robot-runner/examples/ros/vu_battsim_18.04/launch/vu_battsim.launch",
