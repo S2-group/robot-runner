@@ -17,7 +17,7 @@ class ROS1Controller(IROSController):
     def roslaunch_launch_file(self, launch_file: Path):  # TODO: add log_file to output roslaunch pipe to
         output.console_log(f"roslaunch {launch_file}")
         try:
-            FNULL = open(os.devnull, 'w')   # block output from showing in terminal
+            FNULL = open(os.devnull, 'w')  # block output from showing in terminal
             self.process = subprocess.Popen(f"roslaunch --pid={self.roslaunch_pid} {launch_file}",
                                             shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         except RLException:
@@ -28,6 +28,7 @@ class ROS1Controller(IROSController):
         try:
             rospy.init_node("robot_runner")
             rospy.on_shutdown(self.ros_shutdown)
+            output.console_log("Successfully initialised ROS node: robot_runner")
         except:
             output.console_log("Could not initialise robot_runner ROS node...")
 
@@ -53,4 +54,5 @@ class ROS1Controller(IROSController):
         while self.process.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
+        rospy.signal_shutdown("Run completed")
         output.console_log("Roslaunch launch file successfully terminated!")

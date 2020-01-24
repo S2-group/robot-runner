@@ -1,4 +1,5 @@
 import sys
+import signal
 from pathlib import Path
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 from ExperimentRunner.Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
@@ -7,16 +8,25 @@ from ExperimentRunner.Controllers.RobotRunnerController import RobotRunnerContro
 def main(config_path):
     config = Path(config_path)
     output.console_log(f"Initialising experiment for {config.absolute()}")
-    RobotRunner(config)
+    robot_runner = RobotRunner(config)
+
+    def signal_handler(sig, frame):
+        output.console_log("\033[1mSIGINT, Terminating Robot Runner\033[0m\n")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    robot_runner.do_experiment()
 
 
 if __name__ == "__main__":
     argv_count = len(sys.argv)
-    if argv_count == 2 and sys.argv[1] == "--help":     # Help CLI
+    if argv_count == 2 and sys.argv[1] == "--help":  # Help CLI
         output.console_log("usage: python3.7 %s [PATH_TO_CONFIG.JSON]" % __file__)
         sys.exit(0)
-    elif argv_count == 2:                               # Correct usage, continue to program
+    elif argv_count == 2:  # Correct usage, continue to program
         main(sys.argv[1])
-    else:                                               # Incorrect usage, display error and exit
+    else:  # Incorrect usage, display error and exit
         output.console_log("Incorrect usage, please run with --help to view possible arguments")
         sys.exit(0)
+
+
