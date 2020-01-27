@@ -42,11 +42,13 @@ class DrawSquare():
             for x in range(0, 10):
                 self.cmd_vel.publish(move_cmd)
                 r.sleep()
+
             # turn 90 degrees
             rospy.loginfo("Turning")
             for x in range(0, 10):
                 self.cmd_vel.publish(turn_cmd)
                 r.sleep()
+
             count = count + 1
             if count == 4:
                 count = 0

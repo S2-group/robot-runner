@@ -8,18 +8,6 @@ class IROSController(ABC):
         pass
 
     @abstractmethod
-    def subscribe_to_topic(self, topic, datatype, callback):
-        pass
-
-    @abstractmethod
-    def roscore_start(self):
-        pass
-
-    @abstractmethod
-    def rosinit_robot_runner_node(self):
-        pass
-
-    @abstractmethod
     def ros_shutdown(self):
         pass
 
