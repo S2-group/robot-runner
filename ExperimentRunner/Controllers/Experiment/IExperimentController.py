@@ -19,7 +19,7 @@ class IExperimentController(ABC):
         self.config = config
         self.ros = ROS1Controller() if config.ros_version == 1 else ROS2Controller()
         # Run ROS master and init Robot Runner node
-        self.ros.roscore()
+        self.ros.roscore_start()
         self.ros.rosinit_robot_runner_node()
         super(IExperimentController, self).__init__()
 

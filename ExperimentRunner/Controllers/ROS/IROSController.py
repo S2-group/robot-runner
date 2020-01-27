@@ -12,7 +12,7 @@ class IROSController(ABC):
         pass
 
     @abstractmethod
-    def roscore(self):
+    def roscore_start(self):
         pass
 
     @abstractmethod
@@ -21,4 +21,12 @@ class IROSController(ABC):
 
     @abstractmethod
     def ros_shutdown(self):
+        pass
+
+    @abstractmethod
+    def rosbag_start_recording_topics(self, topics, file_path, bag_name):
+        pass
+
+    @abstractmethod
+    def rosbag_stop_recording_topics(self, bag):
         pass

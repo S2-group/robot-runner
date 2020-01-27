@@ -6,15 +6,14 @@ from ExperimentRunner.Controllers.RobotRunnerController import RobotRunnerContro
 
 
 def main(config_path):
-    config = Path(config_path)
-    output.console_log(f"Initialising experiment for {config.absolute()}")
-    robot_runner = RobotRunner(config)
-
     def signal_handler(sig, frame):
-        output.console_log("\033[1mSIGINT, Terminating Robot Runner\033[0m\n")
+        output.console_log_bold("SIGINT, Terminating Robot Runner\n", empty_line=True)
         sys.exit(0)
 
     signal.signal(signal.SIGINT, signal_handler)
+    config = Path(config_path)
+    output.console_log(f"Initialising experiment for {config.absolute()}")
+    robot_runner = RobotRunner(config)
     robot_runner.do_experiment()
 
 

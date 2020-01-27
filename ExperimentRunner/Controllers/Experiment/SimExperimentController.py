@@ -13,6 +13,7 @@ class SimExperimentController(IExperimentController):
             output.console_log_animated("Waiting for simulation to be running...")
             time.sleep(1)
         output.console_log("Simulation detected to be running, everything is ready for experiment!")
+        time.sleep(3)  # Grace period for simulation
 
     def do_experiment(self):
         current_run: int = 1
@@ -21,13 +22,22 @@ class SimExperimentController(IExperimentController):
             current_run += 1
 
     def do_run(self, cur_run: int):
+        run_dir = self.config.exp_dir + f"/run{cur_run}"
+
         print(f"\n-----------------NEW RUN [{cur_run} / {self.config.replications}]-----------------\n")
-        output.console_log("Performing run...")
+
+        output.console_log("Preparing run...")
+        Utils.create_dir(run_dir)
+        output.console_log(f"Created run directory: {run_dir}")
+
         self.ros.roslaunch_launch_file(launch_file=self.config.launch_file_path)
 
         # Init ROS node for Robot Runner and wait for
         # ROS Master and Gazebo Simulator to be running
         self.wait_for_simulation()
+
+        # Simulation running, start recording topics
+        self.ros.rosbag_start_recording_topics(self.config.topics, run_dir + '/topics', f"rosbag_run{cur_run}")
 
         # Set programmatic or timed run stop based on config
         # 0  = Programmatic run stop (indefinite run_time)
@@ -37,8 +47,10 @@ class SimExperimentController(IExperimentController):
         else:
             self.timed_run_stop()
 
+        output.console_log("Performing run...")
         self.run_start()
         self.run_wait_completed()
+        self.ros.rosbag_stop_recording_topics(f"rosbag_run{cur_run}")
         self.ros.ros_shutdown()
 
     def run_completed(self, data: Bool = True):
@@ -46,8 +58,8 @@ class SimExperimentController(IExperimentController):
 
     def programmatic_run_stop(self):
         self.ros.subscribe_to_topic(self.run_completed_topic, Bool, self.run_completed)
-        output.console_log(f"\033[1mPublish True to {self.run_completed_topic} to programmatically complete run! \033[0m")
+        output.console_log_bold(f"Publish True to {self.run_completed_topic} to programmatically complete run!")
 
     def timed_run_stop(self):
-        output.console_log(f"Running experiment run for: {self.config.duration}ms == {self.config.duration/1000}s")
+        output.console_log_bold(f"Running experiment run for: {self.config.duration}ms == {self.config.duration/1000}s")
         self.timed_stop = True

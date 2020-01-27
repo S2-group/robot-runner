@@ -16,6 +16,11 @@ class RobotRunnerOutput:
         print(f"{RobotRunnerOutput.robot_runner} {txt}")
 
     @staticmethod
+    def console_log_bold(txt: str, empty_line=False):
+        bold_text = f"\033[1m{txt}\033[0m"
+        RobotRunnerOutput.console_log(bold_text, empty_line)
+
+    @staticmethod
     def console_log_animated(txt: str):
         prev_text = RobotRunnerOutput.prev_animation_txt
         if prev_text != txt and prev_text != "":

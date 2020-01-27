@@ -1,22 +1,27 @@
 import sys
 import json
+from typing import List
 from pathlib import Path
+from datetime import datetime
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 
 
 class ExperimentConfig:
-    name:               str
-    ros_version:        int
-    use_simulator:      bool
-    replications:       int
-    duration:           int
-    launch_file_path:   Path
-    output_path:        Path
-    profilers:          dict
-    scripts:            dict
-    time_between_run:   int
+    name: str
+    ros_version: int
+    use_simulator: bool
+    replications: int
+    duration: int
+    launch_file_path: Path
+    output_path: Path
+    topics: List[str]
+    scripts: dict
+    time_between_run: int
+
+    exp_dir: str
 
     def __init__(self, config_path):
+        now = datetime.now().strftime("%d_%m_%Y-%H:%M:%S")
         self.load_json(config_path)
 
         # ===== LOAD DEFAULT CONFIG VALUES =====
@@ -27,10 +32,12 @@ class ExperimentConfig:
         self.duration = self.get_value_for_key('duration')
         self.launch_file_path = Path(self.get_value_for_key('launch_file_path'))
         self.output_path = Path(self.get_value_for_key('output_path'))
-        self.profilers = self.get_value_for_key('profilers')
+        self.topics = self.get_value_for_key('topics')
         self.scripts = self.get_value_for_key('scripts')
         self.time_between_run = self.get_value_for_key('time_between_run')
 
+        # Build experiment specific, unique path
+        self.exp_dir = str(self.output_path.absolute()) + f"/{self.name}-{now}"
         output.console_log("Experiment config successfully loaded in")
         output.console_log_tabulate(self.data)
 

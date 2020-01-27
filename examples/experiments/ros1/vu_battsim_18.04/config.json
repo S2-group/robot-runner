@@ -2,12 +2,13 @@
   "name": "vu_battsim",
   "ros_version": 1,
   "use_simulator": "true",
-  "replications": 3,
+  "replications": 2,
   "duration": 5000,
-  "launch_file_path": "/home/stanswanborn/robot-runner/examples/ros/vu_battsim_18.04/launch/vu_battsim.launch",
+  "launch_file_path": "/home/stanswanborn/robot-runner/examples/experiments/ros1/vu_battsim_18.04/launch/vu_battsim.launch",
   "output_path": "/home/stanswanborn/experiment_output",
-  "profilers": {
-  },
+  "topics": [
+    "/mobile_base/commands/charge_level"
+  ],
   "scripts": {
     "before_experiment": "../Scripts/before_experiment.py",
     "before_run": "../Scripts/before_run.py",

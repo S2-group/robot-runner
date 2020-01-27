@@ -1,4 +1,5 @@
 import psutil
+import pathlib
 
 
 class Utils:
@@ -12,3 +13,7 @@ class Utils:
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         return False
+
+    @staticmethod
+    def create_dir(absolute_path: str):
+        pathlib.Path(absolute_path).mkdir(parents=True, exist_ok=True)
