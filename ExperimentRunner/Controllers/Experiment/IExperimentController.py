@@ -11,9 +11,6 @@ from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as ou
 
 
 class IExperimentController(ABC):
-    # Variable needed for negating subprocess output
-    FNULL = Utils.FNULL
-
     # Set on init
     config: ExperimentConfigModel = None
     ros: IROSController = None
@@ -35,16 +32,32 @@ class IExperimentController(ABC):
     def do_experiment(self):
         current_run: int = 1
         while current_run <= self.config.replications:
-            self.do_run(current_run)
+            print(f"\n-----------------NEW RUN [{current_run} / {self.config.replications}]-----------------\n")
+            run_dir = self.create_run_dir(current_run)
+            self.do_run(current_run, run_dir)
             current_run += 1
 
     # ===== Run =====
     @abstractmethod
-    def do_run(self, current_run: int):
+    def do_run(self, current_run: int, run_dir: str):
         pass
+
+    def create_run_dir(self, current_run: int):
+        output.console_log("Preparing run...")
+        run_dir = self.config.exp_dir + f"/run{current_run}"
+        Utils.create_dir(run_dir)
+        output.console_log(f"Created run directory: {run_dir}")
+        return run_dir
 
     def run_start(self):
         self.running = True
+
+    def set_run_stop(self):
+        # Set programmatic or timed run stop based on config
+        if self.config.duration > 0:
+            self.timed_run_stop()  # >0 = Timed run stop, stop run after duration
+        else:
+            self.programmatic_run_stop()  # 0  = Programmatic run stop (indefinite run_time)
 
     def run_wait_completed(self):
         start_time = time.time() * 1000
@@ -63,9 +76,6 @@ class IExperimentController(ABC):
         output.console_log("Run completed!", empty_line=True)
         self.run_complete_gracefully()
 
-    def run_stop(self):
-        self.running = False
-
     def run_script(self):
         script = self.config.run_script_model
         command = f"python3.7 {script.path}"
@@ -75,7 +85,7 @@ class IExperimentController(ABC):
         output.console_log(f"Running script: {script.path}")
         output.console_log(f"Script command: {command}")
 
-        self.script_proc = subprocess.Popen(command, shell=True, stdout=self.FNULL, stderr=subprocess.STDOUT)
+        self.script_proc = subprocess.Popen(command, shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
 
     def run_complete_gracefully(self):
         if self.script_proc:
@@ -87,5 +97,6 @@ class IExperimentController(ABC):
         self.timed_stop = True
 
     def programmatic_run_stop(self):
+        output.console_log_bold(f"Running experiment run with programmatic stop.")
         dir_path = os.path.dirname(os.path.realpath(__file__))
         self.run_poll_proc = subprocess.Popen(f"python3.7 {dir_path}/Run/PollRunCompletion.py", shell=True)
