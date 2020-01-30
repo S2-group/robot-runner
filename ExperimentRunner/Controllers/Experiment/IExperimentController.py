@@ -36,6 +36,7 @@ class IExperimentController(ABC):
             run_dir = self.create_run_dir(current_run)
             self.do_run(current_run, run_dir)
             current_run += 1
+            time.sleep(self.config.time_between_run / 1000)
 
     # ===== Run =====
     @abstractmethod

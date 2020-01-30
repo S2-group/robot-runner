@@ -7,7 +7,7 @@ from ExperimentRunner.Controllers.Experiment.IExperimentController import IExper
 
 class SimExperimentController(IExperimentController):
     def get_gazebo_clock_time(self):
-        return int(str(subprocess.check_output("rostopic echo -n 1 /clock", shell=True)).split('secs: ')[1].split('\\n')[0])
+        return self.ros.get_gazebo_time()
 
     def wait_for_simulation(self):
         sim_running = False

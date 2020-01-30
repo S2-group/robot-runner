@@ -1,0 +1,18 @@
+{
+  "name": "ros2_test",
+  "ros_version": 2,
+  "use_simulator": "true",
+  "replications": 2,
+  "duration": 0,
+  "launch_file_path": "/home/stanswanborn/robot-runner/examples/ros2/experiments/house_world/launch/turtlebot3_house.launch.py",
+  "run_script": {
+    "path": "",
+    "args": {
+    }
+  },
+  "output_path": "/home/stanswanborn/experiment_output",
+  "topics": [
+    "/mobile_base/commands/charge_level"
+  ],
+  "time_between_run": 120000
+}

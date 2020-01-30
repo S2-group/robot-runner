@@ -3,6 +3,13 @@ from abc import ABC, abstractmethod
 
 
 class IROSController(ABC):
+    roslaunch_proc = None
+    roslaunch_pid: str = "/tmp/roslaunch.pid"
+
+    @abstractmethod
+    def get_gazebo_time(self):
+        pass
+
     @abstractmethod
     def roslaunch_launch_file(self, launch_file: Path):
         pass
@@ -16,5 +23,5 @@ class IROSController(ABC):
         pass
 
     @abstractmethod
-    def rosbag_stop_recording_topics(self, bag):
+    def rosbag_stop_recording_topics(self, bag_name):
         pass

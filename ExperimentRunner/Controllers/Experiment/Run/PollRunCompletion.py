@@ -1,4 +1,3 @@
-import sys
 import rospy
 from rospy import ROSInterruptException
 from std_msgs.msg import Bool
