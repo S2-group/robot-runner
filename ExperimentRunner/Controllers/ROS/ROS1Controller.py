@@ -4,22 +4,17 @@ import time
 import signal
 import subprocess
 from pathlib import Path
-from importlib import import_module
 from ExperimentRunner.Utilities.Utils import Utils
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 
+if os.environ['ROS_VERSION'] == 1:
+    import rospy
+    from roslaunch.core import RLException
 
 class ROS1Controller(IROSController):
     def get_gazebo_time(self):
         return int(str(subprocess.check_output("rostopic echo -n 1 /clock", shell=True)).split('secs: ')[1].split('\\n')[0])
-
-    def __init__(self):
-        try:
-            self.rospy = import_module("rospy")
-            self.RLException = import_module("roslaunch.core", "RLException") # If this does not work, reduce exception clause to broad
-        except ImportError:
-            output.console_log_bold("Error while importing rospy (ROS1) env vars probably set to incorrect ROS distro.")
 
     def roslaunch_launch_file(self, launch_file: Path):
         output.console_log(f"Roslaunch {launch_file}")
@@ -27,7 +22,7 @@ class ROS1Controller(IROSController):
         try:
             self.roslaunch_proc = subprocess.Popen(command, shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
             time.sleep(1)
-        except self.RLException:
+        except RLException:
             output.console_log("Something went wrong launching the launch file.")
             sys.exit(1)
 
@@ -45,7 +40,7 @@ class ROS1Controller(IROSController):
         try:
             subprocess.Popen(command, shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
             time.sleep(1)  # Give rosbag recording some time to initiate
-        except self.RLException:
+        except RLException:
             output.console_log("Something went wrong recording topics to rosbag")
             sys.exit(1)
 
@@ -67,6 +62,6 @@ class ROS1Controller(IROSController):
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
-        self.rospy.signal_shutdown("Run completed")
+        rospy.signal_shutdown("Run completed")
         output.console_log("Roslaunch launch file successfully terminated!")
 

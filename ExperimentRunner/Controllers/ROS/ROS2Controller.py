@@ -3,19 +3,30 @@ import sys
 import time
 import signal
 import subprocess
+from subprocess import Popen
 from pathlib import Path
-from importlib import import_module
 from ExperimentRunner.Utilities.Utils import Utils
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 
+if os.environ['ROS_VERSION'] == 2:
+    import rclpy
+    from rclpy.node import Node
+    from rosgraph_msgs.msg._clock import Clock
+
 
 class ROS2Controller(IROSController):
-    def get_gazebo_time(self):
-        return int(str(subprocess.check_output("ros2 topic echo -n 1 /clock", shell=True)).split('secs: ')[1].split('\\n')[0])
+    sim_poll_proc: Popen = None
 
-    def __init__(self):
-        self.rclpy = import_module('rclpy')
+    def get_gazebo_time(self):
+        if not self.sim_poll_proc:
+            dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../Experiment/Run'
+            self.sim_poll_proc = subprocess.Popen(f"python3 {dir_path}/PollSimRunning.py", shell=True)
+
+        if self.sim_poll_proc.poll() is not None:
+            return 2
+        else:
+            return 0
 
     def roslaunch_launch_file(self, launch_file: Path):
         output.console_log(f"ros2 launch {launch_file}")
@@ -47,7 +58,8 @@ class ROS2Controller(IROSController):
 
     def rosbag_stop_recording_topics(self, bag_name):
         output.console_log(f"Stop recording rosbag on ROS node: {bag_name}")
-        subprocess.call(f"ros2 lifecycle set {bag_name} shutdown", shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
+        subprocess.call(f"ros2 lifecycle set {bag_name} shutdown", shell=True, stdout=Utils.FNULL,
+                        stderr=subprocess.STDOUT)
 
     def ros_shutdown(self):
         output.console_log("Terminating roslaunch launch file...")
@@ -63,5 +75,5 @@ class ROS2Controller(IROSController):
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
-        self.rclpy.shutdown()
+        rclpy.shutdown()
         output.console_log("Roslaunch launch file successfully terminated!")

@@ -7,6 +7,7 @@ from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as ou
 
 
 class Utils:
+    version = 2
     FNULL = open(os.devnull, 'w')  # block output from showing in terminal
 
     @staticmethod
