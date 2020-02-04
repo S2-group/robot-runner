@@ -9,11 +9,6 @@ from ExperimentRunner.Utilities.Utils import Utils
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
 
-if os.environ['ROS_VERSION'] == 2:
-    import rclpy
-    from rclpy.node import Node
-    from rosgraph_msgs.msg._clock import Clock
-
 
 class ROS2Controller(IROSController):
     sim_poll_proc: Popen = None
@@ -21,8 +16,9 @@ class ROS2Controller(IROSController):
     def get_gazebo_time(self):
         if not self.sim_poll_proc:
             dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../Experiment/Run'
-            self.sim_poll_proc = subprocess.Popen(f"python3 {dir_path}/PollSimRunning.py", shell=True)
+            self.sim_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/PollSimRunning.py", shell=True)
 
+        # TODO: check return code if non-zero (error)
         if self.sim_poll_proc.poll() is not None:
             return 2
         else:
@@ -61,9 +57,9 @@ class ROS2Controller(IROSController):
         subprocess.call(f"ros2 lifecycle set {bag_name} shutdown", shell=True, stdout=Utils.FNULL,
                         stderr=subprocess.STDOUT)
 
-    def ros_shutdown(self):
+    def ros_shutdown(self): # TODO: Graceful exit of roslaunch file not working
         output.console_log("Terminating roslaunch launch file...")
-        subprocess.call("ros2 service call /gazebo/reset_simulation \"{}\"", shell=True)
+        subprocess.call("ros2 service call /reset_simulation std_srvs/srv/Empty {}", shell=True)
 
         self.roslaunch_proc.send_signal(signal.SIGINT)
         try:
@@ -75,5 +71,4 @@ class ROS2Controller(IROSController):
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
-        rclpy.shutdown()
         output.console_log("Roslaunch launch file successfully terminated!")

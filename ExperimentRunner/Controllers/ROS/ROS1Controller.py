@@ -12,6 +12,7 @@ if os.environ['ROS_VERSION'] == 1:
     import rospy
     from roslaunch.core import RLException
 
+
 class ROS1Controller(IROSController):
     def get_gazebo_time(self):
         return int(str(subprocess.check_output("rostopic echo -n 1 /clock", shell=True)).split('secs: ')[1].split('\\n')[0])

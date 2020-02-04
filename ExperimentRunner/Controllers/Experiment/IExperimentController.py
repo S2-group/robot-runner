@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import subprocess
 from abc import ABC, abstractmethod
@@ -72,7 +73,7 @@ class IExperimentController(ABC):
 
             # When run needs to stop using programmatic stop, poll if check still runs
             if self.config.duration == 0:
-                self.running = self.run_poll_proc.poll() is None
+                self.running = self.run_poll_proc.poll() is None # TODO: check return code non-zero (error)
 
         output.console_log("Run completed!", empty_line=True)
         self.run_complete_gracefully()
@@ -100,4 +101,4 @@ class IExperimentController(ABC):
     def programmatic_run_stop(self):
         output.console_log_bold(f"Running experiment run with programmatic stop.")
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.run_poll_proc = subprocess.Popen(f"python3.7 {dir_path}/Run/PollRunCompletion.py", shell=True)
+        self.run_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Run/PollRunCompletion.py", shell=True)
