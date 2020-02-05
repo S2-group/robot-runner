@@ -1,7 +1,7 @@
 import sys
 import signal
 from pathlib import Path
-from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
+from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
 from ExperimentRunner.Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
 
 

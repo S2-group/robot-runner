@@ -1,5 +1,6 @@
 import os
 import sys
+from rosgraph_msgs.msg import Clock
 
 
 def console_log_bold(txt):
@@ -28,36 +29,21 @@ except ValueError:
 
 if ros_version == 1:
     import rospy
-    from rospy import ROSInterruptException
-    from std_msgs.msg import Bool
 
 if ros_version == 2:
     import rclpy
-    from rosgraph_msgs.msg import Clock
 
 
 class PollROS1:
-    pass
-    # def __init__(self):
-    #     rospy.init_node('poll_sim_running')
-    #     rospy.loginfo("Initialised ROS Node: robot_runner/poll_sim")
-    #     rospy.Subscriber('/clock', Clock, self.completed)
-    #     rospy.loginfo("Publish True at /robot_runner/run_completed to complete run!")
-    #     rospy.on_shutdown(self.shutdown)
-    #     r = rospy.Rate(10)
-    #
-    #     while not rospy.is_shutdown():
-    #         try:
-    #             r.sleep()
-    #         except ROSInterruptException:
-    #             rospy.loginfo("Shutdown requested while sleeping, escalating to SIGTERM...")
-    #
-    # def completed(self, data: Bool = True):
-    #     rospy.loginfo("/robot_runner/run_completed topic published true...")
-    #     rospy.signal_shutdown('run_completed')
-    #
-    # def shutdown(self):
-    #     rospy.loginfo("Run completed! Shutting down ROS node: robot_runner")
+    def __init__(self):
+        rospy.init_node("poll_sim_running")
+        console_log_bold(msg_ros_node_init)
+        rospy.Subscriber(ros_topic_sub_url, Clock, self.clock_callback)
+
+    def clock_callback(self, time: Clock):
+        if time.clock.sec >= 2:
+            console_log_bold(msg_sim_is_cnfrmd)
+            sys.exit(0)
 
 
 class PollROS2:
@@ -65,7 +51,7 @@ class PollROS2:
         rclpy.init()
         node = rclpy.create_node("poll_sim_running")
         console_log_bold(msg_ros_node_init)
-        node.create_subscription(Clock, '/clock', self.clock_callback, 10)
+        node.create_subscription(Clock, ros_topic_sub_url, self.clock_callback, 10)
         rclpy.spin(node)
 
     def clock_callback(self, time: Clock):

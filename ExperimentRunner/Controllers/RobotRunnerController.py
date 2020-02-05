@@ -1,20 +1,13 @@
 from pathlib import Path
-from ExperimentRunner.Utilities.Utils import Utils
-from ExperimentRunner.Models.ExperimentConfigModel import ExperimentConfigModel
-from ExperimentRunner.Controllers.Experiment.IExperimentController import IExperimentController
-from ExperimentRunner.Controllers.Experiment.SimExperimentController import SimExperimentController
-from ExperimentRunner.Controllers.Experiment.NativeExperimentController import NativeExperimentController
+from ExperimentRunner.Models.ConfigModel import ConfigModel
+from ExperimentRunner.Controllers.Experiment.ExperimentController import ExperimentController
 
 
 class RobotRunnerController:
-    exp_controller: IExperimentController  # Abstract ExperimentController which can be either Sim or Native at runtime
+    exp_controller: ExperimentController
 
     def __init__(self, config_path: Path):
-        self.set_exp_controller(ExperimentConfigModel(config_path.absolute()))
-
-    def set_exp_controller(self, config: ExperimentConfigModel):
-        self.exp_controller = SimExperimentController(config) if config.use_simulator else NativeExperimentController(config)
+        self.exp_controller = ExperimentController(ConfigModel(config_path))
 
     def do_experiment(self):
-        Utils.create_dir(self.exp_controller.config.exp_dir)
         self.exp_controller.do_experiment()

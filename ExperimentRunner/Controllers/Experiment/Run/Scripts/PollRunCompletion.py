@@ -18,7 +18,7 @@ ros_topic_sub_url = "/robot_runner/run_completed"
 msg_ros_node_init = "Initialised ROS Node: poll_run_complete."
 msg_topic_publish = "Publish True at /robot_runner/run_completed to complete run!"
 msg_tpc_published = "/robot_runner/run_completed topic published true..."
-msg_run_completed = "Run completed! Shutting down ROS node: robot_runner."
+msg_run_completed = "Run_b completed! Shutting down ROS node: robot_runner."
 msg_unsup_ros_ver = "Unsupported $ROS_VERSION environment variable."
 
 ros_version = 0

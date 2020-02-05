@@ -1,31 +1,21 @@
 import os
-import sys
 import time
 import signal
 import subprocess
 from pathlib import Path
-from ExperimentRunner.Utilities.Utils import Utils
+from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
-from ExperimentRunner.Utilities.RobotRunnerOutput import RobotRunnerOutput as output
+from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
 
 if os.environ['ROS_VERSION'] == 1:
     import rospy
-    from roslaunch.core import RLException
 
 
 class ROS1Controller(IROSController):
-    def get_gazebo_time(self):
-        return int(str(subprocess.check_output("rostopic echo -n 1 /clock", shell=True)).split('secs: ')[1].split('\\n')[0])
-
     def roslaunch_launch_file(self, launch_file: Path):
         output.console_log(f"Roslaunch {launch_file}")
         command = f"roslaunch --pid=/tmp/roslaunch.pid {launch_file}"
-        try:
-            self.roslaunch_proc = subprocess.Popen(command, shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
-            time.sleep(1)
-        except RLException:
-            output.console_log("Something went wrong launching the launch file.")
-            sys.exit(1)
+        ProcessProcedure.subprocess_spawn(command, "ros1_launch_file")
 
     def rosbag_start_recording_topics(self, topics, file_path, bag_name):
         file_path += "-ros1"
@@ -38,21 +28,18 @@ class ROS1Controller(IROSController):
             output.console_log_bold(f" * {topic}")
         command += f" __name:={bag_name}"
 
-        try:
-            subprocess.Popen(command, shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
-            time.sleep(1)  # Give rosbag recording some time to initiate
-        except RLException:
-            output.console_log("Something went wrong recording topics to rosbag")
-            sys.exit(1)
+        ProcessProcedure.subprocess_spawn(command, "ros1bag_record")
+        time.sleep(1)  # Give rosbag recording some time to initiate
 
     def rosbag_stop_recording_topics(self, bag_name):
         output.console_log(f"Stop recording rosbag on ROS node: {bag_name}")
-        subprocess.call(f"rosnode kill {bag_name}", shell=True, stdout=Utils.FNULL, stderr=subprocess.STDOUT)
+        ProcessProcedure.subprocess_call(f"rosnode kill {bag_name}", "ros1bag_kill")
 
     def ros_shutdown(self):
         output.console_log("Terminating roslaunch launch file...")
         subprocess.call("rosservice call /gazebo/reset_simulation \"{}\"", shell=True)
         self.roslaunch_proc.send_signal(signal.SIGINT)
+
         try:
             with open("/tmp/roslaunch.pid", 'r') as myfile:
                 pid = int(myfile.read())
@@ -65,4 +52,3 @@ class ROS1Controller(IROSController):
 
         rospy.signal_shutdown("Run completed")
         output.console_log("Roslaunch launch file successfully terminated!")
-

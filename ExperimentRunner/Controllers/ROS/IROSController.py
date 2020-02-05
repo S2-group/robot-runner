@@ -1,14 +1,21 @@
+import os
+import sys
+import subprocess
 from pathlib import Path
 from abc import ABC, abstractmethod
 
 
 class IROSController(ABC):
+    sim_poll_proc = None
     roslaunch_proc = None
-    roslaunch_pid: str = "/tmp/roslaunch.pid"
 
-    @abstractmethod
-    def get_gazebo_time(self):
-        pass
+    def is_gazebo_running(self):
+        if not self.sim_poll_proc:
+            dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../Experiment/Run/Scripts'
+            self.sim_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/PollSimRunning.py", shell=True)
+
+        # TODO: check return code if non-zero (error)
+        return self.sim_poll_proc.poll() is not None
 
     @abstractmethod
     def roslaunch_launch_file(self, launch_file: Path):
@@ -19,7 +26,7 @@ class IROSController(ABC):
         pass
 
     @abstractmethod
-    def rosbag_start_recording_topics(self, topics, file_path, bag_name):
+    def rosbag_start_recording_topics(self, topics, file_path: str, bag_name):
         pass
 
     @abstractmethod
