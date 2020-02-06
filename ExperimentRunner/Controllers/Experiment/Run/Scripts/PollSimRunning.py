@@ -39,19 +39,16 @@ class PollROS1:
     def __init__(self):
         rospy.init_node("poll_sim_running")
         console_log_bold(msg_ros_node_init)
-        rospy.Subscriber(ros_topic_sub_url, Clock, self.clock_callback)
         rospy.on_shutdown(self.shutdown)
         r = rospy.Rate(10)
 
-        while not rospy.is_shutdown():
+        while rospy.Time.now().secs <= 2:
             try:
                 r.sleep()
             except ROSInterruptException:
                 pass
 
-    def clock_callback(self, time: Clock):
-        if time.clock.sec >= 2:
-            rospy.signal_shutdown("sim_running")
+        rospy.signal_shutdown("sim_running")
 
     def shutdown(self):
         console_log_bold(msg_sim_is_cnfrmd)

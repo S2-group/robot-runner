@@ -1,7 +1,7 @@
 {
   "use_simulator": "true",
   "name": "ros2_test",
-  "replications": 2,
+  "replications": 3,
   "duration": 5000,
   "launch_file_path": "/home/stanswanborn/robot-runner/examples/ros2/experiments/house_world/launch/turtlebot3_house.launch.py",
   "run_script": {

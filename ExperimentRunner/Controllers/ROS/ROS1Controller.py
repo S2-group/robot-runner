@@ -7,15 +7,12 @@ from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
 
-if os.environ['ROS_VERSION'] == 1:
-    import rospy
-
 
 class ROS1Controller(IROSController):
     def roslaunch_launch_file(self, launch_file: Path):
         output.console_log(f"Roslaunch {launch_file}")
         command = f"roslaunch --pid=/tmp/roslaunch.pid {launch_file}"
-        ProcessProcedure.subprocess_spawn(command, "ros1_launch_file")
+        self.roslaunch_proc = ProcessProcedure.subprocess_spawn(command, "ros1_launch_file")
 
     def rosbag_start_recording_topics(self, topics, file_path, bag_name):
         file_path += "-ros1"
@@ -50,5 +47,4 @@ class ROS1Controller(IROSController):
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
-        rospy.signal_shutdown("Run completed")
         output.console_log("Roslaunch launch file successfully terminated!")

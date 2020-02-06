@@ -80,4 +80,4 @@ class IRunController(ABC):
     def programmatic_run_stop(self):
         output.console_log_bold(f"Running experiment run with programmatic stop.")
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.run_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/scripts/PollRunCompletion.py", shell=True)
+        self.run_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/PollRunCompletion.py", shell=True)

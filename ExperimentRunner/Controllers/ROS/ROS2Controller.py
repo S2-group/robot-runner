@@ -8,6 +8,9 @@ from ExperimentRunner.Controllers.Output.OutputController import OutputControlle
 
 
 class ROS2Controller(IROSController):
+    def rosbag_stop_recording_topics(self, bag_name):
+        pass  # TODO: For now OK, needs to terminate ros2bag process in future.
+
     def roslaunch_launch_file(self, launch_file: Path):
         output.console_log(f"ros2 launch {launch_file}")
         command = f"ros2 launch {launch_file}"
@@ -22,14 +25,9 @@ class ROS2Controller(IROSController):
         for topic in topics:
             command += f" {topic}"
             output.console_log_bold(f" * {topic}")
-        command += f" __name:={bag_name}"
 
         ProcessProcedure.subprocess_spawn(command, "ros2bag_record")
         time.sleep(1)  # Give rosbag recording some time to initiate
-
-    def rosbag_stop_recording_topics(self, bag_name):
-        output.console_log(f"Stop recording rosbag on ROS node: {bag_name}")
-        ProcessProcedure.subprocess_call(f"ros2 lifecycle set {bag_name} shutdown", "ros2bag_kill")
 
     def ros_shutdown(self): # TODO: Graceful exit of roslaunch file not working
         output.console_log("Terminating roslaunch launch file...")
