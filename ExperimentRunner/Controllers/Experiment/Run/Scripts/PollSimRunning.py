@@ -29,6 +29,7 @@ except ValueError:
 
 if ros_version == 1:
     import rospy
+    from rospy import ROSInterruptException
 
 if ros_version == 2:
     import rclpy
@@ -39,11 +40,21 @@ class PollROS1:
         rospy.init_node("poll_sim_running")
         console_log_bold(msg_ros_node_init)
         rospy.Subscriber(ros_topic_sub_url, Clock, self.clock_callback)
+        rospy.on_shutdown(self.shutdown)
+        r = rospy.Rate(10)
+
+        while not rospy.is_shutdown():
+            try:
+                r.sleep()
+            except ROSInterruptException:
+                pass
 
     def clock_callback(self, time: Clock):
         if time.clock.sec >= 2:
-            console_log_bold(msg_sim_is_cnfrmd)
-            sys.exit(0)
+            rospy.signal_shutdown("sim_running")
+
+    def shutdown(self):
+        console_log_bold(msg_sim_is_cnfrmd)
 
 
 class PollROS2:

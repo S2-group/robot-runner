@@ -20,4 +20,4 @@ class RunScriptModel:
     def run(self):
         output.console_log(f"Running script: {self.path}")
         output.console_log(f"Script command: {self.command}")
-        ProcessProcedure.subprocess_spawn(self.command)
+        ProcessProcedure.subprocess_spawn(self.command, "run_script_model")
