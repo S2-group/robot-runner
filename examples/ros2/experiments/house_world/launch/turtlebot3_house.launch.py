@@ -30,8 +30,9 @@ TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    world = '/home/stanswanborn/robot-runner/examples/ros2/experiments/house_world/worlds/burger.model'
-    launch_file_dir = '/home/stanswanborn/robot-runner/examples/ros2/experiments/house_world/launch'
+    cur_dir = os.path.dirname(os.path.realpath(__file__))
+    world = cur_dir + '/../worlds/burger.model'
+    launch_file_dir = cur_dir
 
     return LaunchDescription([
         ExecuteProcess(
