@@ -1,7 +1,7 @@
 import time
 from ExperimentRunner.Models.ConfigModel import ConfigModel
 from ExperimentRunner.Controllers.Experiment.Run.SimRunController import SimRunContoller
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 from ExperimentRunner.Controllers.Experiment.Run.NativeRunController import NativeRunController
 
 
@@ -17,8 +17,11 @@ class ExperimentController:
 
         current_run: int = 1
         while current_run <= self.config.replications:
-            run_controller = SimRunContoller(self.config, current_run) \
-                if self.config.use_simulator else NativeRunController(self.config, current_run)
+            run_controller = None
+            if self.config.use_simulator:
+                run_controller = SimRunContoller(self.config, current_run)
+            else:
+                run_controller = NativeRunController(self.config, current_run)
 
             run_controller.do_run()
 

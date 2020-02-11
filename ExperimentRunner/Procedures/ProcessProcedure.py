@@ -4,7 +4,7 @@ import psutil
 import signal
 import subprocess
 from subprocess import Popen
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class ProcessProcedure:

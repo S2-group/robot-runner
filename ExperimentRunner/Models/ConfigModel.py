@@ -5,7 +5,7 @@ from typing import List
 from pathlib import Path
 from datetime import datetime
 from ExperimentRunner.Models.RunScriptModel import RunScriptModel
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class ConfigModel:
@@ -16,18 +16,23 @@ class ConfigModel:
     duration: int
     launch_file_path: Path
     run_script_model: RunScriptModel
+
+    topics_must_be_available: List[str]
+    nodes_must_be_available: List[str]
+
     output_path: Path
-    topics: List[str]
+    topics_to_record: List[str]
     time_between_run: int
 
     exp_dir: Path
 
     def __init__(self, config_path):
         now = datetime.now().strftime("%d_%m_%Y-%H:%M:%S")
-        self.load_json(config_path)
+        self.data = self.load_json(config_path)
 
         # ===== LOAD DEFAULT CONFIG VALUES =====
-        self.use_simulator = bool(self.get_value_for_key('use_simulator'))
+        use_sim = self.get_value_for_key('use_simulator')
+        self.use_simulator = (use_sim == "true")
         self.name = self.get_value_for_key('name')
 
         try:
@@ -44,9 +49,12 @@ class ConfigModel:
         script_json = self.get_value_for_key('run_script')
         self.run_script_model = RunScriptModel(script_json['path'], script_json['args'])
 
+        self.topics_must_be_available = self.get_value_for_key('topics_must_be_available')
+        self.nodes_must_be_available = self.get_value_for_key('nodes_must_be_available')
+
         self.output_path = Path(self.get_value_for_key('output_path'))
 
-        self.topics = self.get_value_for_key('topics')
+        self.topics_to_record = self.get_value_for_key('topics_to_record')
 
         self.time_between_run = self.get_value_for_key('time_between_run')
 
@@ -58,7 +66,7 @@ class ConfigModel:
     def load_json(self, config_path):
         try:
             with open(config_path) as config_file:
-                self.data = json.load(config_file)
+                return json.load(config_file)
         except FileNotFoundError:
             output.console_log("File not found, make sure file exists or path is correct...")
             sys.exit(0)

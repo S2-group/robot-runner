@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class RunScriptModel:

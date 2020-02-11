@@ -1,13 +1,14 @@
-import os
 import time
-import signal
 from pathlib import Path
 from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class ROS2Controller(IROSController):
+    def roscore_start(self):
+        pass
+
     def rosbag_stop_recording_topics(self, bag_name):
         pass  # TODO: For now OK, needs to terminate ros2bag process in future.
 
@@ -29,7 +30,7 @@ class ROS2Controller(IROSController):
         ProcessProcedure.subprocess_spawn(command, "ros2bag_record")
         time.sleep(1)  # Give rosbag recording some time to initiate
 
-    def ros_shutdown(self): # TODO: Graceful exit of roslaunch file not working
+    def ros_shutdown(self):
         output.console_log("Terminating roslaunch launch file...")
         ProcessProcedure.subprocess_call("ros2 service call /reset_simulation std_srvs/srv/Empty {}", "ros2_reset_call")
 

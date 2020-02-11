@@ -1,7 +1,6 @@
 import time
-from pathlib import Path
 from ExperimentRunner.Controllers.Experiment.Run.IRunController import IRunController
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class SimRunContoller(IRunController):
@@ -20,9 +19,9 @@ class SimRunContoller(IRunController):
 
         # Simulation running, start recording topics
         self.ros.rosbag_start_recording_topics(
-            self.config.topics,                         # Topics to record
-            str(self.run_dir.absolute()) + '/topics',   # Path to record .bag to
-            f"rosbag_run{self.current_run}"             # Bagname to kill after run
+            self.config.topics_to_record,  # Topics to record
+            str(self.run_dir.absolute()) + '/topics',  # Path to record .bag to
+            f"rosbag_run{self.current_run}"  # Bagname to kill after run
         )
 
         # If the user set a script to be run while running an experiment run, run it.
@@ -35,4 +34,4 @@ class SimRunContoller(IRunController):
         self.run_wait_completed()
 
         self.ros.rosbag_stop_recording_topics(f"rosbag_run{self.current_run}")
-        self.ros.ros_shutdown()
+        self.ros.sim_shutdown()

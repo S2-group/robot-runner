@@ -5,10 +5,43 @@ import subprocess
 from pathlib import Path
 from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class ROS1Controller(IROSController):
+    def get_available_topics(self):
+        return str(subprocess.check_output('rostopic list', shell=True))
+
+    def get_available_nodes(self):
+        return str(subprocess.check_output('rosnode list', shell=True))
+
+    def are_nodes_available(self, node_names):
+        nodes = self.get_available_nodes()
+        all_available = True
+        for node in node_names:
+            all_available = node in nodes
+
+        return all_available
+
+    def are_topics_available(self, topic_names):
+        topics = self.get_available_topics()
+        all_available = True
+        for topic in topic_names:
+            all_available = topic in topics
+
+        return all_available
+
+    def roscore_start(self):
+        output.console_log("Starting ROS Master (roscore)...")
+        self.roscore_proc = ProcessProcedure.subprocess_spawn("roscore", "roscore_start")
+        while not ProcessProcedure.process_is_running('roscore') and \
+                not ProcessProcedure.process_is_running('rosmaster') and \
+                not ProcessProcedure.process_is_running('rosout'):
+            output.console_log_animated("Waiting to confirm roscore running...")
+
+        output.console_log_bold("ROS Master (roscore) is running!")
+        time.sleep(1)  # Give roscore some time to initiate
+
     def roslaunch_launch_file(self, launch_file: Path):
         output.console_log(f"Roslaunch {launch_file}")
         command = f"roslaunch --pid=/tmp/roslaunch.pid {launch_file}"
@@ -32,8 +65,8 @@ class ROS1Controller(IROSController):
         output.console_log(f"Stop recording rosbag on ROS node: {bag_name}")
         ProcessProcedure.subprocess_call(f"rosnode kill {bag_name}", "ros1bag_kill")
 
-    def ros_shutdown(self):
-        output.console_log("Terminating roslaunch launch file...")
+    def sim_shutdown(self):
+        output.console_log("Shutting down sim run...")
         subprocess.call("rosservice call /gazebo/reset_simulation \"{}\"", shell=True)
         self.roslaunch_proc.send_signal(signal.SIGINT)
 
@@ -47,4 +80,13 @@ class ROS1Controller(IROSController):
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
-        output.console_log("Roslaunch launch file successfully terminated!")
+        output.console_log("Sim run successfully shutdown!")
+
+    def native_shutdown(self):
+        output.console_log("Shutting down native run...")
+        self.roscore_proc.send_signal(signal.SIGINT)
+
+        while self.roscore_proc.poll() is None:
+            output.console_log_animated("Waiting for roscore to gracefully exit...")
+
+        output.console_log("Native run successfully shutdown!")

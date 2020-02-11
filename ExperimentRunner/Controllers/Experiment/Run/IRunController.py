@@ -9,7 +9,7 @@ from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
 from ExperimentRunner.Controllers.ROS.IROSController import IROSController
 from ExperimentRunner.Controllers.ROS.ROS1Controller import ROS1Controller
 from ExperimentRunner.Controllers.ROS.ROS2Controller import ROS2Controller
-from ExperimentRunner.Controllers.Output.OutputController import OutputController as output
+from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
 from ExperimentRunner.Models.ConfigModel import ConfigModel
 
 

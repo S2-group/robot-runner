@@ -2,7 +2,7 @@ import time
 from tabulate import tabulate
 
 
-class OutputController:
+class OutputProcedure:
     prev_animation_txt = ""
     robot_runner = "[ROBOT_RUNNER]: "
     animation = "|/-\\"
@@ -13,26 +13,26 @@ class OutputController:
         if empty_line:
             print(" " * 100)
 
-        print(f"{OutputController.robot_runner} {txt}")
+        print(f"{OutputProcedure.robot_runner} {txt}")
 
     @staticmethod
     def console_log_bold(txt: str, empty_line=False):
         bold_text = f"\033[1m{txt}\033[0m"
-        OutputController.console_log(bold_text, empty_line)
+        OutputProcedure.console_log(bold_text, empty_line)
 
     @staticmethod
     def console_log_animated(txt: str):
-        prev_text = OutputController.prev_animation_txt
+        prev_text = OutputProcedure.prev_animation_txt
         if prev_text != txt and prev_text != "":
             print(" " * 100)
 
-        idx = OutputController.idx
-        animation = OutputController.animation
-        print(f"{OutputController.robot_runner} {txt} {animation[idx % len(animation)]}", end="\r")
-        OutputController.idx += 1
+        idx = OutputProcedure.idx
+        animation = OutputProcedure.animation
+        print(f"{OutputProcedure.robot_runner} {txt} {animation[idx % len(animation)]}", end="\r")
+        OutputProcedure.idx += 1
         time.sleep(0.1)
 
-        OutputController.prev_animation_txt = txt
+        OutputProcedure.prev_animation_txt = txt
 
     @staticmethod
     def console_log_tabulate(d: dict):  # Used to output dictionary as readable, pretty table
