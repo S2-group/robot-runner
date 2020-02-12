@@ -3,10 +3,11 @@ import sys
 import time
 import json
 import subprocess
+from subprocess import Popen
 from subprocess import CalledProcessError
 
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '~/robot-runner/RemoteRunner')
+sys.path.insert(1, '../')
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
@@ -14,6 +15,8 @@ class RobotClient:
     launch_command: str
     launch_file_path: str
     roscore_node_name: str
+
+    roslaunch_proc: Popen
 
     def __init__(self, config_path):
         self.data = self.load_json(config_path)
@@ -29,21 +32,19 @@ class RobotClient:
     def do_run(self):
         while not self.is_roscore_ready():
             output.console_log_animated("Waiting for ROS Master...")
-            time.sleep(0.5)
 
         output.console_log_bold("ROS Master ready!")
 
         # Launch launchfile / launch command
         if self.launch_command == "":
-            subprocess.Popen(f"roslaunch {self.launch_file_path}", shell=True, stdout=open(os.devnull, 'w'),
+            self.roslaunch_proc = subprocess.Popen(f"roslaunch {self.launch_file_path}", shell=True, stdout=open(os.devnull, 'w'),
                              stderr=subprocess.STDOUT)
         else:
-            subprocess.Popen(self.launch_command, shell=True, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT)
+            self.roslaunch_proc = subprocess.Popen(self.launch_command, shell=True, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT)
 
         # Wait for run to finish (/rosout is unavailable again)
         while self.is_roscore_ready():
             output.console_log_animated("Waiting for run to complete...")
-            time.sleep(0.5)
 
     def is_roscore_ready(self):
         try:
