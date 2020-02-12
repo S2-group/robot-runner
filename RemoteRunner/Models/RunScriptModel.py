@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
-from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
+from RemoteRunner.Procedures.ProcessProcedure import ProcessProcedure
+from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class RunScriptModel:

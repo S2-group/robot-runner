@@ -1,6 +1,6 @@
 import time
-from ExperimentRunner.Controllers.Experiment.Run.IRunController import IRunController
-from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
+from RemoteRunner.Controllers.Experiment.Run.IRunController import IRunController
+from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class SimRunContoller(IRunController):

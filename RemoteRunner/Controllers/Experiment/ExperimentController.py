@@ -1,8 +1,8 @@
 import time
-from ExperimentRunner.Models.ConfigModel import ConfigModel
-from ExperimentRunner.Controllers.Experiment.Run.SimRunController import SimRunContoller
-from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
-from ExperimentRunner.Controllers.Experiment.Run.NativeRunController import NativeRunController
+from RemoteRunner.Models.ConfigModel import ConfigModel
+from RemoteRunner.Controllers.Experiment.Run.SimRunController import SimRunContoller
+from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+from RemoteRunner.Controllers.Experiment.Run.NativeRunController import NativeRunController
 
 
 class ExperimentController:

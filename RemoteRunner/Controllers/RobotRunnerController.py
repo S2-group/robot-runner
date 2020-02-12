@@ -1,6 +1,6 @@
 from pathlib import Path
-from ExperimentRunner.Models.ConfigModel import ConfigModel
-from ExperimentRunner.Controllers.Experiment.ExperimentController import ExperimentController
+from RemoteRunner.Models.ConfigModel import ConfigModel
+from RemoteRunner.Controllers.Experiment.ExperimentController import ExperimentController
 
 
 class RobotRunnerController:

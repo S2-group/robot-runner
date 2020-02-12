@@ -1,8 +1,8 @@
 import time
 from pathlib import Path
-from ExperimentRunner.Procedures.ProcessProcedure import ProcessProcedure
-from ExperimentRunner.Controllers.ROS.IROSController import IROSController
-from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
+from RemoteRunner.Procedures.ProcessProcedure import ProcessProcedure
+from RemoteRunner.Controllers.ROS.IROSController import IROSController
+from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class ROS2Controller(IROSController):

@@ -1,8 +1,8 @@
 import sys
 import signal
 from pathlib import Path
-from ExperimentRunner.Procedures.OutputProcedure import OutputProcedure as output
-from ExperimentRunner.Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
+from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+from RemoteRunner.Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
 
 
 def main(config_path):
@@ -20,7 +20,7 @@ def main(config_path):
 if __name__ == "__main__":
     argv_count = len(sys.argv)
     if argv_count == 2 and sys.argv[1] == "--help":  # Help CLI
-        output.console_log("usage: python3.7 %s [PATH_TO_CONFIG.JSON]" % __file__)
+        output.console_log("usage: python3 %s [PATH_TO_CONFIG.JSON]" % __file__)
         sys.exit(0)
     elif argv_count == 2:  # Correct usage, continue to program
         main(sys.argv[1])
