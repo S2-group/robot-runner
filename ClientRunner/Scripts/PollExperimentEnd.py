@@ -1,6 +1,9 @@
 import os
 import sys
+import signal
+import subprocess
 from std_msgs.msg import Bool
+from rospy import ROSException
 
 
 def console_log_bold(txt):
@@ -49,13 +52,17 @@ class PollExperimentEndROS1:
             try:
                 r.sleep()
             except ROSInterruptException:
-                pass
+                sys.exit(1)
+            except ROSException:
+                sys.exit(1)
 
     def completed(self, data: Bool = True):
         rospy.signal_shutdown('experiment_ended')
 
     def shutdown(self):
         console_log_bold(msg_run_completed)
+        os.kill(os.getppid(), signal.SIGTERM)
+        subprocess.call("rosnode kill -a", shell=True)
 
 
 class PollExperimentEndROS2:

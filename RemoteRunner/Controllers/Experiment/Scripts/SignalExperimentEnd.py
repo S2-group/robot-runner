@@ -1,6 +1,9 @@
 import os
 import sys
+import time
+import subprocess
 from std_msgs.msg import Bool
+from rospy import ROSException
 
 
 def console_log_bold(txt):
@@ -38,6 +41,9 @@ if ros_version == 2:
 
 class SignalEndROS1:
     def __init__(self):
+        subprocess.Popen('roscore', shell=True)
+        time.sleep(5)
+
         rospy.init_node('signal_experiment_end')
 
         console_log_bold(msg_ros_node_init)
@@ -52,7 +58,9 @@ class SignalEndROS1:
                 pub.publish(Bool(True))
                 r.sleep()
             except ROSInterruptException:
-                pass
+                sys.exit(1)
+            except ROSException:
+                sys.exit(1)
 
     def shutdown(self):
         console_log_bold(msg_run_completed)

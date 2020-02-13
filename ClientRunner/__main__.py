@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import time
 import subprocess
 from subprocess import Popen
 from subprocess import CalledProcessError
@@ -18,7 +19,7 @@ class RobotClient:
     roscore_node_name: str
 
     roslaunch_proc: Popen
-    poll_exp_end_proc: Popen
+    exp_end_proc: Popen
 
     def __init__(self, config_path):
         self.data = self.load_json(config_path)
@@ -26,31 +27,29 @@ class RobotClient:
         self.launch_command = self.get_value_for_key('launch_command')
         self.launch_file_path = self.get_value_for_key('launch_file_path')
         self.roscore_node_name = "/rosout"
-
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.poll_exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/PollExperimentEnd.py", shell=True)
 
         while True:
-            if self.poll_exp_end_proc.poll() is not None:
+            while not self.is_roscore_ready():
+                output.console_log_animated("Waiting for ROS Master...")
+
+            output.console_log_bold("ROS Master ready!", empty_line=True)
+
+            self.exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/PollExperimentEnd.py", shell=True)
+            time.sleep(2)
+
+            if self.exp_end_proc.poll() is None:
                 self.do_run()
-            else:
-                subprocess.call("rosnode kill -a", shell=True)
-                break
 
     def do_run(self):
-        while not self.is_roscore_ready():
-            output.console_log_animated("Waiting for ROS Master...")
-
-        output.console_log_bold("ROS Master ready!")
-
         # Launch launchfile / launch command
         if self.launch_command == "":
-            self.roslaunch_proc = subprocess.Popen(f"roslaunch {self.launch_file_path}", shell=True,
-                                                   stdout=open(os.devnull, 'w'),
-                                                   stderr=subprocess.STDOUT)
+            self.roslaunch_proc = subprocess.Popen(f"roslaunch {self.launch_file_path}", shell=True)#,
+                                                   #stdout=open(os.devnull, 'w'),
+                                                   #stderr=subprocess.STDOUT)
         else:
-            self.roslaunch_proc = subprocess.Popen(self.launch_command, shell=True, stdout=open(os.devnull, 'w'),
-                                                   stderr=subprocess.STDOUT)
+            self.roslaunch_proc = subprocess.Popen(self.launch_command, shell=True)#, stdout=open(os.devnull, 'w'),
+                                                   #stderr=subprocess.STDOUT)
 
         # Wait for run to finish (/rosout is unavailable again)
         while self.roslaunch_proc.poll() is None:

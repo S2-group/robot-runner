@@ -1,7 +1,7 @@
 {
   "use_simulator": "false",
   "name": "native_ros1_exp",
-  "replications": 4,
+  "replications": 2,
   "duration": 5000,
   "launch_file_path": "",
   "run_script": {
