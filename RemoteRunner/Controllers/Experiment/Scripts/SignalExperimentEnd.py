@@ -1,9 +1,16 @@
 import os
 import sys
 import time
+import psutil
 import subprocess
 from std_msgs.msg import Bool
-from rospy import ROSException
+
+
+def process_kill_by_name(process_name: str):
+    for proc in psutil.process_iter():
+        # check whether the process name matches
+        if proc.name().lower() == process_name.lower():
+            proc.kill()
 
 
 def console_log_bold(txt):
@@ -53,14 +60,26 @@ class SignalEndROS1:
         rospy.on_shutdown(self.shutdown)
         r = rospy.Rate(10)
 
-        while not rospy.is_shutdown():
-            try:
+        while True:
+            if pub.get_num_connections() > 0:
                 pub.publish(Bool(True))
-                r.sleep()
-            except ROSInterruptException:
-                sys.exit(1)
-            except ROSException:
-                sys.exit(1)
+                break
+
+        # sleep just makes sure TurtleBot receives the stop command prior to shutting down the script
+        rospy.sleep(1)
+        process_kill_by_name('rosmaster')
+        process_kill_by_name('roscore')
+        process_kill_by_name('rosout')
+        sys.exit(0)
+
+        # while not rospy.is_shutdown():
+        #     try:
+        #         pub.publish(Bool(True))
+        #         r.sleep()
+        #     except ROSInterruptException:
+        #         sys.exit(1)
+        #     except ROSException:
+        #         sys.exit(1)
 
     def shutdown(self):
         console_log_bold(msg_run_completed)

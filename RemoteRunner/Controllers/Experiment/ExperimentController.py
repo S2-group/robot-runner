@@ -42,7 +42,8 @@ class ExperimentController:
         dir_path = os.path.dirname(os.path.realpath(__file__))
         exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/SignalExperimentEnd.py", shell=True)
 
-        while exp_end_proc.poll() is not None:
+        while exp_end_proc.poll() is None:
             output.console_log_animated("Waiting for robot to confirm experiment end...")
 
         output.console_log_bold("Successfully ended experiment!")
+

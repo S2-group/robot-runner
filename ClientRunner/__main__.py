@@ -36,10 +36,13 @@ class RobotClient:
             output.console_log_bold("ROS Master ready!", empty_line=True)
 
             self.exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/PollExperimentEnd.py", shell=True)
-            time.sleep(2)
+            output.console_log_bold("Grace period for poll_experiment_end")
+            time.sleep(5)
 
             if self.exp_end_proc.poll() is None:
                 self.do_run()
+            else:
+                sys.exit(0)
 
     def do_run(self):
         # Launch launchfile / launch command
@@ -51,7 +54,6 @@ class RobotClient:
             self.roslaunch_proc = subprocess.Popen(self.launch_command, shell=True)#, stdout=open(os.devnull, 'w'),
                                                    #stderr=subprocess.STDOUT)
 
-        # Wait for run to finish (/rosout is unavailable again)
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for run to complete...")
 
