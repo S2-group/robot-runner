@@ -1,4 +1,7 @@
+import os
+import sys
 import time
+import subprocess
 from RemoteRunner.Models.ConfigModel import ConfigModel
 from RemoteRunner.Controllers.Experiment.Run.SimRunController import SimRunContoller
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
@@ -31,3 +34,15 @@ class ExperimentController:
             if time_btwn_runs > 0 and time_btwn_runs is not None:
                 output.console_log_bold(f"Run fully ended, waiting for: {time_btwn_runs}ms == {time_btwn_runs / 1000}s")
                 time.sleep(time_btwn_runs / 1000)
+
+        self.signal_experiment_end()
+
+    def signal_experiment_end(self):
+        output.console_log("Experiment ended, signalling end to robot...")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/SignalExperimentEnd.py", shell=True)
+
+        while exp_end_proc.poll() is not None:
+            output.console_log_animated("Waiting for robot to confirm experiment end...")
+
+        output.console_log_bold("Successfully ended experiment!")

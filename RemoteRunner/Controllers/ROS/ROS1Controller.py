@@ -84,9 +84,14 @@ class ROS1Controller(IROSController):
 
     def native_shutdown(self):
         output.console_log("Shutting down native run...")
-        self.roscore_proc.send_signal(signal.SIGINT)
+        ProcessProcedure.subprocess_call('rosnode kill -a', "rosnode_kill")
+        ProcessProcedure.process_kill_by_name('rosmaster')
+        ProcessProcedure.process_kill_by_name('roscore')
+        ProcessProcedure.process_kill_by_name('rosout')
 
-        while self.roscore_proc.poll() is None:
+        while ProcessProcedure.process_is_running('rosmaster') and \
+              ProcessProcedure.process_is_running('roscore') and \
+              ProcessProcedure.process_is_running('rosout'):
             output.console_log_animated("Waiting for roscore to gracefully exit...")
 
         output.console_log("Native run successfully shutdown!")
