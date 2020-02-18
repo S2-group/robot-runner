@@ -23,14 +23,12 @@ class RobotClient:
 
     def __init__(self, config_path):
         self.data = self.load_json(config_path)
-
         self.launch_command = self.get_value_for_key('launch_command')
         self.launch_file_path = self.get_value_for_key('launch_file_path')
-        self.roscore_node_name = "/rosout"
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
         while True:
-            while not self.is_roscore_ready():
+            while ros_version == 1 and not self.is_roscore_ready():
                 output.console_log_animated("Waiting for ROS Master...")
 
             output.console_log_bold("ROS Master ready!", empty_line=True)
@@ -45,9 +43,9 @@ class RobotClient:
                 sys.exit(0)
 
     def do_run(self):
-        # Launch launchfile / launch command
         if self.launch_command == "":
-            self.roslaunch_proc = subprocess.Popen(f"roslaunch {self.launch_file_path}", shell=True)#,
+            cmd_roslaunch = "roslaunch" if ros_version == 1 else "ros2 launch"
+            self.roslaunch_proc = subprocess.Popen(f"{cmd_roslaunch} {self.launch_file_path}", shell=True)#,
                                                    #stdout=open(os.devnull, 'w'),
                                                    #stderr=subprocess.STDOUT)
         else:
@@ -58,11 +56,9 @@ class RobotClient:
             output.console_log_animated("Waiting for run to complete...")
 
     def is_roscore_ready(self):
-        command = 'rosnode list' if ros_version == 1 else 'ros2 node list'
         try:
-            available_nodes = str(
-                subprocess.check_output(command, stderr=open(os.devnull, 'w'), shell=True))  # TODO: ros2 node list
-            return self.roscore_node_name in available_nodes
+            available_nodes = str(subprocess.check_output('rosnode list', stderr=open(os.devnull, 'w'), shell=True))
+            return "/rosout" in available_nodes
         except CalledProcessError:
             return False
 

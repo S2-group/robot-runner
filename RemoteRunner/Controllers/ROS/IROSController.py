@@ -3,6 +3,13 @@ import sys
 import subprocess
 from pathlib import Path
 from abc import ABC, abstractmethod
+from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+
+try:
+    ros_version = int(os.environ['ROS_VERSION'])
+except ValueError:
+    output.console_log_bold("Unknown value for $ROS_VERSION env variable")
+    sys.exit(1)
 
 
 class IROSController(ABC):
@@ -18,21 +25,29 @@ class IROSController(ABC):
         # TODO: check return code if non-zero (error)
         return self.sim_poll_proc.poll() is not None
 
-    @abstractmethod
     def get_available_topics(self):
-        pass
+        command = "rostopic" if ros_version == 1 else "ros2 topic"
+        return str(subprocess.check_output(f"{command} list", shell=True))
 
-    @abstractmethod
     def get_available_nodes(self):
-        pass
+        command = "rosnode" if ros_version == 1 else "ros2 node"
+        return str(subprocess.check_output(f"{command} list", shell=True))
 
-    @abstractmethod
-    def are_topics_available(self, topic_names):
-        pass
-
-    @abstractmethod
     def are_nodes_available(self, node_names):
-        pass
+        nodes = self.get_available_nodes()
+        all_available = True
+        for node in node_names:
+            all_available = node in nodes
+
+        return all_available
+
+    def are_topics_available(self, topic_names):
+        topics = self.get_available_topics()
+        all_available = True
+        for topic in topic_names:
+            all_available = topic in topics
+
+        return all_available
 
     @abstractmethod
     def roscore_start(self):

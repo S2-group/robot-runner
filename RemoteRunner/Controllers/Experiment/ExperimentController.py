@@ -35,7 +35,8 @@ class ExperimentController:
                 output.console_log_bold(f"Run fully ended, waiting for: {time_btwn_runs}ms == {time_btwn_runs / 1000}s")
                 time.sleep(time_btwn_runs / 1000)
 
-        self.signal_experiment_end()
+        if not self.config.use_simulator:
+            self.signal_experiment_end()
 
     def signal_experiment_end(self):
         output.console_log("Experiment ended, signalling end to robot...")

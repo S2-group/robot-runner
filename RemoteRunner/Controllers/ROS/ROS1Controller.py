@@ -9,28 +9,6 @@ from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
 class ROS1Controller(IROSController):
-    def get_available_topics(self):
-        return str(subprocess.check_output('rostopic list', shell=True))
-
-    def get_available_nodes(self):
-        return str(subprocess.check_output('rosnode list', shell=True))
-
-    def are_nodes_available(self, node_names):
-        nodes = self.get_available_nodes()
-        all_available = True
-        for node in node_names:
-            all_available = node in nodes
-
-        return all_available
-
-    def are_topics_available(self, topic_names):
-        topics = self.get_available_topics()
-        all_available = True
-        for topic in topic_names:
-            all_available = topic in topics
-
-        return all_available
-
     def roscore_start(self):
         output.console_log("Starting ROS Master (roscore)...")
         self.roscore_proc = ProcessProcedure.subprocess_spawn("roscore", "roscore_start")

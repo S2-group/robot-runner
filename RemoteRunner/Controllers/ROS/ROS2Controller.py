@@ -7,7 +7,7 @@ from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 class ROS2Controller(IROSController):
     def roscore_start(self):
-        pass
+        pass  # ROS2 does not have / need roscore.
 
     def rosbag_stop_recording_topics(self, bag_name):
         pass  # TODO: For now OK, needs to terminate ros2bag process in future.
@@ -30,8 +30,8 @@ class ROS2Controller(IROSController):
         ProcessProcedure.subprocess_spawn(command, "ros2bag_record")
         time.sleep(1)  # Give rosbag recording some time to initiate
 
-    def ros_shutdown(self):
-        output.console_log("Terminating roslaunch launch file...")
+    def sim_shutdown(self):
+        output.console_log("Shutting down sim run...")
         ProcessProcedure.subprocess_call("ros2 service call /reset_simulation std_srvs/srv/Empty {}", "ros2_reset_call")
 
         ProcessProcedure.process_kill_by_name("gzserver")
@@ -46,4 +46,23 @@ class ROS2Controller(IROSController):
                 ProcessProcedure.process_is_running("_ros2_daemon"):
             output.console_log_animated("Waiting for graceful exit...")
 
-        output.console_log("Roslaunch launch file successfully terminated!")
+        output.console_log("Sim run successfully shutdown!")
+
+    def native_shutdown(self):
+        output.console_log("Shutting down native run...")
+
+        # Get all nodes, for each node ros2 lifecycle nodename shutdown
+        pass
+        # ======= ROS 1 =======
+        # output.console_log("Shutting down native run...")
+        # ProcessProcedure.subprocess_call('rosnode kill -a', "rosnode_kill")
+        # ProcessProcedure.process_kill_by_name('rosmaster')
+        # ProcessProcedure.process_kill_by_name('roscore')
+        # ProcessProcedure.process_kill_by_name('rosout')
+        #
+        # while ProcessProcedure.process_is_running('rosmaster') and \
+        #       ProcessProcedure.process_is_running('roscore') and \
+        #       ProcessProcedure.process_is_running('rosout'):
+        #     output.console_log_animated("Waiting for roscore to gracefully exit...")
+        #
+        # output.console_log("Native run successfully shutdown!")

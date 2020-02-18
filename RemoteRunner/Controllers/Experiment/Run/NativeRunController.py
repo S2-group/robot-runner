@@ -1,4 +1,3 @@
-import time
 from RemoteRunner.Controllers.Experiment.Run.IRunController import IRunController
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 

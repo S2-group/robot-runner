@@ -1,6 +1,5 @@
 import os
 import sys
-import subprocess
 from std_msgs.msg import Bool
 from rospy import ROSException
 
@@ -63,8 +62,21 @@ class PollExperimentEndROS1:
     def shutdown(self):
         console_log_bold("poll_experiment_end shutting down...")
 
+
 class PollExperimentEndROS2:
-    pass
+    def __init__(self):
+        rclpy.init()
+        node = rclpy.create_node("poll_experiment_end")
+
+        console_log_bold(msg_ros_node_init)
+        node.create_subscription(Bool, ros_topic_sub_url, self.completed, 10)
+
+        rclpy.spin(node)
+
+    def completed(self, data: Bool):
+        if data == Bool(True):
+            console_log_bold(msg_run_completed)
+            sys.exit(0)
 
 
 if __name__ == "__main__":
