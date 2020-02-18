@@ -1,7 +1,6 @@
 import os
 import sys
 from std_msgs.msg import Bool
-from rospy import ROSException
 
 
 def console_log_bold(txt):
@@ -30,6 +29,7 @@ except ValueError:
 
 if ros_version == 1:
     import rospy
+    from rospy import ROSException
     from rospy import ROSInterruptException
 
 if ros_version == 2:
