@@ -3,6 +3,18 @@ from RemoteRunner.Controllers.Experiment.Run.IRunController import IRunControlle
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                  NativeRunController                  |
+###     |       - Define how to perform a Sim run               |
+###     |       - Mostly use predefined, generic functions      |
+###     |         as defined in the abstract parent             |
+###     |                                                       |
+###     |       * Any function which is implementation          |
+###     |         specific (Sim) should be declared here        |
+###     |         like wait_for_simulation()                    |
+###     |                                                       |
+###     =========================================================
 class SimRunContoller(IRunController):
     def wait_for_simulation(self):
         while not self.ros.is_gazebo_running():

@@ -3,6 +3,25 @@ import sys
 from rosgraph_msgs.msg import Clock
 
 
+###     =========================================================
+###     |                                                       |
+###     |                     PollSimRunning                    |
+###     |       - Poll if the simulator (Gazebo) has completed  |
+###     |         its startup phase                             |
+###     |       - Correct usage of ROS1 or ROS2 is guaranteed   |
+###     |         by the use of the environment variable        |
+###     |                                                       |
+###     |       * Any extra functionality needed for            |
+###     |         communicating and guaranteeing a successful   |
+###     |         Gazebo startup should be added here           |
+###     |                                                       |
+###     |       * This file is needed as both rospy and rclpy   |
+###     |         only support cleanly spawning one node per    |
+###     |         process. When this is done multiple times     |
+###     |         from the main robot-runner process, a clean   |
+###     |         respawn (spawn and kill) cannot be gauranteed |
+###     |                                                       |
+###     =========================================================
 def console_log_bold(txt):
     bold_text = f"\033[1m{txt}\033[0m"
     print(f"[ROBOT_RUNNER]:  {bold_text}")

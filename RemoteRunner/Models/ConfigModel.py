@@ -8,6 +8,19 @@ from RemoteRunner.Models.RunScriptModel import RunScriptModel
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                      ConfigModel                      |
+###     |       - Represent config.json file as a runtime       |
+###     |         model for intellisense and more rigid control |
+###     |                                                       |
+###     |       - Fuctionality to read JSON file and set the    |
+###     |         given model variables                         |
+###     |                                                       |
+###     |       * Any functionality regarding parsing JSON to   |
+###     |         the runtime model should be added here        |
+###     |                                                       |
+###     =========================================================
 class ConfigModel:
     use_simulator: bool
     name: str

@@ -2,6 +2,17 @@ from RemoteRunner.Controllers.Experiment.Run.IRunController import IRunControlle
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                  NativeRunController                  |
+###     |       - Define how to perform a Native run            |
+###     |       - Mostly use predefined, generic functions      |
+###     |         as defined in the abstract parent             |
+###     |                                                       |
+###     |       * Any function which is implementation          |
+###     |         specific (Native) should be declared here     |
+###     |                                                       |
+###     =========================================================
 class NativeRunController(IRunController):
     def do_run(self):
         self.ros.roscore_start()

@@ -13,6 +13,31 @@ from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 from RemoteRunner.Models.ConfigModel import ConfigModel
 
 
+###     =========================================================
+###     |                                                       |
+###     |                     IRunController                    |
+###     |       - Init a run based on ConfigModel and current   |
+###     |         run index                                     |
+###     |       - Create necessary directories (run dir)        |
+###     |       - Init correct ROS controller (ROS1 or ROS2)    |
+###     |         based on the ros_verison in the ConfigModel   |
+###     |                                                       |
+###     |       - Provide abstract, implementation specific     |
+###     |         methods for Native or Sim runs to implement   |
+###     |                                                       |
+###     |       - Provide default, generic functions for both   |
+###     |         run types (Native or Sim) like                |
+###     |         run_wait_completed()                          |
+###     |                                                       |
+###     |       * Any function which is implementation          |
+###     |         specific (Native or Sim) should be declared   |
+###     |         here as an abstract function                  |
+###     |                                                       |
+###     |       * Any generic functionality between the two     |
+###     |         run types should be declared here             |
+###     |         as a function                                 |
+###     |                                                       |
+###     =========================================================
 class IRunController(ABC):
     run_dir: Path = None
     current_run: int = None

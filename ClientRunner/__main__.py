@@ -12,7 +12,26 @@ from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 ros_version = int(os.environ['ROS_VERSION'])
 
-
+###     =========================================================
+###     |                                                       |
+###     |           Main (RobotClient | ClientRunner)           |
+###     |       - Ensuring correct usage                        |
+###     |       - SIGINT handling (graceful exit procedures)    |
+###     |       - Parsing config.json to usable variables       |
+###     |       - Start the launch file (.launch or .launch.py) |
+###     |       - Run custom command (roslaunch or ros2 launch) |
+###     |       - Correct usage of ROS1 or ROS2 is guaranteed   |
+###     |         by the use of the environment variable        |
+###     |       - Ensure a correct experiment end by            |
+###     |         communicating with robot-runner (RemoteRunner)|
+###     |         using a spawned subprocess running the node   |
+###     |                                                       |
+###     |       * Implementation is kept very lightweight on    |
+###     |         purpose to have a minimal impact on energy    |
+###     |         consumption, minimizing experiment            |
+###     |         contamination                                 |
+###     |                                                       |
+###     =========================================================
 class RobotClient:
     launch_command: str
     launch_file_path: str

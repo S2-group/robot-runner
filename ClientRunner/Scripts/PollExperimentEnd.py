@@ -3,6 +3,27 @@ import sys
 from std_msgs.msg import Bool
 
 
+###     =========================================================
+###     |                                                       |
+###     |                  PollExperimentEnd                    |
+###     |       - Poll if the experiment has ended by           |
+###     |         subscribing to the experiment end ROS topic:  |
+###     |         /robot_runner/experiment_completed            |
+###     |       - Correct usage of ROS1 or ROS2 is guaranteed   |
+###     |         by the use of the environment variable        |
+###     |                                                       |
+###     |       * Any extra functionality needed for            |
+###     |         communicating and guaranteeing a graceful     |
+###     |         and successful experiment end                 |
+###     |         should be added here                          |
+###     |                                                       |
+###     |       * This file is needed as both rospy and rclpy   |
+###     |         only support cleanly spawning one node per    |
+###     |         process. When this is done multiple times     |
+###     |         from the main robot-runner process, a clean   |
+###     |         respawn (spawn and kill) cannot be gauranteed |
+###     |                                                       |
+###     =========================================================
 def console_log_bold(txt):
     bold_text = f"\033[1m{txt}\033[0m"
     print(f"[ROBOT_RUNNER]:  {bold_text}")

@@ -2,6 +2,16 @@ import time
 from tabulate import tabulate
 
 
+###     =========================================================
+###     |                                                       |
+###     |                    OutputProcedure                    |
+###     |       - Give a standard, in one place defined,        |
+###     |         output format for use in the application      |
+###     |                                                       |
+###     |       * Any functionality regarding application       |
+###     |         output should be added here                   |
+###     |                                                       |
+###     =========================================================
 class OutputProcedure:
     prev_animation_txt = ""
     robot_runner = "[ROBOT_RUNNER]: "

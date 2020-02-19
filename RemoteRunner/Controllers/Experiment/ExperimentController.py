@@ -7,14 +7,25 @@ from RemoteRunner.Controllers.Experiment.Run.SimRunController import SimRunConto
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 from RemoteRunner.Controllers.Experiment.Run.NativeRunController import NativeRunController
 
-
+###     =========================================================
+###     |                                                       |
+###     |                  ExperimentController                 |
+###     |       - Init and perform runs of correct type         |
+###     |       - Perform experiment overhead                   |
+###     |       - Perform run overhead (time_btwn_runs)         |
+###     |       - Signal experiment end to robot (ClientRunner) |
+###     |                                                       |
+###     |       * Experiment config that should be used         |
+###     |         throughout the program is declared here       |
+###     |         and should not be redeclared (only passed)    |
+###     |                                                       |
+###     =========================================================
 class ExperimentController:
     config: ConfigModel = None
 
     def __init__(self, config: ConfigModel):
         self.config = config
 
-    # ===== Experiment =====
     def do_experiment(self):
         self.config.exp_dir.mkdir(parents=True, exist_ok=True)
 

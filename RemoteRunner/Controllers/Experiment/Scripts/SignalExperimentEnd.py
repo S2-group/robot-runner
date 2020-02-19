@@ -5,7 +5,28 @@ import psutil
 import subprocess
 from std_msgs.msg import Bool
 
-
+###     =========================================================
+###     |                                                       |
+###     |                  SignalExperimentEnd                  |
+###     |       - Signal the end of experiment to the robot     |
+###     |         by using a ROS node. Therefore use either     |
+###     |         ROS1 or ROS2, imports fixed accordingly       |
+###     |       - Correct usage of ROS1 or ROS2 is guaranteed   |
+###     |         by the use of the environment variable        |
+###     |                                                       |
+###     |       * Any extra functionality needed for            |
+###     |         communicating and guaranteeing a graceful     |
+###     |         and successful experiment end                 |
+###     |         (exit of Remote- and ClientRunner             |
+###     |         simultaneously) should be added here          |
+###     |                                                       |
+###     |       * This file is needed as both rospy and rclpy   |
+###     |         only support cleanly spawning one node per    |
+###     |         process. When this is done multiple times     |
+###     |         from the main robot-runner process, a clean   |
+###     |         respawn (spawn and kill) cannot be gauranteed |
+###     |                                                       |
+###     =========================================================
 def process_kill_by_name(process_name: str):
     for proc in psutil.process_iter():
         # check whether the process name matches
@@ -58,7 +79,6 @@ class SignalEndROS1:
         console_log_bold(msg_topic_publish)
 
         rospy.on_shutdown(self.shutdown)
-        r = rospy.Rate(10)
 
         while True:
             if pub.get_num_connections() > 0:
@@ -72,19 +92,12 @@ class SignalEndROS1:
         process_kill_by_name('rosout')
         sys.exit(0)
 
-        # while not rospy.is_shutdown():
-        #     try:
-        #         pub.publish(Bool(True))
-        #         r.sleep()
-        #     except ROSInterruptException:
-        #         sys.exit(1)
-        #     except ROSException:
-        #         sys.exit(1)
-
     def shutdown(self):
         console_log_bold(msg_run_completed)
 
-
+# TODO: Signal end of experiment for ROS2. Currently not able to be developed because Raspberry Pi crashed due to overheating
+# and the inability to throttle the CPU as a result of a known bug in the Linux Kernel for ARM processors.
+# Speficically: The Ubuntu 18.04 ARM 64-bit Server image.
 class SignalEndROS2:
     pass
 

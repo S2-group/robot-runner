@@ -4,6 +4,19 @@ from RemoteRunner.Procedures.ProcessProcedure import ProcessProcedure
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                     RunScriptModel                    |
+###     |       - Represent a script, as given as a Path,       |
+###     |         as a model at runtime for intellisense and    |
+###     |         gauranteed safe execution of the script       |
+###     |           - As the command is built-up here and the   |
+###     |             run method is defined here                |
+###     |                                                       |
+###     |       * Any functionality regarding parsing JSON to   |
+###     |         the runtime model should be added here        |
+###     |                                                       |
+###     =========================================================
 class RunScriptModel:
     path: Path
     args: []

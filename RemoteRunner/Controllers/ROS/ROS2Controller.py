@@ -5,6 +5,21 @@ from RemoteRunner.Controllers.ROS.IROSController import IROSController
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                     ROS2Controller                    |
+###     |       - Define communications with ROS2               |
+###     |           - ROS2 does not need a roscore process      |
+###     |           - Launch a launch file (.launch.py)         |
+###     |           - Start ros2 bag recording of topics        |
+###     |                - Stop is automatic (for now)          |
+###     |           - Define graceful shutdown procedure        |
+###     |             for both Native and Sim runs              |
+###     |                                                       |
+###     |       * Any function which is implementation          |
+###     |         specific (ROS2) should be declared here       |
+###     |                                                       |
+###     =========================================================
 class ROS2Controller(IROSController):
     def roscore_start(self):
         pass  # ROS2 does not have / need roscore.
@@ -50,7 +65,9 @@ class ROS2Controller(IROSController):
 
     def native_shutdown(self):
         output.console_log("Shutting down native run...")
-
+        # TODO: Implement this, impossible as of now because of know Linux Kernel bug
+        #       on ARM devices. Raspberry Pi overheats and crashes due to inability to throttle CPU.
+ 
         # Get all nodes, for each node ros2 lifecycle nodename shutdown
         pass
         # ======= ROS 1 =======

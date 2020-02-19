@@ -3,6 +3,27 @@ import sys
 from std_msgs.msg import Bool
 
 
+###     =========================================================
+###     |                                                       |
+###     |                  PollRunCompletion                    |
+###     |       - Poll if a run has completed by subscribing    |
+###     |         to the programmatic run stop ROS topic:       |
+###     |         /robot_runner/run_completed                   |
+###     |       - Correct usage of ROS1 or ROS2 is guaranteed   |
+###     |         by the use of the environment variable        |
+###     |                                                       |
+###     |       * Any extra functionality needed for            |
+###     |         communicating and guaranteeing a graceful     |
+###     |         and successful run completion                 |
+###     |         should be added here                          |
+###     |                                                       |
+###     |       * This file is needed as both rospy and rclpy   |
+###     |         only support cleanly spawning one node per    |
+###     |         process. When this is done multiple times     |
+###     |         from the main robot-runner process, a clean   |
+###     |         respawn (spawn and kill) cannot be gauranteed |
+###     |                                                       |
+###     =========================================================
 def console_log_bold(txt):
     bold_text = f"\033[1m{txt}\033[0m"
     print(f"[ROBOT_RUNNER]:  {bold_text}")

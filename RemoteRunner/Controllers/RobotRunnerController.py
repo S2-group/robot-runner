@@ -3,6 +3,19 @@ from RemoteRunner.Models.ConfigModel import ConfigModel
 from RemoteRunner.Controllers.Experiment.ExperimentController import ExperimentController
 
 
+###     =========================================================
+###     |                                                       |
+###     |                RobotRunnerController                  |
+###     |       - Init ExperimentController with                |
+###     |         correct configmodel loaded from path          |
+###     |                                                       |
+###     |       - Public function available for parent          |
+###     |         to start experiment                           |
+###     |                                                       |
+###     |       * Add non-experiment related overhead           |
+###     |         here, like validating config variables        |
+###     |                                                       |
+###     =========================================================
 class RobotRunnerController:
     exp_controller: ExperimentController
 

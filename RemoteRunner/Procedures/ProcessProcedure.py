@@ -7,6 +7,17 @@ from subprocess import Popen
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                    ProcessProcedure                   |
+###     |       - Give a standard, in one place defined,        |
+###     |         procedure for handling any functionality      |
+###     |         regarding processes and subprocess (spawned)  |
+###     |                                                       |
+###     |       * Any functionality regarding processes or      |
+###     |         subprocesses should be added here             |
+###     |                                                       |
+###     =========================================================
 class ProcessProcedure:
     block_out = open(os.devnull, 'w')  # block output from showing in terminal
 

@@ -8,6 +8,20 @@ from RemoteRunner.Controllers.ROS.IROSController import IROSController
 from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 
 
+###     =========================================================
+###     |                                                       |
+###     |                     ROS1Controller                    |
+###     |       - Define communications with ROS1               |
+###     |           - Start roscore process                     |
+###     |           - Launch a launch file (.launch)            |
+###     |           - Start and stop rosbag recording of topics |
+###     |           - Define graceful shutdown procedure        |
+###     |             for both Native and Sim runs              |
+###     |                                                       |
+###     |       * Any function which is implementation          |
+###     |         specific (ROS1) should be declared here       |
+###     |                                                       |
+###     =========================================================
 class ROS1Controller(IROSController):
     def roscore_start(self):
         output.console_log("Starting ROS Master (roscore)...")

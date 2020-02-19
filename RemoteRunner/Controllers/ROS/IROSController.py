@@ -12,6 +12,24 @@ except ValueError:
     sys.exit(1)
 
 
+###     =========================================================
+###     |                                                       |
+###     |                     IROSController                    |
+###     |       - Provide abstract, implementation specific     |
+###     |         methods for ROS1 or ROS2 to implement         |
+###     |                                                       |
+###     |       - Provide default, generic functions for both   |
+###     |         ROS versions like get_available_topics()      |
+###     |                                                       |
+###     |       * Any function which is implementation          |
+###     |         specific (ROS1 or ROS2) should be declared    |
+###     |         here as an abstract function                  |
+###     |                                                       |
+###     |       * Any generic functionality between the two     |
+###     |         ROS types should be declared here             |
+###     |         as a function                                 |
+###     |                                                       |
+###     =========================================================
 class IROSController(ABC):
     sim_poll_proc = None
     roslaunch_proc = None
