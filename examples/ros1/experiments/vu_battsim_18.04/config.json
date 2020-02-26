@@ -10,10 +10,9 @@
     }
   },
   "nodes_must_be_available": [
-    "/turtlebot3_core"
   ],
   "topics_must_be_available": [
-    "/battery_state"
+    "/mobile_base/commands/charge_level"
   ],
   "output_path": "/home/stanswanborn/experiment_output",
   "topics_to_record": [
