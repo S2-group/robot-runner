@@ -50,13 +50,13 @@ Everything needed to be able to run robot-runner for any use case is present in 
 | ClientRunner/Scripts                   | Contains scripts used by the robot-runner native client, **not interesting for a general user**. |
 | ClientRunner/config.json               | A very simple, two line, config file which specifies a **ROS launch file** or an **entire ROS launch command** which will be executed each run. |
 | ClientRunner/\__main__.py              | Run this program on the native ROS device using **Python** 3.6.9. <br> `python3 __main__.py config.json` |
-| **=======================**            | **=============================================================** |
+|                                        |                                                              |
 | **RemoteRunner**                       | Robot-runner remote PC module, the **main application** of robot-runner. |
 | RemoteRunner/\__main__.py              | Run this program on the remote PC using **Python** 3.6.9. <br/> `python3 __main__.py config.json` |
 | RemoteRunner/Controllers               | Contains all controllers used by robot-runner to control experiment execution, run execution, config validation, and ROS communcations. (**All application logic**) |
 | RemoteRunner/Models                    | Contains all models needed during execution of robot-runner. (**Only model representations, minimal logic**) |
 | RemoteRunner/Procedures                | Contains all procedures defined in one place. (**All code which does not need or cannot be provided as part of a class or object (code that does not adhere to OOP-Principles**) |
-| **=======================**            | **=============================================================** |
+|                                        |                                                              |
 | **Examples**                           | Contains experiment examples, **native and sim**, for ROS1 on both Ubuntu 16.04 and Ubuntu 18.04. <br><br>Contains experiment examples, **native**, for ROS2 on Ubuntu 18.04. |
 | Examples/**ROS1**/Experiments          | Contains the experiment examples both for a native ROS1 experiment and a simulation experiment using Gazebo for both Ubuntu 16.04 and Ubuntu 18.04. The sim examples **require** the user to follow, at least **step 4** of, **automatic install** as part of the [Install guide](#install-guide).<br><br>NOTE: For any experiment example, **start with looking at the config.json** with the understanding as given in the [User guide](#user-guide). |
 | Examples/**ROS1**/Scripts              | These scripts were used by the developer to gain understanding on the workings of ROS1 and Gazebo. Also how to use these scripts while running robot-runner experiments. They were vital to understand the modularity and node- and topicbased nature of ROS. Therefore they are also provided as part of the robot-runner package. |
