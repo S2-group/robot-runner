@@ -188,6 +188,30 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 
 
+* Ubuntu MATE 32-bit (recommended) confirmed working for ROS1, ROS2 confirmed not working
+  * ROS2 requries 64-bit.
+* Ubuntu MATE 64-bit (experimental) testing phase for ROS1 and ROS2.
+* INSTALL ROS1 on Ubuntu MATE
+  * Follow ROS guide, install desktop
+  * Turtlebot3 guide, replace all kinetic (add commands here for easy copy)
+  * mkdir catkin_ws/src
+  * clone _msgs and hdfs drivers with -b melodic-devel
+  * Dload zip turtlebot3.git on -b melodic devel and extract into turtlebot3 folder in src.
+    * Explain memory issue
+  * rmdirs as given in guide
+  * apt-get ros-melodic (replace all kinetic to melodic)
+  * catkin_make
+  * source catkin_ws/devel/setup.bash
+  * rosrun udev_rules
+  * install pip: sudo apt install python3-pip
+  * install tabulate
+  * run for ros1.
+  * setup ROS Master etc.
+  * **install completed**
+* INSTALL ROS2 on Ubuntu server image: follow ROS guide / ROBOTIS guide.
+* INSTALL ROS2 on Ubuntu MATE 64-bit:
+  * TODO
+
 
 
 <a name="test-install-guide"/>
@@ -202,7 +226,9 @@ To check whether your ROS environment, either ROS1 or ROS2, is correctly install
 printenv | grep ROS
 ```
 
-### Correct ROS1 output:
+### Indication of correct ROS1 output:
+
+**NOTE:** Not every field needs to be present nor does every field need to have the same value as given below. This is just an indication of the fact that a successful ROS install has taken place. Most important fields are: **ROS_VERSION** | **ROS_PYTHON_VERSION** | **ROS_DISTRO**
 
 ```bash
 ROS_ETC_DIR=/opt/ros/melodic/etc/ros
@@ -217,7 +243,9 @@ ROSLISP_PACKAGE_DIRECTORIES=/home/stanswanborn/catkin_ws/devel/share/common-lisp
 ROS_DISTRO=melodic
 ```
 
-### Correct ROS2 output:
+### Indication of correct ROS2 output:
+
+**NOTE:** Not every field needs to be present nor does every field need to have the same value as given below. This is just an indication of the fact that a successful ROS install has taken place. Most important fields are: **ROS_VERSION** | **ROS_PYTHON_VERSION** | **ROS_DISTRO**
 
 ```bash
 ROS_DOMAIN_ID=30
