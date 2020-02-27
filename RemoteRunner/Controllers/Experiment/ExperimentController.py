@@ -2,10 +2,10 @@ import os
 import sys
 import time
 import subprocess
-from RemoteRunner.Models.ConfigModel import ConfigModel
-from RemoteRunner.Controllers.Experiment.Run.SimRunController import SimRunContoller
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
-from RemoteRunner.Controllers.Experiment.Run.NativeRunController import NativeRunController
+from Models.ConfigModel import ConfigModel
+from Controllers.Experiment.Run.SimRunController import SimRunContoller
+from Procedures.OutputProcedure import OutputProcedure as output
+from Controllers.Experiment.Run.NativeRunController import NativeRunController
 
 ###     =========================================================
 ###     |                                                       |

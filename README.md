@@ -26,7 +26,7 @@ Robot-runner is specifically developed to be able to do research into the energy
 
 # Table of Contents
 
-This README is quite elaborate and therefore somewhat long, however not all information might be of interest to all readers. Therefore the information as given in this README is presented here in a clear overview, with context to whom this may be of interest.
+This README is an elaborate and therefore somewhat long description of robot-runner. However, not all information might be of interest to all readers. Therefore the information given in this README is presented here in a clear overview, with context to whom this may be of interest.
 
 | Content title                                       | Content                                                      | To whom it may concern                                       |
 | --------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -34,8 +34,9 @@ This README is quite elaborate and therefore somewhat long, however not all info
 | [Install guide](#install-guide)                     | An elaborate guide to set up everything needed to start using robot-runner in any use case. It also provides easy verififcation of a successful install. | General user of robot-runner.                                |
 | [Native install](#native-install-guide)             | An elaborate guide to set up everything needed to start using robot-runner with native ROS devices. | General user of robot-runner, specifically interested in **native experiments**. |
 | [Test successful install](#test-install-guide)      | A set of tests with expected output that help the user determine if the install was correct and successful. | General user of robot-runner.                                |
-| [User guide](#user-guide)                           | An elaborate guide as to how to use robot-runner and set up a succesfull experiment for any use case, including native experiments. | General user of robot-runner                                 |
+| [User guide](#user-guide)                           | An elaborate guide as to how to use robot-runner and set up a succesfull experiment for any use case, including native experiments. | General user of robot-runner.                                |
 | [Technical documentation](#technical-documentation) | Extensive technical documentation of the inner-workings of robot-runner and the rationale behind design decisions. | Any user or developer in need of a technical understanding of robot-runner. |
+| [Troubleshooting](#troubleshooting)                 | Common issues and possible fixes.                            | General user of robot-runner.                                |
 
 <a name="short-description"/>
 
@@ -78,7 +79,7 @@ Any robot-runner experiment can be defined as a combination of these factors:
 | -------------------------- | ------------------------------------------------------------ |
 | ros_version                | ROS1 (**Kinetic** on Ubuntu 16.04, **Melodic** on Ubuntu 18.04) <br />ROS2 (**Eloquent**, only Ubuntu 18.04) |
 | sim or native              | Running an automated experiment on a simulation or on a native device |
-| run_script or not          | Experiment actions defined in a separate, controllable, run script or not<br><br>**Note:** If the experiment is not defined in a **run_script** robot-runner **assumes** it is defined somewhere else which is **spawned** as part of any **ROS launch file** specified either on the **remote PC** or on the **native device**. |
+| run_script or not          | Experiment actions defined in a separate, controllable, run script or not<br><br>**NOTE:** If the experiment is not defined in a **run_script** robot-runner **assumes** it is defined somewhere else which is **spawned** as part of any **ROS launch file** specified either on the **remote PC** or on the **native device**. |
 | timed or programmatic stop | Experiment run ends after a set timeout or when the run_completed ROS topic is published. |
 
 These factors can be set and manipulated by the user in the **config.json** that is described in the [User guide](#user-guide). Here the focus is to give a **global, simplified understanding** of robot-runner. With this simplified knowledge a **general idea** of **combination of factors** needed for **any** specific **use case** can already be derived. Considering the user has most **probably** already a **use case** in **mind**, a **correct** **install** and experiment setup can be **chosen** and **followed** using the understanding gained from this short description.
@@ -156,7 +157,7 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 ## Setup ROS1 for Ubuntu 16.04 (Automatic)<br>`not recommended`
 
-**Note:** This is not recommended as the manual install guides are kept up-to-date by their respective developers and thus offer a better long-term support. Also knowing each individual setup step enables the user to create an install which fits perfectly to their specific use case.
+**NOTE:** This is not recommended as the manual install guides are kept up-to-date by their respective developers and thus offer a better long-term support. Also knowing each individual setup step enables the user to create an install which fits perfectly to their specific use case.
 
 `cd into /examples/ros1/experiments/vu_battsim_16.04/install and:`
 
@@ -170,7 +171,7 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 ## Setup ROS1 for Ubuntu 18.04 (Automatic)<br>`not recommended`
 
-**Note:** This is not recommended as the manual install guides are kept up-to-date by their respective developers and thus offer a better long-term support. Also knowing each individual setup step enables the user to create an install which fits perfectly to their specific use case.
+**NOTE:** This is not recommended as the manual install guides are kept up-to-date by their respective developers and thus offer a better long-term support. Also knowing each individual setup step enables the user to create an install which fits perfectly to their specific use case.
 
 `cd into /examples/ros1/experiments/vu_battsim_16.04/install and:`
 
@@ -183,7 +184,11 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 <a name="native-install-guide"/>
 # Native install guide
 
-**NOTE:** This step is only necessary when you want to perform a **native experiment**. If you are only interested in simulating a ROS device, then your install is already completed if the above described test was successful.
+**NOTE:** This step is only necessary when you want to perform a **native experiment**. If you are only interested in simulating a ROS device, then your install is already completed if the [tests](#test-install-guide), that apply to your use case, were successful.
+
+
+
+
 
 <a name="test-install-guide"/>
 
@@ -197,9 +202,30 @@ To check whether your ROS environment, either ROS1 or ROS2, is correctly install
 printenv | grep ROS
 ```
 
-Which should give the following output:
+### Correct ROS1 output:
 
-**======TODO OUTPUT OF ROS ENV VARS CHECK.======**
+```bash
+ROS_ETC_DIR=/opt/ros/melodic/etc/ros
+ROS_DOMAIN_ID=30
+ROS_ROOT=/opt/ros/melodic/share/ros
+ROS_MASTER_URI=http://localhost:11311
+ROS_VERSION=1
+ROS_LOCALHOST_ONLY=0
+ROS_PYTHON_VERSION=2
+ROS_PACKAGE_PATH=/home/stanswanborn/catkin_ws/src:/opt/ros/melodic/share
+ROSLISP_PACKAGE_DIRECTORIES=/home/stanswanborn/catkin_ws/devel/share/common-lisp
+ROS_DISTRO=melodic
+```
+
+### Correct ROS2 output:
+
+```bash
+ROS_DOMAIN_ID=30
+ROS_VERSION=2
+ROS_LOCALHOST_ONLY=0
+ROS_PYTHON_VERSION=3
+ROS_DISTRO=eloquent
+```
 
 ## Test ROS1 / ROS2 with Turtlebot packages:
 
@@ -213,7 +239,7 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 
 A succesful Gazebo launch showing an empty world with a Turtlebot3 present should now be displayed. When running `rosnode list` or `rostopic list` Turtlebot3 nodes and topics should be present. To check if any data is being published by using `rostopic echo /topic`
 
-#### ROS2:
+# ROS2:
 
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
@@ -254,5 +280,7 @@ In this section, an elaborate user guide will be given as to how to set up any e
 
 This section is only of interest to those that wish to understand the inner-workings of robot-runner, those that wish to expand robot-runner and those that want to see the rationale behind the design decisions made. It is therefore mainly for Software Engineers or those that have such skills. Any copying, alteration or redistribution of this software package (robot-runner) is allowed as it is provided under the MIT license. As long as the original author (**Stan Swanborn**), the supervisor (**Ivano Malavolta**) and the institution for which it was developed (**Vrije Universiteit Amsterdam**) are credited.
 
+<a name="troubleshooting"/>
 
+# Troubleshooting
 

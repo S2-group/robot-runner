@@ -1,8 +1,9 @@
 import sys
 import signal
 from pathlib import Path
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
-from RemoteRunner.Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
+from Procedures.ProcessProcedure import ProcessProcedure
+from Procedures.OutputProcedure import OutputProcedure as output
+from Controllers.RobotRunnerController import RobotRunnerController as RobotRunner
 
 
 ###     =========================================================
@@ -19,7 +20,7 @@ from RemoteRunner.Controllers.RobotRunnerController import RobotRunnerController
 ###     |         Only execution overhead (system)              |
 ###     |                                                       |
 ###     =========================================================
-def main(config_path_arg):
+def main(config_path_arg, verbose=False):
     # CTRL+C (SIGINT), add necessary graceful exit procedures here.
     def signal_handler(sig, frame):
         output.console_log_bold("SIGINT, Terminating Robot Runner\n", empty_line=True)
@@ -30,6 +31,7 @@ def main(config_path_arg):
     config_path = Path(config_path_arg)
     output.console_log(f"Initialising experiment for {config_path.absolute()}")
 
+    ProcessProcedure.verbose = verbose        # Set verbose, if True, subprocesses will output to terminal.
     robot_runner = RobotRunner(config_path)
     robot_runner.do_experiment()
 
@@ -40,7 +42,9 @@ if __name__ == "__main__":
         output.console_log("usage: python3 %s [PATH_TO_CONFIG.JSON]" % __file__)
         sys.exit(0)
     elif argv_count == 2:
-        main(sys.argv[1]) # Pass config_path_arg to main TODO: Validate that it is a path in ConfigModel or ConfigValidator
+        main(sys.argv[1])  # TODO: Validate that it is a path in ConfigModel or ConfigValidator
+    elif argv_count == 3 and sys.argv[1] == '--verbose':
+        main(sys.argv[2], verbose=True)
     else:
         output.console_log("Incorrect usage, please run with --help to view possible arguments")
         sys.exit(0)

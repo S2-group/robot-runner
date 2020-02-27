@@ -3,7 +3,7 @@ import sys
 import subprocess
 from pathlib import Path
 from abc import ABC, abstractmethod
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+from Procedures.OutputProcedure import OutputProcedure as output
 
 try:
     ros_version = int(os.environ['ROS_VERSION'])
@@ -31,17 +31,8 @@ except ValueError:
 ###     |                                                       |
 ###     =========================================================
 class IROSController(ABC):
-    sim_poll_proc = None
     roslaunch_proc = None
     roscore_proc = None
-
-    def is_gazebo_running(self):
-        if not self.sim_poll_proc:
-            dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../Experiment/Run/Scripts'
-            self.sim_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/PollSimRunning.py", shell=True)
-
-        # TODO: check return code if non-zero (error)
-        return self.sim_poll_proc.poll() is not None
 
     def get_available_topics(self):
         command = "rostopic" if ros_version == 1 else "ros2 topic"

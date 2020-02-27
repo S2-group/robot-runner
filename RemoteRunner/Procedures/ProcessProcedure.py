@@ -4,7 +4,7 @@ import psutil
 import signal
 import subprocess
 from subprocess import Popen
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+from Procedures.OutputProcedure import OutputProcedure as output
 
 
 ###     =========================================================
@@ -19,7 +19,8 @@ from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 ###     |                                                       |
 ###     =========================================================
 class ProcessProcedure:
-    block_out = open(os.devnull, 'w')  # block output from showing in terminal
+    block_out = open(os.devnull, 'w')  # Block output from terminal if verbose is false
+    verbose = False
 
     @staticmethod
     def process_is_running(process_name: str):
@@ -50,7 +51,10 @@ class ProcessProcedure:
     @staticmethod
     def subprocess_spawn(command: str, name: str):
         try:
-            return subprocess.Popen(command, shell=True, stdout=ProcessProcedure.block_out, stderr=subprocess.STDOUT)
+            if ProcessProcedure.verbose:
+                return subprocess.Popen(command, shell=True)
+
+            return subprocess.Popen(command, shell=True, stdout=ProcessProcedure.block_out, stderr=ProcessProcedure.block_out)
         except:
             output.console_log_bold(f"Something went wrong spawning subprocess {name}")
             sys.exit(1)
@@ -58,7 +62,11 @@ class ProcessProcedure:
     @staticmethod
     def subprocess_call(command: str, name: str):
         try:
-            subprocess.call(command, shell=True, stdout=ProcessProcedure.block_out, stderr=subprocess.STDOUT)
+            if ProcessProcedure.verbose:
+                subprocess.call(command, shell=True)
+                return
+
+            subprocess.call(command, shell=True, stdout=ProcessProcedure.block_out, stderr=ProcessProcedure.block_out)
         except:
             output.console_log_bold(f"Something went wrong calling command: {command} for name: {name}")
             sys.exit(1)

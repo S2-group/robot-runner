@@ -61,7 +61,7 @@ class PollROS1:
         rospy.on_shutdown(self.shutdown)
         r = rospy.Rate(10)
 
-        while rospy.Time.now().secs <= 2:
+        while rospy.Time.now().secs <= 5:
             try:
                 r.sleep()
             except ROSInterruptException:
@@ -82,7 +82,7 @@ class PollROS2:
         rclpy.spin(node)
 
     def clock_callback(self, time: Clock):
-        if time.clock.sec >= 2:
+        if time.clock.sec >= 5:
             console_log_bold(msg_sim_is_cnfrmd)
             sys.exit(0)
 

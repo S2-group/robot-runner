@@ -3,9 +3,9 @@ import time
 import signal
 import subprocess
 from pathlib import Path
-from RemoteRunner.Procedures.ProcessProcedure import ProcessProcedure
-from RemoteRunner.Controllers.ROS.IROSController import IROSController
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+from Procedures.ProcessProcedure import ProcessProcedure
+from Controllers.ROS.IROSController import IROSController
+from Procedures.OutputProcedure import OutputProcedure as output
 
 
 ###     =========================================================
@@ -72,6 +72,7 @@ class ROS1Controller(IROSController):
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
+        ProcessProcedure.subprocess_call('rosnode kill -a', "rosnode_kill")
         output.console_log("Sim run successfully shutdown!")
 
     def native_shutdown(self):

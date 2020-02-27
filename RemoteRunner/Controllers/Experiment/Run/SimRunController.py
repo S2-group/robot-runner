@@ -1,6 +1,9 @@
+import os
+import sys
 import time
-from RemoteRunner.Controllers.Experiment.Run.IRunController import IRunController
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+import subprocess
+from Controllers.Experiment.Run.IRunController import IRunController
+from Procedures.OutputProcedure import OutputProcedure as output
 
 
 ###     =========================================================
@@ -16,8 +19,18 @@ from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
 ###     |                                                       |
 ###     =========================================================
 class SimRunContoller(IRunController):
+    sim_poll_proc = None
+
+    def is_gazebo_running(self):
+        if not self.sim_poll_proc:
+            dir_path = os.path.dirname(os.path.realpath(__file__)) + '/Scripts'
+            self.sim_poll_proc = subprocess.Popen(f"{sys.executable} {dir_path}/PollSimRunning.py", shell=True)
+
+        # TODO: check return code if non-zero (error)
+        return self.sim_poll_proc.poll() is not None
+
     def wait_for_simulation(self):
-        while not self.ros.is_gazebo_running():
+        while not self.is_gazebo_running():
             output.console_log_animated("Waiting for simulation to be running...")
 
         output.console_log("Simulation detected to be running, everything is ready for experiment!")

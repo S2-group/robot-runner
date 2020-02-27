@@ -5,12 +5,12 @@ import subprocess
 from pathlib import Path
 from subprocess import Popen
 from abc import ABC, abstractmethod
-from RemoteRunner.Procedures.ProcessProcedure import ProcessProcedure
-from RemoteRunner.Controllers.ROS.IROSController import IROSController
-from RemoteRunner.Controllers.ROS.ROS1Controller import ROS1Controller
-from RemoteRunner.Controllers.ROS.ROS2Controller import ROS2Controller
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
-from RemoteRunner.Models.ConfigModel import ConfigModel
+from Procedures.ProcessProcedure import ProcessProcedure
+from Controllers.ROS.IROSController import IROSController
+from Controllers.ROS.ROS1Controller import ROS1Controller
+from Controllers.ROS.ROS2Controller import ROS2Controller
+from Procedures.OutputProcedure import OutputProcedure as output
+from Models.ConfigModel import ConfigModel
 
 
 ###     =========================================================

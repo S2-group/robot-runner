@@ -4,8 +4,8 @@ import json
 from typing import List
 from pathlib import Path
 from datetime import datetime
-from RemoteRunner.Models.RunScriptModel import RunScriptModel
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+from Models.RunScriptModel import RunScriptModel
+from Procedures.OutputProcedure import OutputProcedure as output
 
 
 ###     =========================================================
