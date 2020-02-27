@@ -152,7 +152,7 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 ​	http://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_setup/
 
-**NOTE:** When choosing manual install but you still want the VU_BATTSIM example experiment to be able to run, still run `install_vu_battsim.sh` for each corresponding automatic install.
+**NOTE:** When choosing **manual install** but you still want the **VU_BATTSIM** example experiment to be **able** to run, still run `install_vu_battsim.sh` for the **correct** **automatic** **install** for **your use case**. To be **able** to run **any** example, except the **native experiment examples**, the **Turtlebot3 packages** are **required** to be installed as well.
 
 ## Setup ROS1 for Ubuntu 16.04 (Automatic)<br>`not recommended`
 
@@ -176,7 +176,7 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 **STEP 1**: run ``install_ros_melodic.sh`` to install the correct ROS version (**MELODIC**)
 
-**STEP 2**: run ``install_turtlebot3_srcs.sh`` to install all necessary turtlebot3 packages (**OPTIONAL**)
+**STEP 2**: run ``install_turtlebot3_srcs.sh`` to install all necessary Turtlebot3 packages (**OPTIONAL**)
 
 **STEP 3**: run ``install_vu_battsim.sh`` to install the Gazebo battery simulation plugin (**OPTIONAL**)
 
