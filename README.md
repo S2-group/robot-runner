@@ -744,7 +744,7 @@ A ( ***** ) should be used to explain any significant **category of addition** w
 
 ## General overview
 
-![](http://i.imgur.com/vnGNMIS.png)
+![](https://i.imgur.com/FkkUttX.png)
 
 Here an overview is given, showing the various parts of robot-runner. Each component is further elaborated on below:
 
