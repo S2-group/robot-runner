@@ -7,10 +7,11 @@ from subprocess import Popen
 from subprocess import CalledProcessError
 
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '../')
-from RemoteRunner.Procedures.OutputProcedure import OutputProcedure as output
+sys.path.insert(1, '../RemoteRunner/')
+from Procedures.OutputProcedure import OutputProcedure as output
 
 ros_version = int(os.environ['ROS_VERSION'])
+
 
 ###     =========================================================
 ###     |                                                       |
@@ -33,6 +34,7 @@ ros_version = int(os.environ['ROS_VERSION'])
 ###     |                                                       |
 ###     =========================================================
 class RobotClient:
+    verbose: bool = False
     launch_command: str
     launch_file_path: str
     roscore_node_name: str
@@ -40,7 +42,8 @@ class RobotClient:
     roslaunch_proc: Popen
     exp_end_proc: Popen
 
-    def __init__(self, config_path):
+    def __init__(self, config_path, verbose=False):
+        self.verbose = verbose
         self.data = self.load_json(config_path)
         self.launch_command = self.get_value_for_key('launch_command')
         self.launch_file_path = self.get_value_for_key('launch_file_path')
@@ -52,7 +55,8 @@ class RobotClient:
 
             output.console_log_bold("ROS Master ready!", empty_line=True)
 
-            self.exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/PollExperimentEnd.py", shell=True)
+            self.exp_end_proc = subprocess.Popen(f"{sys.executable} {dir_path}/Scripts/PollExperimentEnd.py",
+                                                 shell=True)
             output.console_log_bold("Grace period for poll_experiment_end")
             time.sleep(5)
 
@@ -62,21 +66,30 @@ class RobotClient:
                 sys.exit(0)
 
     def do_run(self):
-        if self.launch_command == "":
-            cmd_roslaunch = "roslaunch" if ros_version == 1 else "ros2 launch"
-            self.roslaunch_proc = subprocess.Popen(f"{cmd_roslaunch} {self.launch_file_path}", shell=True)#,
-                                                   #stdout=open(os.devnull, 'w'),
-                                                   #stderr=subprocess.STDOUT)
+        cmd_roslaunch = "roslaunch" if ros_version == 1 else "ros2 launch"
+        cmd_roslaunch += f" {self.launch_file_path}"
+
+        if self.launch_file_path != "":
+            cmd_roslaunch = self.launch_command
+
+        if self.verbose:
+            self.roslaunch_proc = subprocess.Popen(f"{cmd_roslaunch}", shell=True,
+                                                   stdout=open(os.devnull, 'w'),
+                                                   stderr=subprocess.STDOUT)
         else:
-            self.roslaunch_proc = subprocess.Popen(self.launch_command, shell=True)#, stdout=open(os.devnull, 'w'),
-                                                   #stderr=subprocess.STDOUT)
+            self.roslaunch_proc = subprocess.Popen(f"{cmd_roslaunch} {self.launch_file_path}", shell=True)
 
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for run to complete...")
 
     def is_roscore_ready(self):
         try:
-            available_nodes = str(subprocess.check_output('rosnode list', stderr=open(os.devnull, 'w'), shell=True))
+            if self.verbose:
+                nodes_output = subprocess.check_output('rosnode list', shell=True)
+            else:
+                nodes_output = subprocess.check_output('rosnode list', stderr=open(os.devnull, 'w'), shell=True)
+
+            available_nodes = str(nodes_output)
             return "/rosout" in available_nodes
         except CalledProcessError:
             return False
@@ -105,9 +118,12 @@ if __name__ == "__main__":
     argv_count = len(sys.argv)
     if argv_count == 2 and sys.argv[1] == "--help":  # Help CLI
         output.console_log("usage: python3 %s [PATH_TO_CONFIG.JSON]" % __file__)
+        output.console_log_bold("optional: python3 %s --verbose [PATH_TO_CONFIG.JSON]" % __file__)
         sys.exit(0)
     elif argv_count == 2:  # Correct usage, continue to program
         RobotClient(sys.argv[1])
+    elif argv_count == 3 and sys.argv[1] == '--verbose':
+        RobotClient(sys.argv[2], verbose=True)
     else:  # Incorrect usage, display error and exit
         output.console_log("Incorrect usage, please run with --help to view possible arguments")
         sys.exit(0)

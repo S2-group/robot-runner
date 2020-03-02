@@ -1,5 +1,5 @@
 {
-  "use_simulator": "false",
+  "use_simulator": false,
   "name": "native_ros2_exp",
   "replications": 1,
   "duration": 5000,

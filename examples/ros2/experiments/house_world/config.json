@@ -1,5 +1,5 @@
 {
-  "use_simulator": "true",
+  "use_simulator": true,
   "name": "ros2_test",
   "replications": 3,
   "duration": 5000,

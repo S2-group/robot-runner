@@ -44,8 +44,7 @@ class ConfigModel:
         self.data = self.load_json(config_path)
 
         # ===== LOAD DEFAULT CONFIG VALUES =====
-        use_sim = self.get_value_for_key('use_simulator')
-        self.use_simulator = (use_sim == "true")
+        self.use_simulator = self.get_value_for_key('use_simulator')
         self.name = self.get_value_for_key('name')
 
         try:

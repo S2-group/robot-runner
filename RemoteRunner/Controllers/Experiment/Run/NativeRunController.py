@@ -17,11 +17,7 @@ class NativeRunController(IRunController):
     def do_run(self):
         self.ros.roscore_start()
 
-        ready = False
-        while not ready:
-            ready = self.ros.are_nodes_available(self.config.nodes_must_be_available) and \
-                    self.ros.are_topics_available(self.config.topics_must_be_available)
-            output.console_log_animated("Waiting for necessary nodes and topics to be availble...")
+        self.wait_for_necessary_topics_and_nodes()
 
         output.console_log_bold("All necessary nodes and topics available, everything is ready for experiment!")
 

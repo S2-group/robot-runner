@@ -40,6 +40,7 @@ if __name__ == "__main__":
     argv_count = len(sys.argv)
     if argv_count == 2 and sys.argv[1] == "--help":  # Help CLI
         output.console_log("usage: python3 %s [PATH_TO_CONFIG.JSON]" % __file__)
+        output.console_log_bold("optional: python3 %s --verbose [PATH_TO_CONFIG.JSON]" % __file__)
         sys.exit(0)
     elif argv_count == 2:
         main(sys.argv[1])  # TODO: Validate that it is a path in ConfigModel or ConfigValidator

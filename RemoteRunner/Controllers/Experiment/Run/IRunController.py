@@ -65,6 +65,11 @@ class IRunController(ABC):
     def do_run(self):
         pass
 
+    def wait_for_necessary_topics_and_nodes(self):
+        while not self.ros.are_nodes_available(self.config.nodes_must_be_available) and \
+                self.ros.are_topics_available(self.config.topics_must_be_available):
+            output.console_log_animated("Waiting for necessary nodes and topics to be available...")
+
     def run_start(self):
         self.running = True
 
