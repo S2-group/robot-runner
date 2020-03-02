@@ -782,6 +782,6 @@ In this section any known problems encountered during development and use of rob
 
 | Known problem                                                | Solution                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| IntelliJ not detecting any robot-runner modules at the import section. | Mark the RemoteRunner directory as source root by <u>right-clicking</u> **>** <u>mark directory as</u> **>** <u>sources root</u>. |
+| **IntelliJ** not detecting any robot-runner modules at the import section. | Mark the RemoteRunner directory as source root by <u>right-clicking</u> **>** <u>mark directory as</u> **>** <u>sources root</u>. |
 | After changing the activated ROS version, this error message is displayed: `This might be a ROS 1 message type but it should be a ROS 2 message  type. Make sure to source your ROS 2 workspace after your ROS 1  workspace.` | 1. Check your ~/.bashrc file to make sure you are not sourcing both ROS installations.<br />2. Close your terminal and open a new terminal, sourcing an altered ~/.bashrc sometimes results in a termporary source merge with the old ~/.bashrc in that specific terminal instance. |
 
