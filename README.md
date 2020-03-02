@@ -137,7 +137,7 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 ### Recommended setup guides:
 
-**FOR MANUAL ROS1 INSTALL**: http://wiki.ros.org/melodic/Installation/Ubuntu
+**ROS1 (Melodic) install guide**: http://wiki.ros.org/melodic/Installation/Ubuntu
 
 ​	If **Turtlebot3 packages** are required for **your use case**, follow the ROBOTIS guide as well: (**PC Setup**)
 
@@ -145,7 +145,7 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 ​	http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#pc-setup
 
-**FOR MANUAL ROS2 INSTALL**: https://index.ros.org/doc/ros2/Installation/Eloquent/
+**ROS2 (Eloquent) install guide**: https://index.ros.org/doc/ros2/Installation/Eloquent/
 
 ​	If **Turtlebot3 packages** are required for **your use case**, follow the ROBOTIS guide as well: (**PC Setup**)
 
@@ -181,38 +181,76 @@ Robot-runner has been developed mainly using Ubuntu 18.04. However, it has also 
 
 **STEP 3**: run ``install_vu_battsim.sh`` to install the Gazebo battery simulation plugin (**OPTIONAL**)
 
+
+
+**================**
+
+**ADD ~/.bashrc example of remote pc**
+
+**================**
+
 <a name="native-install-guide"/>
+
 # Native install guide
 
-**NOTE:** This step is only necessary when you want to perform a **native experiment**. If you are only interested in simulating a ROS device, then your install is already completed if the [tests](#test-install-guide), that apply to your use case, were successful.
+**NOTE:** This step is only necessary when you want to perform a **native experiment**. If you are only interested in **simulating** a ROS device, then your install is already complete. That is if the [tests](#test-install-guide), that apply to your use case, were successful.
 
+**NOTE:** As the author was provided a Turtlebot3 Burger, featuring a Raspberry Pi 3 model B+, this guide is written in the context of using that specific robot. The guide is written generally, so it can be followed by any user, but any recommendations or warnings are based on development experiences on the Turtlebot3 Burger.
 
+To be **able** to perform automated experiments using **robot-runner**, the native ROS device has to run **Python 3.6.9** and **ROS**. From this point on, the install guide will make recommendations of what to do and what will faill based on the aforementioned Turtlebot3 Burger install experience. Therefore, if your device is in any way significantly different, this guide might be useless to you.
 
-* Ubuntu MATE 32-bit (recommended) confirmed working for ROS1, ROS2 confirmed not working
-  * ROS2 requries 64-bit.
-* Ubuntu MATE 64-bit (experimental) testing phase for ROS1 and ROS2.
-* INSTALL ROS1 on Ubuntu MATE
-  * Follow ROS guide, install desktop
-  * Turtlebot3 guide, replace all kinetic (add commands here for easy copy)
-  * mkdir catkin_ws/src
-  * clone _msgs and hdfs drivers with -b melodic-devel
-  * Dload zip turtlebot3.git on -b melodic devel and extract into turtlebot3 folder in src.
-    * Explain memory issue
-  * rmdirs as given in guide
-  * apt-get ros-melodic (replace all kinetic to melodic)
-  * catkin_make
-  * source catkin_ws/devel/setup.bash
-  * rosrun udev_rules
-  * install pip: sudo apt install python3-pip
-  * install tabulate
-  * run for ros1.
-  * setup ROS Master etc.
-  * **install completed**
-* INSTALL ROS2 on Ubuntu server image: follow ROS guide / ROBOTIS guide.
-* INSTALL ROS2 on Ubuntu MATE 64-bit:
-  * TODO
+In that case, know that the **only requirements** to be able to perform automated experiments using robot-runner, is to be able to **run** the **ClientRunner** module, which requires **Python 3.6.9**. and have a **supported ROS version** installed on the native device. If you make sure these requirements are met, then you can proceed to the [user guide](#user-guide).
 
+> **WARNING:**
+>
+> As described before, ROS2 native experiments are not supported nor working at this time. This is the case as for this project, the native ROS device consists of a **Turtlebot3 Burger.** To be able to successfully use this robot, **Turtlebot3 packages** have to be build and installed next to ROS2. It is at this step that most installs failed on most images, but using the recommended image the build succeeded.
+>
+> However, while running ROS2 on this recommended image, the **Raspberry Pi 3 model B+** **overheats** and has to throttle down the CPU. This triggers a **hardware interrupt** from which the system **does not recover**, resulting in a **crash**.
+>
+> **It is being investigated at this time, if the Raspberry Pi 3 model b+ that is provided to the auther is a faulty unit. If so, ROS2 support will be developed soon.**
 
+## Choosing the right image
+
+In the table below the tested images are described and what was working, running and what was not. The recommended image for each ROS vesion is highlighted.
+
+| Raspberry Pi image                                           | ROS1 Install      | ROS1 Running | ROS2 Install | ROS2 Running | Turtlebot3 packages installed | Recommended for use with             |
+| ------------------------------------------------------------ | ----------------- | ------------ | ------------ | ------------ | ----------------------------- | ------------------------------------ |
+| [ROBOTIS Raspbian](http://www.robotis.com/service/download.php?no=1738) | **Pre-installed** | **YES**      | **NO**       | **NO**       | **ROS1 YES<br />ROS2 NO**     | **RECOMMENDED FOR ROS1**             |
+| Ubuntu MATE 32-bit (Ubuntu recommended)                      | YES               | YES          | NO           | NO           | ROS1 YES<br />ROS2 NO         | Can be used with ROS1                |
+| Ubuntu MATE 64-bit (Ubuntu experimental)                     | YES               | YES          | YES          | YES          | ROS1 YES<br />ROS2 NO         | Can be used with either ROS1 or ROS2 |
+| [Ubuntu 18.04.4 Server image (arm64)](https://ubuntu.com/download/server/arm) | **YES**           | **YES**      | **YES**      | **YES**      | **ROS 1 YES<br />ROS2 YES**   | **RECOMMENDED FOR ROS2**             |
+
+To further elaborate on the table's information:
+
+- **Raspbian** is recommended for use with ROS1 as it is the most lightweight, best running image on the Raspberry Pi 3 model B+ and comes with all ROBOTIS Turtlebot3 packages pre-installed.
+  - In case you do not need the Turtlebot3 packages; Raspbian is still **strongly recommended**, but then downloaded and installed as a clean install from https://www.raspberrypi.org/downloads/.
+- **Ubuntu MATE 32-bit** can be important to those users that want debian package manager support (dpkg). In that case, it can be successfully used with ROS1.
+- **Ubuntu MATE 64-bit** can be used with either ROS1 or ROS2. However, the Turtlebot3 packages did not manage to install and so it is not a viable option for those that require those packages. If the image is not used with ROS2 but with ROS1, it is **strongly discouraged** to use this image. This is because running a 64-bit images proves to be hard for the Raspberry Pi 3 model B+ and the general performance of the image was significantly lower than that of Raspbian.
+- **Ubuntu 18.04.4 Server image (arm64)** supports both ROS1 and ROS2 and is the recommended image for ROS2 by ROBOTIS, the creators of Turtlebot. However, running ROS2 on the image proved impossible as a hardware interrupt to throttle the CPU crashes the system. It remains however the **"recommended for ROS2"** image, as it is also recommended by ROBOTIS and ROS2 was not succesfully running on any image.
+
+## Installing ROS
+
+When the right image for your use case has been successfully installed on your ROS device, you are ready to start installing ROS.
+
+### ROS1
+
+The recommended setup guide for installing **ROS1** (**Melodic**) is: http://wiki.ros.org/melodic/Installation/Ubuntu
+
+​	If **Turtlebot3 packages** are required for **your use case**, follow the ROBOTIS guide as well:
+
+​	http://emanual.robotis.com/docs/en/platform/turtlebot3/setup/#setup
+
+​    In this guide, follow **SBC Setup** and **OpenCR Setup**.
+
+### ROS2
+
+**Not supported at this time.**
+
+**================**
+
+**ADD ~/.bashrc example of ROS1 native install**
+
+**================**
 
 <a name="test-install-guide"/>
 
@@ -255,9 +293,9 @@ ROS_PYTHON_VERSION=3
 ROS_DISTRO=eloquent
 ```
 
-## Test ROS1 / ROS2 with Turtlebot packages:
+## Test a successfull sim install (remote PC):
 
-### Simulation test:
+**NOTE:** By default there are no test scripts provided with any ROS1 or ROS2 install to test if the Gazebo simulator in combination with the ROS install is working correctly. These examples are only provided by the **Turtlebot3 packages**. Therefore this section describes how to test a succesful sim install with these Turtlebot3 packages.
 
 #### ROS1:
 
@@ -267,7 +305,7 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 
 A succesful Gazebo launch showing an empty world with a Turtlebot3 present should now be displayed. When running `rosnode list` or `rostopic list` Turtlebot3 nodes and topics should be present. To check if any data is being published by using `rostopic echo /topic`
 
-# ROS2:
+#### ROS2:
 
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
@@ -275,9 +313,40 @@ ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 
 A succesful Gazebo launch showing an empty world with a Turtlebot3 present should now be displayed. When running `ros2 node list` or `ros2 topic list` Turtlebot3 nodes and topics should be present. To check if any data is being published by using `ros2 topic echo /topic <topic_data_type>`
 
-### Native test:
+## Test a successful native install (remote PC & Native ROS device):
 
-**======TODO NATIVE TEST OF ROS======**
+#### ROS1:
+
+Follow these steps too ensure a correct working and install of both the remote PC and the native device.
+
+**On the remote PC**, run roscore:
+
+```bash
+roscore
+```
+
+**On the native ROS device**, <u>run a simple node publishing some data to a topic</u>. This can be any node, publishing any kind of data. **When using a Turtlebot3, a simple example is already provided. Use the following command:**
+
+```bash
+roslaunch turtlebot3_bringup turtlebot3_robot.launch
+```
+
+**Now on the remote PC**, open another terminal and run these two commands:
+
+```
+rostopic list
+rosnode list
+```
+
+In the output a Turtlebot3 node should be seen and Turtlebot3 topics, like **/BatteryState** should be observed and publishing. To check wether a topic is being published, run the following command:
+
+```
+rostopic echo /topic_name
+```
+
+#### ROS2:
+
+**Unsupported at this time.**
 
 ## Test ROS1 with VU_BATTSIM for correct functionality:
 
