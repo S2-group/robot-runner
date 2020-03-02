@@ -1,7 +1,7 @@
 # Robot-Runner
 This framework enables automated experiment execution on ROS devices, both on physical (**real-life**, hereon after called **native**) robots and in a simulated setting (**Gazebo**, hereon after referred to as **sim**).
 
-Robot-runner is developed to work with both **ROS1**, tested with **Kinetic** and **Melodic**, and **ROS2** , tested with **Eloquent**. Please carefully read and follow this README for the correct setup for your use case.
+Robot-runner is developed to work with both **ROS1**, tested with **Kinetic** and **Melodic**, and **ROS2**, tested with **Eloquent**. Please carefully read and follow this README for the correct setup for your use case.
 
 Robot-runner is developed and tested using **Python 3.6.9**, hereon after referred to as **Python**. Any other version of Python can possibly be used, but this has not been tested nor is it recommended.
 
@@ -421,7 +421,9 @@ Any experiment starts with a **config.json** file, which will be given to the **
 }
 ```
 
-Each field has been given a clear name. However, to give a more formal and clear overview the fields above are represented in the table below with expected data types, what these expected values have as a consequence (if any) and a requirement specification.
+Each field has been given a clear name. However, to give a more formal and clear overview the fields above are represented in the table below with expected data types, what these expected values have as a consequence (if any) and a requirement specification. 
+
+The requirement specification: **not required** means that it can be empty (**""**) but the field itself has to be present in the **config.json**. Any config file passed to robot-runner must contain the **exact same fields** as shown in the **example above**.
 
 | Field name               | Expected value(s)                                            | Requirement      |
 | ------------------------ | ------------------------------------------------------------ | ---------------- |
@@ -445,6 +447,8 @@ Using the knowledge gained from following this README up to this point will make
 
 ### Setting up a simulation experiment
 
+**IMPORTANT:** An example of a config file, specifically for a simulation experiment (both ROS 1 and ROS 2), can be found in the [example guide](#example-guide).
+
 A simulation experiment always needs the field **use_simulator** set to the value **true**. It needs some way to start a Gazebo simulation. This can be using the launch file as specified by the **launch_file_path** field, or when this is left empty, robot-runner expects a run_script to be present as specified by the **run_script** object containing the **path** and **optional arguments**.
 
 When a launch file, launching the Gazebo simulation, is not given, the run_script is given the responsibility to start the Gazebo simulation. This enables the user to perform custom logic using **Python** before launching running the experiment, instead of only being able to specify launch nodes in a launch file.
@@ -456,6 +460,8 @@ This gives the user a lot of variability, control and ease-of-use. Launching an 
 **All other settings can be set according to your very specific use case, as long as they adhere to the requirements as set out above.**
 
 ### Setting up a native experiment
+
+**IMPORTANT:** An example of a config file, specifically for a native experiment (currently only ROS 1 supported), can be found in the [example guide](#example-guide).
 
 A native experiment always needs the field **use_simulator** set to the value **false**. It also does not need any launch file specified in the **launch_file_path** field. In case you as a user need to launch specific nodes you can do so by launching them from the run_script or launching a .launch file from the run_script.
 
@@ -738,7 +744,7 @@ A ( ***** ) should be used to explain any significant **category of addition** w
 
 ## General overview
 
-![](/home/stanswanborn/Downloads/Screenshot from 2020-03-02 19-13-13.png)
+![](http://i.imgur.com/vnGNMIS.png)
 
 Here an overview is given, showing the various parts of robot-runner. Each component is further elaborated on below:
 
