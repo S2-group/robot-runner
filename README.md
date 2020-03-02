@@ -739,7 +739,7 @@ An example of the elaborate comments, as present in the code-base:
 
 Any addition to the robot-runner codebase must adhere to this comment style, which is present at the top of each **Python** file, just below the **imports**. 
 
-A ( - ) should be used to explain any significant **responsibility** of the module in question.
+A ( - ) should be used to explain any significant **responsibility** of the module in question. <br />
 A ( * ) should be used to explain any significant **category of addition** which must then be added to the module in question.
 
 ## General overview
@@ -766,7 +766,7 @@ Here an overview is given, showing the various parts of robot-runner. Each compo
 | Models/ConfigModel                 | A Python representation of the **config.json** with minimal model-logic; loading in and verifying the **config.json** file. |
 | Models/RunScriptModel              | A Python representation of the **run_script** object with minimal model-logic; easy, in-one-place defined launch command with the specified **args (arguments)**. |
 |                                    |                                                              |
-| IROSController                     | The abstract parent class for all ROS versions. As of writing only two ROS versions are supported:<br /><br />**ROS 1 (Kinetic and Melodic)**<br />**ROS 2 (Eloquent)**<br /><br />The correct ROS version and thus correct **IROSController** **child** is selected as robot-runner uses the **ROS_VERSION** **environment variable** as set by any correct ROS installation.<br />**All shared logic between any ROS versions must be added in this abstract class.** |
+| IROSController                     | The abstract parent class for all ROS versions. As of writing only two ROS versions are supported:<br /><br />**ROS 1 (Kinetic and Melodic)**<br />**ROS 2 (Eloquent)**<br /><br />The correct ROS version and thus correct **IROSController** **child** is selected as robot-runner uses the **ROS_VERSION** **environment variable** as set by any correct ROS installation.<br /><br />**All shared logic between any ROS versions must be added in this abstract class.** |
 | IROSController/ROS1Controller      | Inherits **IROSController**, this controller is responsible for communicating with an activated **ROS1** install on the host system.<br /><br />Any **ROS1** specific logic must be added here. |
 | IROSController/ROS2Controller      | Inherits **IROSController**, this controller is responsible for communicating with an activated **ROS2** install on the host system.<br /><br />Any **ROS2** specific logic must be added here. |
 |                                    |                                                              |
