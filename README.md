@@ -161,8 +161,10 @@ Robot-runner has been developed mainly using **Ubuntu 18.04**. However, it has a
 ### An example of a correct ~/.bashrc for a remote PC
 
 ```bash
-# General						# Remove this line when you are not using a Turtlebot3
-export TURTLEBOT3_MODEL=burger  # Or change it to the Turtlebot3 model you are using
+# General	
+# Remove this line when you are not using a Turtlebot3
+# Or change it to the Turtlebot3 model you are using
+export TURTLEBOT3_MODEL=burger
 
 ## ROS 1
 source /opt/ros/melodic/setup.bash
