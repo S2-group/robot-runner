@@ -739,8 +739,8 @@ An example of the elaborate comments, as present in the code-base:
 
 Any addition to the robot-runner codebase must adhere to this comment style, which is present at the top of each **Python** file, just below the **imports**. 
 
-A ( **-** ) should be used to explain any significant **responsibility** of the module in question.
-A ( ***** ) should be used to explain any significant **category of addition** which must then be added to the module in question.
+A ( - ) should be used to explain any significant **responsibility** of the module in question.
+A ( * ) should be used to explain any significant **category of addition** which must then be added to the module in question.
 
 ## General overview
 
