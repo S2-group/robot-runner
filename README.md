@@ -1,28 +1,27 @@
 # Robot-Runner
-This framework enables automated experiment execution on ROS devices, both on physical (**real-life**, hereon after called **native**) robots and in a simulated setting (**Gazebo**, hereon after referred to as **sim**).
+This framework enables automated experiment execution on ROS-based systems, both on physical (**real-life**, hereon after called **native**) systems and in a simulated setting (**Gazebo**, hereon after referred to as **sim**).
 
 Robot-runner is developed to work with both **ROS1**, tested with **Kinetic** and **Melodic**, and **ROS2**, tested with **Eloquent**. Please carefully read and follow this README for the correct setup for your use case.
 
 Robot-runner is developed and tested using **Python 3.6.9**, hereon after referred to as **Python**. Any other version of Python can possibly be used, but this has not been tested nor is it recommended.
 
-Robot-runner is developed specifically for experimenting with a Turtlebot3 Burger, as this is the native ROS device provided by the **Vrije Universiteit Amsterdam**. Therefore example experiments and install guides also involve Turtlebot3 install guides. However, robot-runner is, as said before, developed to be used with **any** ROS device and thus can also be used without any Turtlebot software present. This would however mean that the example experiments provided, with the exception of the native experiments, are unusable. 
+Robot-runner is developed specifically for experimenting with a Turtlebot3 Burger, as this is the native ROS device provided by the **Vrije Universiteit Amsterdam**. Therefore example experiments and install guides also involve Turtlebot3 install guides. Nonetheless, robot-runner is, as said before, developed to be used with **any** ROS device and thus can also be used without any Turtlebot software present. However, this would mean that the example experiments provided, with the exception of the native experiments, are unusable. 
 
 Read this README therefore carefully and adjust the install to your own personal needs.
 
 > **Warning:**
 >
-> Currently **ROS2 Native experiments** are **NOT WORKING**. **ROS2 Sim experiments ARE WORKING** however. ROS2 Native experiments are not working since the recommended image for the Raspberry Pi in combination with ROS2: **Ubuntu 18.04 Server image for ARM processors** has a **known bug** in the Linux kernel. The Raspberry Pi gets too hot under any significant load and tries to throttle the CPU, however this results in a **hardware interrupt** from which the system is **unable to recover**, leading to a **crash**.
+> Currently **ROS2 Native experiments** are **NOT WORKING**. **ROS2 Sim experiments ARE WORKING** however. ROS2 Native experiments are not working since the recommended image for the Raspberry Pi in combination with ROS2: **Ubuntu 18.04 Server image for ARM processors** will cause the Raspberry Pi to get too hot under any significant load. The Raspberry Pi tries to throttle the CPU, but this results in a **hardware interrupt** from which the system is **unable to recover**; leading to a **crash**.
 >
 > **This issue is being worked on.**
 
 # Intro
 
-Robot-runner, has been developed out of a need to be able to perform academic experiments repeatedly and reliably, while preventing as much interference and manual labor as possible. With as end goal that these results can be used to perform academic research and draw scientifically sound conclusions.
+Robot-runner, has been developed out of a need to be able to perform scientific experiments repeatedly and reliably, while preventing as much interference and manual labor as possible. With as end goal that these results can be used to perform academic research and draw scientifically sound conclusions.
 
+Robot-runner has been developed by [<b>Stan Swanborn</b>](https://github.com/StanSwanborn) in early 2020 under the supervision of [<b>Ivano Malavolta</b>](https://github.com/iivanoo) as part of the course [<b>Individual Systems Practical</b>](https://studiegids.vu.nl/en/Master/2018-2019/computer-science/XM_405088) as part of the <i>Master's degree</i> [<b>Computer Science</b>](https://masters.vu.nl/en/programmes/computer-science-software-engineering-green-it/index.aspx) at the [<b>Vrije Universiteit Amsterdam</b>](https://www.vu.nl/en).
 
-Robot-runner has been developed by **Stan Swanborn** in early 2020 under the supervision of **Ivano Malavolta** as part of the course **Individual Systems Practical** as part of the ***Master's degree* Computer Science** at the **Vrije Universiteit Amsterdam**.
-
-Robot-runner is specifically developed to be able to do research into the energy efficiency of architectural tactics for ROS devices (experimented specifically on a **Turtlebot3 Burger**) however, the framework is developed to be versatile and can be used for any sort of experiment or just any automated sequence of actions on any ROS device (native or simulated).
+Robot-runner is specifically developed to be able to do research into the energy efficiency of architectural tactics for ROS-based systems (experimented specifically on a **Turtlebot3 Burger**). The framework is developed to be versatile and can be used for any sort of experiment or just any automated sequence of actions on any ROS device (native or simulated).
 
 # Table of Contents
 
@@ -31,15 +30,15 @@ This README is an elaborate and therefore somewhat long description of robot-run
 | Content title                                       | Content                                                      | To whom it may concern                                       |
 | --------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [Short description](#short-description)             | An overview of what is present in this repository and why.<br />A simplified description of robot-runner's workings. | General user of robot-runner.                                |
-| [Install guide](#install-guide)                     | An elaborate guide to set up everything needed to start using robot-runner in any use case. It also provides easy verififcation of a successful install. | General user of robot-runner.                                |
-| [Native install](#native-install-guide)             | An elaborate guide to set up everything needed to start using robot-runner with native ROS devices. | General user of robot-runner, specifically interested in **native experiments**. |
+| [Install guide](#install-guide)                     | A detailed guide to set up everything needed to start using robot-runner in any use case. It also provides easy verififcation of a successful install. | General user of robot-runner.                                |
+| [Native install](#native-install-guide)             | A detailed guide to set up everything needed to start using robot-runner with native ROS-based systems. | General user of robot-runner, specifically interested in **native experiments**. |
 | [Test successful install](#test-install-guide)      | A set of tests with expected output that help the user determine if the install was correct and successful. | General user of robot-runner.                                |
-| [User guide](#user-guide)                           | An elaborate guide as to how to use robot-runner and set up a succesfull experiment for any use case, including native experiments. | General user of robot-runner.                                |
+| [User guide](#user-guide)                           | A detailed guide as to how to use robot-runner and set up a succesfull experiment for any use case, including native experiments. | General user of robot-runner.                                |
 | [Example guide](#example-guide)                     | A guide to understand the provided examples better and to know how to setup the host system environment correctly for experiments. | General user of robot-runner.                                |
 | [Technical documentation](#technical-documentation) | Extensive technical documentation of the inner-workings of robot-runner and the rationale behind design decisions. | Any user or developer in need of a technical understanding of robot-runner. |
 | [Troubleshooting](#troubleshooting)                 | Common issues and possible fixes.                            | General user of robot-runner.                                |
 
-<a name="short-description"/>
+<a name="short-description"/></a>
 
 # Short description
 ## Contents of repository
@@ -51,10 +50,10 @@ Everything needed to be able to run robot-runner for any use case is present in 
 | **ClientRunner**              | Robot-runner client that needs to run on a native ROS device in case native experiments need to be performed. |
 | ClientRunner/Scripts          | Contains scripts used by the robot-runner native client, **not interesting for a general user**. |
 | ClientRunner/config.json      | A very simple, two line, config file which specifies a **ROS launch file** or an **entire ROS launch command** which will be executed each run. |
-| ClientRunner/\__main__.py     | Run this program on the native ROS device using **Python** 3.6.9. <br> `python3 __main__.py config.json` |
+| ClientRunner/\__main__.py     | This is the main entry point for the application that needs to run on the <b>native</b> device. This file is responsible for checking the user input and start all requried processes accordingly. <br/><br/> Execute the following command using **Python** 3.6.9 to run the program: <br/> `python3 __main__.py config.json`  |
 |                               |                                                              |
 | **RemoteRunner**              | Robot-runner remote PC module, the **main application** of robot-runner. |
-| RemoteRunner/\__main__.py     | Run this program on the remote PC using **Python** 3.6.9. <br/> `python3 __main__.py config.json` |
+| RemoteRunner/\__main__.py     | This is the main entry point for the application that needs to run on the <b>remote</b> device. This file is responsible for checking the user input and start all requried processes accordingly. <br/><br/> Execute the following command using **Python** 3.6.9 to run the program: <br/> `python3 __main__.py config.json` |
 | RemoteRunner/Controllers      | Contains all controllers used by robot-runner to control experiment execution, run execution and ROS communications. <br />**All application logic** |
 | RemoteRunner/Models           | Contains all models needed during execution of robot-runner. <br />**Only model representations, minimal logic** |
 | RemoteRunner/Procedures       | Contains all procedures defined in one place. <br />**All code which does not need or cannot be provided as part of a class or object (code that does not adhere to OOP-Principles** |
@@ -66,7 +65,7 @@ Everything needed to be able to run robot-runner for any use case is present in 
 
 ## General description of robot-runner
 
-Robot-runner is as versatile as it can be, this has as a consequence that it can be used in many different ways, leading to many different use cases. However, this README is written in the context of someone that wants to perform an academic, scientifically sound, automated ROS experiment. Using this context, this README explains to the user how to set up such an experiment. Since there are so many ways a user can start doing that, the most defining factors for any experiment are explained here. The highly detailed, in-depth explanation is given in the [user guide](#user-guide).
+Robot-runner is as versatile as it can be, this has as a consequence that it can be used in many different ways, leading to many different use cases. It needs to be taken into account that this README is written in the context of someone that wants to perform a scientific, scientifically sound, automated ROS experiment. Using this context, this README explains to the user how to set up such an experiment. Since there are so many ways a user can start doing that, the most defining factors for any experiment are explained here. The highly detailed, in-depth explanation is given in the [user guide](#user-guide).
 
 Considering these factors use some implementation specific terms which are needed for explaining them, some terms are introduced before they are explained. In any case that this happens, the introduced term links to the section in which it is explained in detail.
 
@@ -87,7 +86,7 @@ These factors can be set and manipulated by the user in the **config.json** that
 
 #### ros_version
 
-The ROS version that robot-runner uses is the version that is currently activated on the system robot-runner runs on. Any system can have multiple installs of multiple ROS versions (multiple ROS1 installs, multiple ROS2 installs, all side-by-side), however only one ROS install can be active at a time. This one, active install, sets its version in the environment variable **ROS_VERSION**, the value of this environment variable is used by robot-runner to correctly determine the currently running ROS instance.
+The ROS version that robot-runner uses is the version that is currently activated on the system robot-runner runs on. Any system can have multiple installs of multiple ROS versions (multiple ROS1 installs, multiple ROS2 installs, all side-by-side). Only one ROS install can be active at a time. This one, active, install sets its version in the environment variable **ROS_VERSION**, the value of this environment variable is used by robot-runner to correctly determine the currently running ROS instance.
 
 This applies to both the RemoteRunner (remote PC) and ClientRunner (native device) modules of robot-runner.
 
@@ -103,11 +102,11 @@ Robot-runner is specifically designed to be as versatile as possible and to only
 
 The user has many options available as to **where** to **define** the **experiment**, provided natively by ROS. The user can, for example, define a node which manipulates a **basic client** on the ROS device. This node can be programmed in **any language** supported by the **ROS library**, and this **node** and the **basic client** can be launched from a **launch file**. This launch file can then be given to robot-runner in the **config.json**, resulting in robot-runner launching that specified launch file each run of the experiment.
 
-However, when the node is programmed in **Python** it can also be **kept** from the **launch file** and directly specified to robot-runner as the run script. This can be done by giving the path to the file in the **config.json** under the **run_script** field. This option has the advantage that **arguments** can be passed to the run script, these can also be specified in the **config.json**.
+When the node is programmed in **Python** it can also be **kept** from the **launch file** and directly specified to robot-runner as the run script. This can be done by giving the path to the file in the **config.json** under the **run_script** field. This option has the advantage that **arguments** can be passed to the run script, these can also be specified in the **config.json**.
 
 It also offers the user the capability of doing additional logic, before launching the **actual** experiment definition. This actual definition could be spawned from the run_script specified to robot-runner.
 
-**Concrete scenario:** when the user runs a native experiment, the experiment can be defined on the (simulated) ROS device as its behavior. However, this moves the variability of experiment definitions to the (simulated) ROS device instead of the remote PC. Instead, the user could choose to develop one client, which can be manipulated by any other ROS node. This node, or these nodes, as specified in a Python file are then considered to be the run script. This script can then be specified to robot-runner. To run different experiments, the user would then only need to specify different run scripts; moving the **added memory** and **changing of experiments** (*changing config files*) to the **remote PC** instead of the (simulated) ROS device.
+**Concrete scenario:** when the user runs an experiment, the experiment can be defined on the ROS device as its behavior. This moves the variability of experiment definitions to the ROS device instead of the remote PC. Instead, the user could choose to develop one client, which can be manipulated by any other ROS node. This node, or these nodes, as specified in a Python file are then considered to be the run script. This script can then be specified to robot-runner. To run different experiments, the user would then only need to specify different run scripts; moving the **added memory** and **changing of experiments** (*changing config files*) to the **remote PC** instead of the (simulated) ROS device.
 
 #### timed or programmatic stop
 
@@ -115,11 +114,11 @@ An experiment consists of a specified number of replications, called runs. Each 
 
 The **programmatic stop** has robot-runner initialize a ROS node (*poll_run_complete*) which subscribes to the topic: **/robot_runner/run_completed**. When a message of type **std_msgs.msg.Bool** *<u>Bool(True)</u>* is **published** to the **topic**, the run is **automatically** **stopped**. This is **deliberately designed** to be a **topic**, as they are **asynchronous** and **non-blocking**. This means that any experiment node which publishes True does not have to **wait** for robot-runner to respond but can **close immediately**, ensuring a **minimal impact** of the robot-runner **overhead** on any gathered **statistics**.
 
-<a name="install-guide"/>
+<a name="install-guide"/></a>
 
 # Install guide
 
-Robot-runner has been developed mainly using **Ubuntu 18.04**. However, it has also been tested and developed on Ubuntu 16.04, albeit with an older ROS1 version: **Kinetic**, as this is the last ROS1 version to be guaranteed on Ubuntu 16.04. The install options available are thus:
+Robot-runner has been developed mainly using **Ubuntu 18.04**. It has also been tested and developed on Ubuntu 16.04, albeit with an older ROS1 version: **Kinetic**, as this is the last ROS1 version to be guaranteed on Ubuntu 16.04. The install options available are thus:
 
 | Ubuntu           | ROS1 Latest version | ROS2 Latest version | Use case                                                     |
 | ---------------- | ------------------- | ------------------- | :----------------------------------------------------------- |
@@ -128,13 +127,13 @@ Robot-runner has been developed mainly using **Ubuntu 18.04**. However, it has a
 
 > **WARNING:**
 >
-> Robot-runner comes with a set of example experiments. Since robot-runner is specifically designed to experiment with a **Turtlebot3 Burger**, these examples need **Turtlebot3 packages** to be installed with it. This is mentioned in each install guide, if you do not need or want these examples to work, then only follow the ROS install guide. 
+> Robot-runner comes with a set of example experiments. These examples need **Turtlebot3 packages** to be installed with it, as they are specific for a Turltebot3. This is mentioned in each install guide, if you do not need or want these examples to work, then only follow the ROS install guide. 
 >
 > Considering the Turtlebot3 simulation does not provide any **battery simulation**, a **Gazebo plugin** is provided with each example. This plugin is developed by the **CMU** (Carnegie Mellon University), and used and modified for this project under the **MIT license**.
 >
 > Examples that use this battery plugin are called VU_BATTSIM_1\*.04 (where ***** = 6 or 8, (16.04 or 18.04)). Please note that only **Ubuntu 16.04 fully supports** the original plugin with motor power taken into account in the battery discharge simulation. Ubuntu 18.04 does not provide this functionality, it thus only provides **linear discharge**, as **legacy software** used is not supported on 18.04.
 >
-> This is however of **no, or slight, importance** to the user, the examples are only just that. The recommended install is therefore still Ubuntu 18.04.
+> This is of **no, or slight, importance** to the user, the examples are only just that. The recommended install is therefore still Ubuntu 18.04.
 >
 > **NOTE: The VU_BATTSIM battery simulation is only available for ROS1.**
 
@@ -144,7 +143,7 @@ Robot-runner has been developed mainly using **Ubuntu 18.04**. However, it has a
 
 ​	If **Turtlebot3 packages** are required for **your use case**, follow the ROBOTIS guide as well: (**PC Setup**)
 
-​	Follow from step **1.3**:
+​	Follow from step **6.1.3** and **6.1.4**:
 
 ​	http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#pc-setup
 
@@ -154,7 +153,7 @@ Robot-runner has been developed mainly using **Ubuntu 18.04**. However, it has a
 
 ​	If **Turtlebot3 packages** are required for **your use case**, follow the ROBOTIS guide as well: (**PC Setup**)
 
-​	Follow from step **1.3**:
+​	Follow from step **16.1.3** to **16.1.5**:
 
 ​	http://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_setup/
 
@@ -168,11 +167,11 @@ export TURTLEBOT3_MODEL=burger
 
 ## ROS 1
 source /opt/ros/melodic/setup.bash
-source /home/stanswanborn/catkin_ws/devel/setup.bash # Source any ROS1 packages (OPTIONAL)
+source ~/catkin_ws/devel/setup.bash # Source any ROS1 packages (OPTIONAL)
 
 ## ROS 1 - VU_BATTSIM Env. Variables (OPTIONAL)
-export VU_BATTSIM=/home/'<user>'/robot-runner/examples/ros1/experiments/vu_battsim_18.04
-export GAZEBO_PLUGIN_PATH=:/home/'<user>'/catkin_ws/src/vu_gazebo_battery/build/devel/lib
+export VU_BATTSIM=~/robot-runner/examples/ros1/experiments/vu_battsim_18.04
+export GAZEBO_PLUGIN_PATH=:~/catkin_ws/src/vu_gazebo_battery/build/devel/lib
 
 ## ROS 2
 export ROS_DOMAIN_ID=30 #TURTLEBOT3, remove when you are not using a Turtlebot3 (OPTIONAL)
@@ -182,7 +181,7 @@ source /opt/ros/eloquent/setup.bash
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models
 ```
 
-<a name="native-install-guide"/>
+<a name="native-install-guide"/></a>
 
 # Native install guide
 
@@ -204,7 +203,7 @@ To be **able** to perform automated experiments using **robot-runner**, the nati
 
 ## Choosing the right image
 
-Choosing the right image for your use case is of high importance to guarantee a successful setup, which can run as smooth as possible. When using a Turtlebot3, a set of recommended images are provided by ROBOTIS, the creators of Turtlebot. For this guide however, multiple images have been tested, also images that have not been mentioned by ROBOTIS to see if they would work. Based on these findings the following table has been created:
+Choosing the right image for your use case is of high importance to guarantee a successful setup, which can run as smooth as possible. When using a Turtlebot3, a set of recommended images are provided by ROBOTIS, the creators of Turtlebot. Multiple images have been tested by the creators of robot-runner; also images that have not been mentioned by ROBOTIS, to see if they would work. Based on these findings the following table has been created:
 
 | Raspberry Pi image                                           | ROS1 Install      | ROS1 Running | ROS2 Install | ROS2 Running | Turtlebot3 packages installed | Recommended for use with             |
 | ------------------------------------------------------------ | ----------------- | ------------ | ------------ | ------------ | ----------------------------- | ------------------------------------ |
@@ -248,14 +247,14 @@ After installing ROS1 on the native device, a correct ~/.bashrc file should look
 ```bash
 # ROS1
 source /opt/ros/melodic/setup.bash
-source /home/'<user>'/catkin_ws/devel/setup.bash
+source ~/catkin_ws/devel/setup.bash
 ```
 
 ### ROS2
 
 **Not supported at this time.**
 
-<a name="test-install-guide"/>
+<a name="test-install-guide"/></a>
 
 # Test successful install:
 
@@ -292,7 +291,7 @@ A successful Gazebo launch showing an empty world with a Turtlebot3 present shou
 #### ROS2:
 
 ```
-ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+ros2 launch turtlebot3_gazebo empty_world.launch.py
 ```
 
 A successful Gazebo launch showing an empty world with a Turtlebot3 present should now be displayed. When running `ros2 node list` or `ros2 topic list` Turtlebot3 nodes and topics should be present. To check if any data is being published by using `ros2 topic echo /topic_name <topic_data_type>`
@@ -344,11 +343,11 @@ You should now observe:
  - A Gazebo instance should now be running, showing a Turtlebot3 Burger in a house.
  - The ROS topic `/mobile_base/commands/charge_level` should be available (published)
 
-<a name="user-guide"/>
+<a name="user-guide"/></a>
 
 # User guide
 
-In this section, an elaborate user guide will be given as to how to set up any experiment with any combination of use cases. Important aspects will be described such as:
+In this section, a detailed user guide will be given as to how to set up any experiment with any combination of use cases. Important aspects will be described such as:
 
 * How to setup, run and collect data from a correct experiment for any use case
 * How to process this data and be able to analyze this data
@@ -359,9 +358,9 @@ To start, robot-runner consists of two main modules: **RemoteRunner** and **Clie
 
 **NOTE:** Robot-runner blocks most of the output of its subprocesses. It does so because the terminal would otherwise be flooded with info messages which are not of any particular value when all goes well. 
 
-The error messages, if anything goes wrong, should be outputted to the terminal. However, that might not always be the case. When anything goes wrong **directly** related to **robot-runner**, it **will always output** the error messages, but subprocesses might not show all their **info / warning / error** messages.
+The error messages, if anything goes wrong, should be output to the terminal. Note that that might not always be the case. When anything goes wrong **directly** related to **robot-runner**, it **will always output** the error messages, but subprocesses might not show all their **info / warning / error** messages.
 
-These messages, however, can be crucial for solving the issue. Therefore robot-runner offers a **verbose** mode, in which all subprocesses output their `stdout` to the robot-runner terminal. In order to use the **verbose** mode, run either the **RemoteRunner** or **ClientRunner** module with the following command:
+These messages can be crucial for solving an issue. Therefore robot-runner offers a **verbose** mode, in which all subprocesses output their `stdout` to the robot-runner terminal. In order to use the **verbose** mode, run either the **RemoteRunner** or **ClientRunner** module with the following command:
 
 ```bash
 python3 __main__.py --verbose /path/to/config.json
@@ -401,7 +400,7 @@ Any experiment starts with a **config.json** file, which will be given to the **
   "name": "ros2_test",
   "replications": 3,
   "duration": 5000,
-  "launch_file_path": "/home/stanswanborn/robot-runner/examples/ros2/experiments/house_world/launch/turtlebot3_house.launch.py",
+  "launch_file_path": "~/robot-runner/examples/ros2/experiments/house_world/launch/turtlebot3_house.launch.py",
   "run_script": {
     "path": "",
     "args": {
@@ -413,7 +412,7 @@ Any experiment starts with a **config.json** file, which will be given to the **
   "topics_must_be_available": [
     "/clock"
   ],
-  "output_path": "/home/stanswanborn/experiment_output",
+  "output_path": "~/experiment_output",
   "topics_to_record": [
     "/clock"
   ],
@@ -421,7 +420,7 @@ Any experiment starts with a **config.json** file, which will be given to the **
 }
 ```
 
-Each field has been given a clear name. However, to give a more formal and clear overview the fields above are represented in the table below with expected data types, what these expected values have as a consequence (if any) and a requirement specification. 
+Each field has been given a clear name. To give a more formal and clear overview the fields above are represented in the table below with expected data types, what these expected values have as a consequence (if any) and a requirement specification. 
 
 The requirement specification: **not required** means that it can be empty (**""**) but the field itself has to be present in the **config.json**. Any config file passed to robot-runner must contain the **exact same fields** as shown in the **example above**.
 
@@ -431,7 +430,7 @@ The requirement specification: **not required** means that it can be empty (**""
 | name                     | **string**<br /><br />The name of the experiment, used in naming the experiment output folder as described in the **output_path** field explanation. | **NOT_NULL**     |
 | replications             | **int**<br /><br />The number of experiment runs             | **NOT_NULL**     |
 | duration                 | **int**<br /><br />A set timeout after which a run is killed.<br /><br />**When set to: 0** runs indefinitely, until the ROS topic: **/robot_runner/run_completed** is published **TRUE** | **NOT_NULL**     |
-| launch_file_path         | **string**<br /><br />The path to the .launch (ROS 1) or .launch.py (ROS 2) launch file which will spawn all necessary nodes for the experiment.<br /><br />**Can be empty** (If left empty, robot-runner assumes a run_script has been specified from which the user can manually launch the necessary nodes for the experiment OR when running a **native experiment**, robot-runner expects the native ROS device to launch the necessary nodes for manipulation.) | **not required** |
+| launch_file_path         | **string**<br /><br />The path to the .launch (ROS 1) or .launch.py (ROS 2) launch file which will spawn all necessary nodes for the experiment. This will be run on each experiment run and automatically, gracefully closed by robot-runner on each end of an experiment run.<br /><br />**Can be empty** (If left empty, robot-runner assumes a run_script has been specified from which the user can manually launch the necessary nodes for the experiment OR when running a **native experiment**, robot-runner expects the native ROS device to launch the necessary nodes for manipulation.) | **not required** |
 | run_script               | **array**<br /><br />The array containing the **path** and the possible **args (arguments)** for running a user-defined, Python 3.6.9, .py run_script. | **not required** |
 | run_script/path          | **string**<br /><br />The path to the .py file of the run_script, which will be run each experiment run. Here the user can specify custom logic.<br /><br />**Can be empty** (If left empty, robot-runner will not run a run_script and will not consider any run_script arguments that are possibly given.) | **not required** |
 | run_script/args          | **array of strings**<br /><br />An array of strings, each string is a new argument. Arguments should be specified in the order in which they are required by the run_script.<br /><br />**Can be empty** (If left empty, robot-runner will run the run_script (if present) without any arguments.) | **not required** |
@@ -465,7 +464,7 @@ This gives the user a lot of variability, control and ease-of-use. Launching an 
 
 A native experiment always needs the field **use_simulator** set to the value **false**. It also does not need any launch file specified in the **launch_file_path** field. In case you as a user need to launch specific nodes you can do so by launching them from the run_script or launching a .launch file from the run_script.
 
-A native experiment does not necessarily need a **run_script** specified. It does however need a run_script specified, if the experiment consists of performing custom logic on the remote PC side, or of manipulating the native ROS device.
+A native experiment does not necessarily need a **run_script** specified. But it does need a run_script specified, if the experiment consists of performing custom logic on the remote PC side, or consists of manipulating the native ROS device.
 
 **Important:**
 
@@ -594,7 +593,7 @@ ros2 topic echo /topic_name /topic_data_type > data.txt
 
 The generated .txt file should now contain the recorded data and can be used for data processing.
 
-<a name="example-guide"/>
+<a name="example-guide"/></a>
 
 # Example guide
 
@@ -611,10 +610,10 @@ This can be done and checked by looking at the ~/.bashrc file and checking that 
 ```bash
 ## ROS 1 (ACTIVATED)
 source /opt/ros/melodic/setup.bash
-export VU_BATTSIM=/home/stanswanborn/robot-runner/examples/ros1/experiments/vu_battsim_18.04
+export VU_BATTSIM=~/robot-runner/examples/ros1/experiments/vu_battsim_18.04
 export GAZEBO_MODEL_PATH=:/model
-export GAZEBO_PLUGIN_PATH=:/home/stanswanborn/catkin_ws/src/vu_gazebo_battery/build/devel/lib
-source /home/stanswanborn/catkin_ws/devel/setup.bash
+export GAZEBO_PLUGIN_PATH=:~/catkin_ws/src/vu_gazebo_battery/build/devel/lib
+source ~/catkin_ws/devel/setup.bash
 
 ## ROS 2 (COMMENTED OUT)
 #export ROS_DOMAIN_ID=30 #TURTLEBOT3
@@ -665,7 +664,7 @@ To start this experiment:
 2. Run from the RemoteRunner directory on the **remote PC** the following command:
    1. `python3 __main__.py ../examples/ros1/experiments/native_experiment/config.json`
 
-The experiment should now be running and complete automatically. This example does not contain any special behavior, like moving the robot. It is however a nice test to see if on the remote PC the ROS nodes and topics can now be observed by running:
+The experiment should now be running and complete automatically. This example does not contain any special behavior, like moving the robot. It is a good test to see if on the remote PC the ROS nodes and topics can now be observed by running:
 
 ```bash
 rostopic list
@@ -685,7 +684,7 @@ This example demonstrates the following significant aspects:
 
 ## ROS2 / Experiments / house_world
 
-This experiment demonstrates a simplified version of the VU_BATTSIM example but then for ROS 2. It does not use the VU_BATTSIM plugin as that only supports ROS 1. However, it demonstrates how to setup an experiment which launches a specific world file with a robot model present. It can be used to learn how to set this up for ROS 2 and what differs from the ROS 1 example. 
+This experiment demonstrates a simplified version of the VU_BATTSIM example but for ROS 2. It does not use the VU_BATTSIM plugin as that only supports ROS 1. It demonstrates how to setup an experiment which launches a specific world file with a robot model present. It can be used to learn how to set this up for ROS 2 and what differs from the ROS 1 example. 
 
 **NOTE:** The correct ROS version (**ROS 2**) needs to be sourced and activated as described above.
 
@@ -711,7 +710,7 @@ This example demonstrates the following significant aspects:
 
 **NOT SUPPORTED AT THIS TIME.**
 
-<a name="technical-documentation"/>
+<a name="technical-documentation"/></a>
 
 # Technical documentation
 
@@ -758,7 +757,7 @@ Here an overview is given, showing the various parts of robot-runner. Each compo
 | IRunController/NativeRunController | Inherits **IRunController**, this controller is responsible, and only responsible, for a successful **native** experiment run.<br /><br />Any native run specific logic should be added here. |
 | IRunController/SimRunController    | Inherits **IRunController**, this controller is responsible, and only responsible, for a successful **sim** experiment run. <br /><br />Any sim run specific logic should be added here. |
 |                                    |                                                              |
-| Run/Scripts                        | In this folder all scripts needed for ROS communication during an experiment run should be added. These scripts are needed as separate **Python** files since the current ROS libraries: **rospy (ROS1)** and **rclpy (ROS2)** only support one initialization per spawned process.<br /><br />However, robot-runner closes all ROS instances after every run, also closing its own instances. After this the library doesn't allow for a re-initialization. Therefore separate scripts are needed, spawned on each run, which then adhere to the '**one initialization per process**' rule. |
+| Run/Scripts                        | In this folder all scripts needed for ROS communication during an experiment run should be added. These scripts are needed as separate **Python** files since the current ROS libraries: **rospy (ROS1)** and **rclpy (ROS2)** only support one initialization per spawned process.<br /><br />This is an issue as robot-runner closes all ROS instances after every run, also closing its own instances. After this the library does not allow for a re-initialization. Therefore separate scripts are needed, spawned on each run, which then adhere to the '**one initialization per process**' rule. |
 | Run/Scripts/PollRunCompletion.py   | A Python script which, based on the activated ROS version, automatically uses the correct ROS library and polls if the run has completed.<br /><br />**This script is spawned when the programmatic run stop is set up (duration: 0 in *config.json*).** |
 | Run/Scripts/PollSimRunning.py      | A Python script which, based on the activated ROS version, automatically uses the correct ROS library and polls if the Gazebo simulator is running.<br /><br />**This script is only used when use_simulator=true in *config.json.*** |
 |                                    |                                                              |
@@ -774,7 +773,7 @@ Here an overview is given, showing the various parts of robot-runner. Each compo
 | Procedures/OutputProcedure         | This procedure contains all **static** methods that are used throughout robot-runner to **output** in a **coherent fashion** to the **terminal**.<br /><br />**All output changes or additions must be made or added here.** |
 | Procedures/ProcessProcedure        | This procedure contains all **static** methods that are used throughout robot-runner to **(de)spawn** any **subprocess** or do any kind of **process manipulation**.<br /><br />**All logic involving any kind of system process(es) must be added here.** |
 
-<a name="troubleshooting"/>
+<a name="troubleshooting"/></a>
 
 # Troubleshooting
 
