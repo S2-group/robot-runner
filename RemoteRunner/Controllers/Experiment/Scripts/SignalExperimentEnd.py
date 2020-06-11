@@ -3,7 +3,7 @@ import sys
 import time
 import psutil
 import subprocess
-from std_msgs.msg import Bool
+from std_msgs.msg import Empty
 
 ###     =========================================================
 ###     |                                                       |
@@ -27,13 +27,6 @@ from std_msgs.msg import Bool
 ###     |         respawn (spawn and kill) cannot be gauranteed |
 ###     |                                                       |
 ###     =========================================================
-def process_kill_by_name(process_name: str):
-    for proc in psutil.process_iter():
-        # check whether the process name matches
-        if proc.name().lower() == process_name.lower():
-            proc.kill()
-
-
 def console_log_bold(txt):
     bold_text = f"\033[1m{txt}\033[0m"
     print(f"[ROBOT_RUNNER]:  {bold_text}")
@@ -63,10 +56,6 @@ if ros_version == 1:
     import rospy
     from rospy import ROSInterruptException
 
-if ros_version == 2:
-    import rclpy
-
-
 class SignalEndROS1:
     def __init__(self):
         subprocess.Popen('roscore', shell=True)
@@ -75,39 +64,27 @@ class SignalEndROS1:
         rospy.init_node('signal_experiment_end')
 
         console_log_bold(msg_ros_node_init)
-        pub = rospy.Publisher(ros_topic_sub_url, Bool, queue_size=10)
+        pub = rospy.Publisher(ros_topic_sub_url, Empty, queue_size=10)
         console_log_bold(msg_topic_publish)
 
         rospy.on_shutdown(self.shutdown)
 
         while True:
             if pub.get_num_connections() > 0:
-                pub.publish(Bool(True))
+                pub.publish({})
                 break
 
         # sleep just makes sure TurtleBot receives the stop command prior to shutting down the script
         rospy.sleep(1)
-        process_kill_by_name('rosmaster')
-        process_kill_by_name('roscore')
-        process_kill_by_name('rosout')
         sys.exit(0)
 
     def shutdown(self):
         console_log_bold(msg_run_completed)
 
-# TODO: Signal end of experiment for ROS2. Currently not able to be developed because Raspberry Pi crashed due to overheating
-# and the inability to throttle the CPU as a result of a known bug in the Linux Kernel for ARM processors.
-# Speficically: The Ubuntu 18.04 ARM 64-bit Server image.
-class SignalEndROS2:
-    pass
-
-
 if __name__ == "__main__":
     try:
         if ros_version == 1:
             SignalEndROS1()
-        elif ros_version == 2:
-            SignalEndROS2()
         else:
             console_log_bold(msg_unsup_ros_ver)
     except KeyboardInterrupt:

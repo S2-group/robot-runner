@@ -3,6 +3,7 @@ import sys
 import psutil
 import signal
 import subprocess
+from typing import List
 from subprocess import Popen
 from Procedures.OutputProcedure import OutputProcedure as output
 
@@ -22,6 +23,11 @@ class ProcessProcedure:
     block_out = open(os.devnull, 'w')  # Block output from terminal if verbose is false
     verbose = False
 
+    # @staticmethod
+    # def reset_ros2():
+    #     ProcessProcedure.process_kill_by_name('ros2')
+    #     ProcessProcedure.process_kill_by_name('_ros2_daemon')
+
     @staticmethod
     def process_is_running(process_name: str):
         for proc in psutil.process_iter():
@@ -29,6 +35,18 @@ class ProcessProcedure:
                 # Check if process name contains the given name string.
                 if process_name.lower() in proc.name().lower():
                     return True
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        return False
+
+    @staticmethod
+    def processes_are_running(process_names: List[str]):
+        for proc in psutil.process_iter():
+            try:
+                # Check if process name contains the given name string.
+                for process_name in process_names:
+                    if process_name.lower() in proc.name().lower():
+                        return True
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         return False

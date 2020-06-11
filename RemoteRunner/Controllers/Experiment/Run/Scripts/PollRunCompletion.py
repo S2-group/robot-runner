@@ -1,6 +1,6 @@
 import os
 import sys
-from std_msgs.msg import Bool
+from std_msgs.msg import Empty
 
 
 ###     =========================================================
@@ -56,15 +56,13 @@ if ros_version == 1:
 
 if ros_version == 2:
     import rclpy
-    from rosgraph_msgs.msg import Clock
-
 
 class PollROS1:
     def __init__(self):
         rospy.init_node('poll_run_complete')
 
         console_log_bold(msg_ros_node_init)
-        rospy.Subscriber(ros_topic_sub_url, Bool, self.completed)
+        rospy.Subscriber(ros_topic_sub_url, Empty, self.completed)
         console_log_bold(msg_topic_publish)
 
         rospy.on_shutdown(self.shutdown)
@@ -76,7 +74,7 @@ class PollROS1:
             except ROSInterruptException:
                 pass
 
-    def completed(self, data: Bool = True):
+    def completed(self, data: Empty):
         console_log_bold(msg_tpc_published)
         rospy.signal_shutdown('run_completed')
 
@@ -90,12 +88,12 @@ class PollROS2:
         node = rclpy.create_node("poll_run_complete")
 
         console_log_bold(msg_ros_node_init)
-        node.create_subscription(Bool, ros_topic_sub_url, self.completed, 10)
+        node.create_subscription(Empty, ros_topic_sub_url, self.completed, 10)
         console_log_bold(msg_topic_publish)
 
         rclpy.spin(node)
 
-    def completed(self, data: Bool = True):
+    def completed(self, data: Empty):
         console_log_bold(msg_tpc_published)
         console_log_bold(msg_run_completed)
         sys.exit(0)

@@ -53,11 +53,11 @@ class IRunController(ABC):
     run_poll_proc: Popen = None
     block_out = open(os.devnull, 'w')  # block output from showing in terminal
 
-    def __init__(self, config: ConfigModel, current_run: int):
+    def __init__(self, config: ConfigModel, current_run: int, ros: IROSController):
         self.run_dir = Path(str(config.exp_dir.absolute()) + f"/run{current_run}")
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self.current_run = current_run
-        self.ros = ROS1Controller() if config.ros_version == 1 else ROS2Controller()
+        self.ros = ros
         self.config = config
         print(f"\n-----------------NEW RUN [{current_run} / {self.config.replications}]-----------------\n")
 
@@ -67,7 +67,7 @@ class IRunController(ABC):
 
     def wait_for_necessary_topics_and_nodes(self):
         while not self.ros.are_nodes_available(self.config.nodes_must_be_available) and \
-                self.ros.are_topics_available(self.config.topics_must_be_available):
+                not self.ros.are_topics_available(self.config.topics_must_be_available):
             output.console_log_animated("Waiting for necessary nodes and topics to be available...")
 
     def run_start(self):

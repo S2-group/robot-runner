@@ -21,6 +21,10 @@ from Procedures.OutputProcedure import OutputProcedure as output
 ###     |                                                       |
 ###     =========================================================
 class ROS2Controller(IROSController):
+    processes_sim = ["gzserver", "gzclient"]
+    processes_native = ["ros2", "_ros2_daemon"]
+    processes_all = processes_sim + processes_native
+
     def roscore_start(self):
         pass  # ROS2 does not have / need roscore.
 
@@ -35,8 +39,9 @@ class ROS2Controller(IROSController):
     def rosbag_start_recording_topics(self, topics, file_path, bag_name):
         file_path += "-ros2"
         output.console_log(f"Rosbag2 starts recording...")
+        output.console_log_bold(f"Rosbag2 recording to: {file_path}")
         output.console_log_bold("Recording topics: ")
-        # Build 'rosbag record -O filename [/topic1 /topic2 ...] __name:=bag_name' command
+        # Build 'ros2 bag record --output [file_path] [topic1 topic2 ...]
         command = f" ros2 bag record --output {file_path}"
         for topic in topics:
             command += f" {topic}"
@@ -49,37 +54,32 @@ class ROS2Controller(IROSController):
         output.console_log("Shutting down sim run...")
         ProcessProcedure.subprocess_call("ros2 service call /reset_simulation std_srvs/srv/Empty {}", "ros2_reset_call")
 
-        ProcessProcedure.process_kill_by_name("gzserver")
-        ProcessProcedure.process_kill_by_name("gzclient")
-        ProcessProcedure.process_kill_by_name("_ros2_daemon")
-        ProcessProcedure.process_kill_by_name("ros2")
+        time.sleep(1) # Grace period for simulation to reset
+
+        for process in self.processes_all:
+            ProcessProcedure.process_kill_by_name(process)
+
         ProcessProcedure.process_kill_by_cmdline("/opt/ros/")
 
-        while ProcessProcedure.process_is_running("gzserver") or \
-                ProcessProcedure.process_is_running("gzclient") or \
-                ProcessProcedure.process_is_running("ros2") or \
-                ProcessProcedure.process_is_running("_ros2_daemon"):
+        while ProcessProcedure.processes_are_running(self.processes_all):
             output.console_log_animated("Waiting for graceful exit...")
+
+        time.sleep(1) # Grace period
 
         output.console_log("Sim run successfully shutdown!")
 
-    def native_shutdown(self):
+    def native_run_end(self):
         output.console_log("Shutting down native run...")
-        # TODO: Implement this, impossible as of now because of know Linux Kernel bug
-        #       on ARM devices. Raspberry Pi overheats and crashes due to inability to throttle CPU.
- 
-        # Get all nodes, for each node ros2 lifecycle nodename shutdown
+
+        # TODO: Communicate run_end to native
+
+        #ProcessProcedure.processes_kill_by_names(self.processes_native)
+        #ProcessProcedure.process_kill_by_cmdline("/opt/ros/")
+
+        # while ProcessProcedure.processes_are_running(self.processes_native):
+        #     output.console_log_animated("Waiting for graceful exit...")
+
+        time.sleep(1)
+
+        output.console_log("Native run successfully shutdown!")
         pass
-        # ======= ROS 1 =======
-        # output.console_log("Shutting down native run...")
-        # ProcessProcedure.subprocess_call('rosnode kill -a', "rosnode_kill")
-        # ProcessProcedure.process_kill_by_name('rosmaster')
-        # ProcessProcedure.process_kill_by_name('roscore')
-        # ProcessProcedure.process_kill_by_name('rosout')
-        #
-        # while ProcessProcedure.process_is_running('rosmaster') and \
-        #       ProcessProcedure.process_is_running('roscore') and \
-        #       ProcessProcedure.process_is_running('rosout'):
-        #     output.console_log_animated("Waiting for roscore to gracefully exit...")
-        #
-        # output.console_log("Native run successfully shutdown!")

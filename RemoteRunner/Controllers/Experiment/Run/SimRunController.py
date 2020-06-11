@@ -60,9 +60,9 @@ class SimRunContoller(IRunController):
             f"rosbag_run{self.current_run}"  # Bagname to kill after run
         )
 
-        if self.config.launch_file_path != "":
-            # If the user set a script to be run while running an experiment run, run it.
-            self.run_runscript_if_present()
+        #if self.config.launch_file_path != "":
+        # If the user set a script to be run while running an experiment run, run it.
+        self.run_runscript_if_present()
 
         # Set run stop, timed or programmatic
         self.set_run_stop()

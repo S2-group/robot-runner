@@ -42,6 +42,7 @@ class ROS1Controller(IROSController):
     def rosbag_start_recording_topics(self, topics, file_path, bag_name):
         file_path += "-ros1"
         output.console_log(f"Rosbag starts recording...")
+        output.console_log_bold(f"Rosbag recording to: {file_path}")
         output.console_log_bold("Recording topics: ")
         # Build 'rosbag record -O filename [/topic1 /topic2 ...] __name:=bag_name' command
         command = f"rosbag record -O {file_path}"
@@ -62,6 +63,8 @@ class ROS1Controller(IROSController):
         subprocess.call("rosservice call /gazebo/reset_simulation \"{}\"", shell=True)
         self.roslaunch_proc.send_signal(signal.SIGINT)
 
+        time.sleep(1) # Grace period for sim reset and interrupt signal
+
         try:
             with open("/tmp/roslaunch.pid", 'r') as myfile:
                 pid = int(myfile.read())
@@ -69,13 +72,18 @@ class ROS1Controller(IROSController):
         except FileNotFoundError:
             output.console_log("roslaunch pid not found, continuing normally...")
 
+        time.sleep(1) # Grace period, before launching check if process died.
+
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated("Waiting for graceful exit...")
 
         ProcessProcedure.subprocess_call('rosnode kill -a', "rosnode_kill")
+
+        time.sleep(1) # Grace period, let all rosnodes be killed before claiming success.
+
         output.console_log("Sim run successfully shutdown!")
 
-    def native_shutdown(self):
+    def native_run_end(self):
         output.console_log("Shutting down native run...")
         ProcessProcedure.subprocess_call('rosnode kill -a', "rosnode_kill")
         ProcessProcedure.process_kill_by_name('rosmaster')
