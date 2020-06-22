@@ -1,4 +1,5 @@
 {
   "launch_command": "roslaunch turtlebot3_bringup turtlebot3_robot.launch",
-  "launch_file_path": ""
+  "launch_file_path": "",
+  "required_node": "turtlebot3_node"
 }

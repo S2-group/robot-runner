@@ -45,9 +45,9 @@ from Scripts.PollExperimentEnd import poll_exp_end_ROS2
 # ======================
 class RobotClient:
     verbose: bool = False
-    launch_command: str
-    launch_file_path: str
-    roscore_node_name: str
+    launch_command: str     # Entire command to start ROS launch script
+    launch_file_path: str   # ROS launch script (file) to be launched
+    required_node: str      # Node marked as required, kill after run
 
     roslaunch_proc: Popen
     exp_end_proc: Popen
@@ -101,12 +101,11 @@ class RobotClient:
         output.console_log_bold(f"Launching with: {cmd_roslaunch}")
 
         if self.verbose:
-            self.roslaunch_proc = subprocess.Popen(cmd_roslaunch.split(' '), preexec_fn=os.setsid)
+            self.roslaunch_proc = subprocess.Popen(cmd_roslaunch.split(' '))
         else:
             self.roslaunch_proc = subprocess.Popen(cmd_roslaunch.split(' '), 
                                                     stdout=open(os.devnull, 'w'), 
-                                                    stderr=subprocess.STDOUT,
-                                                    preexec_fn=os.setsid)
+                                                    stderr=subprocess.STDOUT)
         
         run_completed_proc = subprocess.Popen(f"{sys.executable} {self.dir_path}/Scripts/PollRunCompletion.py", shell=True)
 
@@ -114,11 +113,11 @@ class RobotClient:
         while run_completed_proc.poll() is None:
             output.console_log_animated("Waiting for run to complete...")
 
-        os.killpg(os.getpgid(get_pid("ros2")), signal.SIGINT)
-        # self.roslaunch_proc.send_signal(signal.SIGINT)
-        # self.roslaunch_proc.wait()
-        #ProcessProcedure.process_kill_by_name("ros2")
+        # Run completed, shutdown run.
+        required_pid = subprocess.check_output(f"pgrep {self.required_node}")
+        subprocess.call(f"kill -2 {required_pid}")
 
+        # TODO: Maybe change to polling required_pid
         while self.roslaunch_proc.poll() is None:
             output.console_log_animated(f"Waiting for '{cmd_roslaunch}' to exit...")
 
