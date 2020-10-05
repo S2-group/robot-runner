@@ -5,8 +5,7 @@ import signal
 import subprocess
 from typing import List
 from subprocess import Popen
-from Procedures.OutputProcedure import OutputProcedure as output
-
+from Common.Procedures.OutputProcedure import OutputProcedure as output
 
 ###     =========================================================
 ###     |                                                       |
@@ -70,7 +69,7 @@ class ProcessProcedure:
     def subprocess_spawn(command: str, name: str):
         try:
             if ProcessProcedure.verbose:
-                return subprocess.Popen(command, shell=True)
+                return subprocess.Popen(command)
 
             return subprocess.Popen(command, shell=True, stdout=ProcessProcedure.block_out, stderr=ProcessProcedure.block_out)
         except:
@@ -81,7 +80,7 @@ class ProcessProcedure:
     def subprocess_call(command: str, name: str):
         try:
             if ProcessProcedure.verbose:
-                subprocess.call(command, shell=True)
+                subprocess.call(command)
                 return
 
             subprocess.call(command, shell=True, stdout=ProcessProcedure.block_out, stderr=ProcessProcedure.block_out)
@@ -90,11 +89,11 @@ class ProcessProcedure:
             sys.exit(1)
 
     @staticmethod
-    def subprocess_check_output(command:str, name: str):
+    def subprocess_check_output(command_in_array: List[str]):
         try:
-            return subprocess.check_output(command, shell=True)
+            return subprocess.check_output(command_in_array)
         except:
-            output.console_log_bold(f"Something went wrong checking output for command: {command} for name: {name}")
+            output.console_log_bold(f"Something went wrong checking output for command:")
             sys.exit(1)
 
     @staticmethod

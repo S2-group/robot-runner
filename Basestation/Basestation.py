@@ -1,11 +1,10 @@
-from pathlib import Path
-from Models.ConfigModel import ConfigModel
-from Controllers.Experiment.ExperimentController import ExperimentController
-
+# from Common.Procedures.OutputProcedure import OutputProcedure as output
+# from Basestation.Experiment.ExperimentController import ExperimentController
+from Common.Config.BasestationConfig import BasestationConfig
 
 ###     =========================================================
 ###     |                                                       |
-###     |                RobotRunnerController                  |
+###     |                   BaseStation                         |
 ###     |       - Init ExperimentController with                |
 ###     |         correct configmodel loaded from path          |
 ###     |                                                       |
@@ -16,11 +15,13 @@ from Controllers.Experiment.ExperimentController import ExperimentController
 ###     |         here, like validating config variables        |
 ###     |                                                       |
 ###     =========================================================
-class RobotRunnerController:
-    exp_controller: ExperimentController
+class Basestation:
+    # exp_controller: ExperimentController
 
-    def __init__(self, config_path: Path):
-        self.exp_controller = ExperimentController(ConfigModel(config_path))
+    def __init__(self, basestation_config: BasestationConfig):
+        # self.exp_controller = ExperimentController(basestation_config)
+        pass
 
     def do_experiment(self):
-        self.exp_controller.do_experiment()
+        # self.exp_controller.do_experiment()
+        pass

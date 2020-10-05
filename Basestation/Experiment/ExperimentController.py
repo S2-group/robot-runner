@@ -2,7 +2,8 @@ import os
 import sys
 import time
 import subprocess
-from Models.ConfigModel import ConfigModel
+from Common.Config.BasestationConfig import BasestationConfig
+
 from Procedures.ProcessProcedure import ProcessProcedure
 from Controllers.ROS.IROSController import IROSController
 from Controllers.ROS.ROS1Controller import ROS1Controller
@@ -25,10 +26,10 @@ from Controllers.Experiment.Run.NativeRunController import NativeRunController
 ###     |                                                       |
 ###     =========================================================
 class ExperimentController:
-    config: ConfigModel = None
+    config: BasestationConfig = None
     ros: IROSController
 
-    def __init__(self, config: ConfigModel):
+    def __init__(self, config: BasestationConfig):
         self.config = config
         self.ros = ROS1Controller() if self.config.ros_version == 1 else ROS2Controller()
 

@@ -1,6 +1,14 @@
 import time
+import inspect
 from tabulate import tabulate
 
+def props(obj):
+    pr = {}
+    for name in dir(obj):
+        value = getattr(obj, name)
+        if not name.startswith('__') and not inspect.ismethod(value):
+            pr[name] = value
+    return pr
 
 ###     =========================================================
 ###     |                                                       |
@@ -45,7 +53,14 @@ class OutputProcedure:
         OutputProcedure.prev_animation_txt = txt
 
     @staticmethod
-    def console_log_tabulate(d: dict):  # Used to output dictionary as readable, pretty table
+    def console_log_tabulate_dict(d: dict):     # Used to output dictionary as readable, pretty table
+        headers = ['Key', 'Value']
+        data = [(k, v) for k, v in d.items()]
+        print(f"\n\n{tabulate(data, headers=headers)}\n\n")
+
+    @staticmethod
+    def console_log_tabulate_class(class_to_dict):
+        d = props(class_to_dict)
         headers = ['Key', 'Value']
         data = [(k, v) for k, v in d.items()]
         print(f"\n\n{tabulate(data, headers=headers)}\n\n")
