@@ -1,5 +1,5 @@
-# from Common.Procedures.OutputProcedure import OutputProcedure as output
-# from Basestation.Experiment.ExperimentController import ExperimentController
+from Common.Procedures.OutputProcedure import OutputProcedure as output
+from Basestation.Experiment.ExperimentController import ExperimentController
 from Common.Config.BasestationConfig import BasestationConfig
 
 ###     =========================================================
@@ -15,13 +15,11 @@ from Common.Config.BasestationConfig import BasestationConfig
 ###     |         here, like validating config variables        |
 ###     |                                                       |
 ###     =========================================================
-class Basestation:
-    # exp_controller: ExperimentController
+class BasestationController:
+    exp_controller: ExperimentController
 
     def __init__(self, basestation_config: BasestationConfig):
-        # self.exp_controller = ExperimentController(basestation_config)
-        pass
+        self.exp_controller = ExperimentController(basestation_config)
 
     def do_experiment(self):
-        # self.exp_controller.do_experiment()
-        pass
+        self.exp_controller.do_experiment()

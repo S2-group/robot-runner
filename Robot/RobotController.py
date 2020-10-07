@@ -1,6 +1,6 @@
 from Common.Config.RobotConfig import RobotConfig
 
-class Robot:
+class RobotController:
 
     def __init__(self, robot_config: RobotConfig):
         pass

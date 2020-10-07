@@ -2,8 +2,9 @@ import os
 import sys
 import time
 import subprocess
-from Controllers.Experiment.Run.IRunController import IRunController
-from Procedures.OutputProcedure import OutputProcedure as output
+
+from Basestation.Experiment.Run.IRunController import IRunController
+from Common.Procedures.OutputProcedure import OutputProcedure as output
 
 
 ###     =========================================================

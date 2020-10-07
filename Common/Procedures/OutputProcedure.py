@@ -1,14 +1,7 @@
 import time
 import inspect
 from tabulate import tabulate
-
-def props(obj):
-    pr = {}
-    for name in dir(obj):
-        value = getattr(obj, name)
-        if not name.startswith('__') and not inspect.ismethod(value):
-            pr[name] = value
-    return pr
+from Common.Misc.DictConversion import class_to_dict
 
 ###     =========================================================
 ###     |                                                       |
@@ -60,7 +53,7 @@ class OutputProcedure:
 
     @staticmethod
     def console_log_tabulate_class(class_to_dict):
-        d = props(class_to_dict)
+        d = class_to_dict(class_to_dict)
         headers = ['Key', 'Value']
         data = [(k, v) for k, v in d.items()]
         print(f"\n\n{tabulate(data, headers=headers)}\n\n")

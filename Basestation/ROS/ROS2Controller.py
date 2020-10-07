@@ -1,8 +1,8 @@
 import time
 from pathlib import Path
-from Procedures.ProcessProcedure import ProcessProcedure
-from Controllers.ROS.IROSController import IROSController
-from Procedures.OutputProcedure import OutputProcedure as output
+from Common.Procedures.ProcessProcedure import ProcessProcedure
+from Basestation.ROS.IROSController import IROSController
+from Common.Procedures.OutputProcedure import OutputProcedure as output
 
 
 ###     =========================================================

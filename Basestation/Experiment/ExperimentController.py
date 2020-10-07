@@ -4,13 +4,13 @@ import time
 import subprocess
 from Common.Config.BasestationConfig import BasestationConfig
 
-from Procedures.ProcessProcedure import ProcessProcedure
-from Controllers.ROS.IROSController import IROSController
-from Controllers.ROS.ROS1Controller import ROS1Controller
-from Controllers.ROS.ROS2Controller import ROS2Controller
-from Procedures.OutputProcedure import OutputProcedure as output
-from Controllers.Experiment.Run.SimRunController import SimRunContoller
-from Controllers.Experiment.Run.NativeRunController import NativeRunController
+from Common.Procedures.ProcessProcedure import ProcessProcedure
+from Basestation.ROS.IROSController import IROSController
+from Basestation.ROS.ROS1Controller import ROS1Controller
+from Basestation.ROS.ROS2Controller import ROS2Controller
+from Common.Procedures.OutputProcedure import OutputProcedure as output
+from Basestation.Experiment.Run.SimRunController import SimRunContoller
+from Basestation.Experiment.Run.NativeRunController import NativeRunController
 
 ###     =========================================================
 ###     |                                                       |
@@ -31,13 +31,13 @@ class ExperimentController:
 
     def __init__(self, config: BasestationConfig):
         self.config = config
-        self.ros = ROS1Controller() if self.config.ros_version == 1 else ROS2Controller()
+        self.ros = ROS1Controller() if self.config.required_ros_version == 1 else ROS2Controller()
 
     def do_experiment(self):
-        self.config.exp_dir.mkdir(parents=True, exist_ok=True)
+        self.config.experiment_path.mkdir(parents=True, exist_ok=True)
 
         current_run: int = 1
-        while current_run <= self.config.replications:
+        while current_run <= self.config.number_of_runs:
             run_controller = None
             if self.config.use_simulator:
                 run_controller = SimRunContoller(self.config, current_run, self.ros)
@@ -48,7 +48,7 @@ class ExperimentController:
 
             current_run += 1
 
-            time_btwn_runs = self.config.time_between_run
+            time_btwn_runs = self.config.time_between_runs_in_ms
             if time_btwn_runs > 0 and time_btwn_runs is not None:
                 output.console_log_bold(f"Run fully ended, waiting for: {time_btwn_runs}ms == {time_btwn_runs / 1000}s")
                 time.sleep(time_btwn_runs / 1000)
@@ -59,7 +59,7 @@ class ExperimentController:
             self.signal_experiment_end()
 
     def signal_experiment_continue(self):
-        if self.config.ros_version == 2:
+        if self.config.required_ros_version == 2:
             self.signal_experiment_continue_ros2()
 
     def signal_experiment_end(self):

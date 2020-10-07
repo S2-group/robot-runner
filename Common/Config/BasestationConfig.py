@@ -1,35 +1,38 @@
 from enum import Enum
 from typing import List
+from pathlib import Path
 
 class OperationType(Enum):
     AUTO = 1
     SEMI = 2
-    SINGLE = 3
 
 class BasestationConfig:
+    # =================================================USER SPECIFIED CONFIG=================================================
     # Name for this experiment
-    name:                       str             = ""
+    name:                       str             = "new_robot_runner_experiment"
     # Required ROS version for this experiment to be ran with 
-    # (e.g. foxy or eloquent)
-    required_ros_version:       int             = "foxy"
+    # NOTE: (e.g. ROS2 foxy or eloquent)
+    # NOTE: version: 2
+    # NOTE: distro: "foxy"
+    required_ros_version:       int             = 2
+    required_ros_distro:        str             = "foxy"
     # Use simulator or not (gazebo)
     use_simulator:              bool            = True
-    requored_gazebo_version:    int             = 11
     # Experiment operation types
     operation_type:             OperationType   = OperationType.AUTO
     # Run settings
-
     number_of_runs:             int             = 2
     run_duration_in_ms:         int             = 5000
     time_between_runs_in_ms:    int             = 1000
     # Start run criteria (ROS)
-    nodes_must_be_available:    List[str]       = ["/test"]
-    topics_must_be_available:   List[str]       = ["/test"]
-    services_must_be_available: List[str]       = []
+    nodes_must_be_available:    List[str]       = ["/example_node1", "/example_node2"]
+    topics_must_be_available:   List[str]       = ["/example_topic", "/example_topic2"]
+    services_must_be_available: List[str]       = ["/example_service", "/example_service2"]
     # ROS Recording settings
-    topics_to_record:           List[str]       = []
+    topics_to_record:           List[str]       = ["/record_topic", "/record_topic2"]
     # Path to store results at
-    results_output_path:        str             = "~/Documents"
+    # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
+    results_output_path:        Path             = Path("~/Documents/experiments")
 
     # Dynamic configurations can be one-time satisfied here before the program takes the config as-is
     def __init__(self):
@@ -63,14 +66,6 @@ class BasestationConfig:
         """Executes after the last run of the experiment completes"""
         pass
 
-    def __iter__(self):
-        """NOT RECOMMENDED TO CHANGE: this aids the tabular view of the config on start"""
-        # first start by grabbing the Class items
-        iters = dict((x,y) for x,y in self.__dict__.items() if x[:2] != '__')
-
-        # then update the class items with the instance items
-        iters.update(self.__dict__)
-
-        # now 'yield' through the items
-        for x,y in iters.items():
-            yield x,y
+    # ===============================================DO NOT ALTER BELOW THIS LINE=================================================
+    # NOTE: Do not alter these values
+    experiment_path:            Path             = None

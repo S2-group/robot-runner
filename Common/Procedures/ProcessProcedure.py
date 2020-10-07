@@ -89,9 +89,29 @@ class ProcessProcedure:
             sys.exit(1)
 
     @staticmethod
+    def subprocess_check_call(command_in_array: List[str]):
+        try:
+            return subprocess.check_call(command_in_array)
+        except:
+            output.console_log_bold(f"Something went wrong checking output for command:")
+            sys.exit(1)
+
+    @staticmethod
     def subprocess_check_output(command_in_array: List[str]):
         try:
             return subprocess.check_output(command_in_array)
+        except:
+            output.console_log_bold(f"Something went wrong checking output for command:")
+            sys.exit(1)
+
+    @staticmethod
+    def subprocess_check_output_friendly_string(command_in_array: List[str]):
+        try:
+            return str(ProcessProcedure.subprocess_check_output(command_in_array) \
+                        .strip()) \
+                        .replace('\n', '') \
+                        .replace('b', '') \
+                        .replace("'", "")
         except:
             output.console_log_bold(f"Something went wrong checking output for command:")
             sys.exit(1)

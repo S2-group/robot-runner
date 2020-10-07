@@ -3,8 +3,8 @@ import sys
 import subprocess
 from pathlib import Path
 from abc import ABC, abstractmethod
-from Procedures.ProcessProcedure import ProcessProcedure
-from Procedures.OutputProcedure import OutputProcedure as output
+from Common.Procedures.ProcessProcedure import ProcessProcedure
+from Common.Procedures.OutputProcedure import OutputProcedure as output
 
 try:
     ros_version = int(os.environ['ROS_VERSION'])
