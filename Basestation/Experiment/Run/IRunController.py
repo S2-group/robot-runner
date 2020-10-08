@@ -11,7 +11,7 @@ from Basestation.ROS.IROSController import IROSController
 from Basestation.ROS.ROS1Controller import ROS1Controller
 from Basestation.ROS.ROS2Controller import ROS2Controller
 from Common.Procedures.OutputProcedure import OutputProcedure as output
-from Common.Config.BasestationConfig import BasestationConfig
+from Common.Config.BasestationConfig import (BasestationConfig, RobotRunnerContext)
 
 
 ###     =========================================================
@@ -44,6 +44,7 @@ class IRunController(ABC):
     current_run: int = None
     ros: IROSController = None
     config: BasestationConfig = None
+    run_context: RobotRunnerContext = None
 
     # Needed at runtime
     running: bool = False
@@ -60,16 +61,12 @@ class IRunController(ABC):
         self.current_run = current_run
         self.ros = ros
         self.config = config
+        self.run_context = RobotRunnerContext(self.current_run, self.run_dir)
         print(f"\n-----------------NEW RUN [{current_run} / {self.config.number_of_runs}]-----------------\n")
 
     @abstractmethod
     def do_run(self):
         pass
-
-    def wait_for_necessary_topics_and_nodes(self):
-        while not self.ros.are_nodes_available(self.config.nodes_must_be_available) and \
-                not self.ros.are_topics_available(self.config.topics_must_be_available):
-            output.console_log_animated("Waiting for necessary nodes and topics to be available...")
 
     def run_start(self):
         self.running = True

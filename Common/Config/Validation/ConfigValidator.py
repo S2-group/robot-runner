@@ -32,8 +32,8 @@ class ConfigValidator:
         ConfigValidator.exception_dict = class_to_dict(config)
 
         # Mandatory fields check
-        installed_ros_version = int(os.environ['ROS_VERSION'])
-        installed_ros_distro = ProcessProcedure.subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])
+        installed_ros_version   = int(os.environ['ROS_VERSION'])
+        installed_ros_distro    = ProcessProcedure.subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])
 
         # required_ros_version
         ConfigValidator.__check_expression('required_ros_version', installed_ros_version, config.required_ros_version,
@@ -72,9 +72,11 @@ class ConfigValidator:
                     (lambda a, b: '/' not in a)
                 )
 
-        check_str_collections("nodes_must_be_available", config.nodes_must_be_available)
-        check_str_collections("topics_must_be_available", config.topics_must_be_available)
-        check_str_collections("services_must_be_available", config.services_must_be_available)
+        # NO LONGER NECESSARY BUT KEPT FOR POSSIBLE FUTURE RE-ACTIVATION
+        # check_str_collections("nodes_must_be_available", config.nodes_must_be_available)
+        # check_str_collections("topics_must_be_available", config.topics_must_be_available)
+        # check_str_collections("services_must_be_available", config.services_must_be_available)
+
         check_str_collections("topics_to_record", config.topics_to_record)
 
         # Results output path

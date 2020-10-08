@@ -2,6 +2,7 @@ import time
 import inspect
 from tabulate import tabulate
 from Common.Misc.DictConversion import class_to_dict
+from Common.Misc.BashHeaders import BashHeaders
 
 ###     =========================================================
 ###     |                                                       |
@@ -25,6 +26,21 @@ class OutputProcedure:
             print(" " * 100)
 
         print(f"{OutputProcedure.robot_runner} {txt}")
+
+    @staticmethod
+    def console_log_OK(txt: str, empty_line=False):
+        txt = BashHeaders.OKGREEN + txt + BashHeaders.ENDC
+        OutputProcedure.console_log(txt, empty_line)
+
+    @staticmethod
+    def console_log_WARNING(txt: str, empty_line=False):
+        txt = BashHeaders.WARNING + txt + BashHeaders.ENDC
+        OutputProcedure.console_log(txt, empty_line)
+
+    @staticmethod
+    def console_log_FAIL(txt: str, empty_line=False):
+        txt = BashHeaders.FAIL + txt + BashHeaders.ENDC
+        OutputProcedure.console_log(txt, empty_line)
 
     @staticmethod
     def console_log_bold(txt: str, empty_line=False):

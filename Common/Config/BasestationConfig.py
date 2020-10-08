@@ -2,6 +2,14 @@ from enum import Enum
 from typing import List
 from pathlib import Path
 
+class RobotRunnerContext:
+    run_nr:  int
+    run_dir: Path
+
+    def __init__(self, run_nr: int, run_dir: Path):
+        self.run_nr = run_nr
+        self.run_dir = run_dir
+
 class OperationType(Enum):
     AUTO = 1
     SEMI = 2
@@ -24,10 +32,6 @@ class BasestationConfig:
     number_of_runs:             int             = 2
     run_duration_in_ms:         int             = 5000
     time_between_runs_in_ms:    int             = 1000
-    # Start run criteria (ROS)
-    nodes_must_be_available:    List[str]       = ["/example_node1", "/example_node2"]
-    topics_must_be_available:   List[str]       = ["/example_topic", "/example_topic2"]
-    services_must_be_available: List[str]       = ["/example_service", "/example_service2"]
     # ROS Recording settings
     topics_to_record:           List[str]       = ["/record_topic", "/record_topic2"]
     # Path to store results at
@@ -35,35 +39,32 @@ class BasestationConfig:
     results_output_path:        Path             = Path("~/Documents/experiments")
 
     # Dynamic configurations can be one-time satisfied here before the program takes the config as-is
+    # NOTE: Setting some variable based on some criteria
     def __init__(self):
         """Executes immediately after program start, on config load"""
 
     def execute_script_before_experiment(self) -> None:
-        """Executes before the first run of the experiment"""
+        """Perform any activity required before starting the experiment here"""
         pass
 
-    def execute_script_before_run(self) -> None:
-        """Executes before every run of the experiment"""
+    def execute_script_start_run(self, context: RobotRunnerContext) -> None:
+        """Perform any activity required for starting the run here. 
+        Activities before and after starting the run should also be performed here."""
+        # TODO: Add event to signal run start before return. State that this should always be signalled.
         pass
 
-    def execute_script_after_launch(self) -> None:
-        """Executes after every run is started but before measurement starts"""
+    def execute_script_interaction_during_run(self, context: RobotRunnerContext) -> None:
+        """Perform any activity interacting with the robotic
+        system in question (simulated or real-life) here."""
         pass
 
-    def execute_script_interaction(self) -> None:
-        """Executes during the measurement window"""
-        pass
-
-    def execute_script_before_close(self) -> None:
-        """Executes before every run is ended"""
-        pass
-
-    def execute_script_after_run(self) -> None:
-        """Executes after a run completes"""
+    def execute_script_stop_run(self, context: RobotRunnerContext) -> None:
+        """Perform any activity required for stopping the run here.
+        Activities before and after stopping the run should also be performed here."""
         pass
     
-    def execute_script_after_experiment(self) -> None:
-        """Executes after the last run of the experiment completes"""
+    def execute_script_after_experiment(self, context: RobotRunnerContext) -> None:
+        """Perform any activity required after stopping the experiment here"""
         pass
 
     # ===============================================DO NOT ALTER BELOW THIS LINE=================================================
