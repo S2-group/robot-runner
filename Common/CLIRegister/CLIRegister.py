@@ -116,4 +116,7 @@ class CLIRegister:
         if len(args) == 2:
             command_class.execute()
         elif len(args) > 2:
-            command_class.execute(args)
+            if args[2] == 'help':
+                command_class.description_long()
+            else:
+                command_class.execute(args)

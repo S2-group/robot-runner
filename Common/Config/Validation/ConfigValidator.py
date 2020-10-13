@@ -13,23 +13,26 @@ from Common.Config.BasestationConfig import (BasestationConfig, OperationType)
 from Common.Procedures.ProcessProcedure import ProcessProcedure
 from Common.Procedures.OutputProcedure import OutputProcedure as output
 
-from Common.CustomErrors.ConfigErrors import ConfigInvalidError
+from Common.CustomErrors.ConfigErrors import (ConfigInvalidError, ConfigAttributeInvalidError)
 
 class ConfigValidator:
-    exception_dict: dict = {}
+    config_values_or_exception_dict: dict = {}
+    error_found:                     bool = False
 
     @staticmethod
     def __check_expression(name, value, expected, expression):
         if expression(value, expected):
-            ConfigValidator.exception_dict[name] = str(ConfigValidator.exception_dict[name]) + \
-                                                    f"\n\n{ConfigInvalidError(name, value, expected)}"
+            ConfigValidator \
+                .config_values_or_exception_dict[name] = str(ConfigValidator.config_values_or_exception_dict[name]) + \
+                                                    f"\n\n{ConfigAttributeInvalidError(name, value, expected)}"
+            ConfigValidator.error_found = True
 
     @staticmethod
     def validate_base_config(config: BasestationConfig):
         # Runtime set experiment_path
         config.experiment_path = Path(str(config.results_output_path) + f"/{config.name}")
         # Convert class to dictionary with utility method
-        ConfigValidator.exception_dict = class_to_dict(config)
+        ConfigValidator.config_values_or_exception_dict = class_to_dict(config)
 
         # Mandatory fields check
         installed_ros_version   = int(os.environ['ROS_VERSION'])
@@ -53,7 +56,7 @@ class ConfigValidator:
                             )
         ConfigValidator.__check_expression('number_of_runs', config.number_of_runs, 
                                 "number of runs must be > 0",
-                                (lambda a, b: not a > 0)
+                                (lambda a, b: not a > 0 if isinstance(a, int) else True)
                             )
         # run_duration
         ConfigValidator.__check_expression('run_duration_in_ms', config.run_duration_in_ms, int,
@@ -95,11 +98,14 @@ class ConfigValidator:
         # Display config in user-friendly manner, including potential errors found
         print(
             tabulate(
-                ConfigValidator.exception_dict.items(), 
+                ConfigValidator.config_values_or_exception_dict.items(), 
                 ['Key', 'Value'], 
                 tablefmt="rst"
             )
         )
+
+        if ConfigValidator.error_found:
+            raise ConfigInvalidError
 
     @staticmethod
     def validate_robot_config(config: RobotConfig):

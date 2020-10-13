@@ -29,11 +29,11 @@ class BasestationConfig:
     # Experiment operation types
     operation_type:             OperationType   = OperationType.AUTO
     # Run settings
-    number_of_runs:             int             = 2
+    number_of_runs:             int             = None
     run_duration_in_ms:         int             = 5000
     time_between_runs_in_ms:    int             = 1000
     # ROS Recording settings
-    topics_to_record:           List[str]       = ["/record_topic", "/record_topic2"]
+    topics_to_record:           List[str]       = ["record_topic", "/record_topic2"]
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
     results_output_path:        Path             = Path("~/Documents/experiments")
@@ -63,7 +63,7 @@ class BasestationConfig:
         Activities before and after stopping the run should also be performed here."""
         pass
     
-    def execute_script_after_experiment(self, context: RobotRunnerContext) -> None:
+    def execute_script_after_experiment(self) -> None:
         """Perform any activity required after stopping the experiment here"""
         pass
 

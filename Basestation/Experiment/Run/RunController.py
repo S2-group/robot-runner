@@ -11,22 +11,20 @@ from Common.Procedures.OutputProcedure import OutputProcedure as output
 
 ###     =========================================================
 ###     |                                                       |
-###     |                  NativeRunController                  |
-###     |       - Define how to perform a Sim run               |
+###     |                  RunController                        |
+###     |       - Define how to perform a run                   |
 ###     |       - Mostly use predefined, generic functions      |
 ###     |         as defined in the abstract parent             |
 ###     |                                                       |
 ###     |       * Any function which is implementation          |
-###     |         specific (Sim) should be declared here        |
-###     |         like wait_for_simulation()                    |
+###     |         specific should be declared here              |
 ###     |                                                       |
 ###     =========================================================
-class SimRunContoller(IRunController):
+class RunController(IRunController):
     def do_run(self):
-        output.console_log("Calling start_run config hook")
+        output.console_log_WARNING("Calling start_run config hook")
         self.config.execute_script_start_run(self.run_context)
 
-        output.console_log_bold("RUN STARTED!")
         output.console_log_WARNING("... Starting measurement ...")
         # Record topics
         self.ros.rosbag_start_recording_topics(
@@ -34,13 +32,13 @@ class SimRunContoller(IRunController):
             str(self.run_dir.absolute()) + '/topics',   # Path to record .bag to
             f"rosbag_run{self.current_run}"             # Bagname to kill after run
         )
-        output.console_log_OK("\t Measurement started successfully!")
+        output.console_log_OK(" + Measurement started successfully!")
 
         #if self.config.launch_file_path != "":
         # If the user set a script to be run while running an experiment run, run it.
         #self.run_runscript_if_present()
 
-        output.console_log("Calling interaction config hook")
+        output.console_log_WARNING("Calling interaction config hook")
         self.config.execute_script_interaction_during_run(self.run_context)
 
         # TODO: Run stop should be timed (duration > 0, or programmatic: ROS Service)
@@ -51,7 +49,7 @@ class SimRunContoller(IRunController):
         # Either event based, or timed based -> method returns when done
         self.run_wait_completed()
 
-        output.console_log("Calling stop_run config hook")
+        output.console_log_WARNING("Calling stop_run config hook")
         self.config.execute_script_stop_run(self.run_context)
 
         output.console_log_WARNING("... Stopping measurement ...")

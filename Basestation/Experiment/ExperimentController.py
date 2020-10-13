@@ -9,8 +9,9 @@ from Basestation.ROS.IROSController import IROSController
 from Basestation.ROS.ROS1Controller import ROS1Controller
 from Basestation.ROS.ROS2Controller import ROS2Controller
 from Common.Procedures.OutputProcedure import OutputProcedure as output
-from Basestation.Experiment.Run.SimRunController import SimRunContoller
-from Basestation.Experiment.Run.NativeRunController import NativeRunController
+from Basestation.Experiment.Run.RunController import RunController
+
+from Common.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExists
 
 ###     =========================================================
 ###     |                                                       |
@@ -35,21 +36,19 @@ class ExperimentController:
 
         # TODO: Create run_schedule table and save externally. Reference and restart from crash if occurred.
 
-        output.console_log_bold("Experiment setup completed...")
-        output.console_log("Calling before_experiment config hook")
+        output.console_log_OK("Experiment setup completed...")
+        output.console_log_WARNING("Calling before_experiment config hook")
         self.config.execute_script_before_experiment()
 
     def do_experiment(self):
-        self.config.experiment_path.mkdir(parents=True, exist_ok=True)
+        try:
+            self.config.experiment_path.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            raise ExperimentOutputPathAlreadyExists
 
         current_run: int = 1
-        for current_run in range(0, self.config.number_of_runs):
-            run_controller = None
-            run_controller = SimRunContoller(self.config, current_run, self.ros) \
-                            if self.config.use_simulator else \
-                            NativeRunController(self.config, current_run, self.ros)
-
-            run_controller.do_run()
+        for current_run in range(1, self.config.number_of_runs + 1):
+            RunController(self.config, current_run, self.ros).do_run()  # Perform run
 
             time_btwn_runs = self.config.time_between_runs_in_ms
             if time_btwn_runs > 0:
@@ -58,6 +57,6 @@ class ExperimentController:
 
             # TODO: ROS Services signalling start / stop / continue
         
-        output.console_log("Experiment completed...")
-        output.console_log("Calling after_experiment config hook")
+        output.console_log_OK("Experiment completed...")
+        output.console_log_WARNING("Calling after_experiment config hook")
         self.config.execute_script_after_experiment()

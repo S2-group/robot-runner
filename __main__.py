@@ -3,17 +3,13 @@ import traceback
 import importlib.machinery
 from Common.CLIRegister.CLIRegister import CLIRegister
 
-from Common.CustomErrors.CLIErrors import CommandNotRecognisedError
 from Common.CustomErrors.ConfigErrors import ConfigInvalidClassNameError
-
-from Common.Procedures.OutputProcedure import OutputProcedure as output
-
 from Common.Config.Validation.ConfigValidator import ConfigValidator
-from Common.Config.BasestationConfig import BasestationConfig
-from Common.Config.RobotConfig import RobotConfig
 
 from Basestation.BasestationController import BasestationController
 from Robot.RobotController import RobotController
+
+from Common.CustomErrors.BaseError import BaseError
 
 if __name__ == "__main__":
     try: 
@@ -40,5 +36,8 @@ if __name__ == "__main__":
                 raise ConfigInvalidClassNameError
         else:                           # Else, a utility command is entered
             CLIRegister.parse_command(sys.argv)
-    except Exception as e:
+    except BaseError as e:
+        print("")
+        print(e)
+    except:
         traceback.print_exc()
