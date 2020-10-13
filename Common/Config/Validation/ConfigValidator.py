@@ -1,5 +1,4 @@
 import os
-import inspect
 from typing import List
 from pathlib import Path
 from tabulate import tabulate
@@ -31,6 +30,9 @@ class ConfigValidator:
     def validate_base_config(config: BasestationConfig):
         # Runtime set experiment_path
         config.experiment_path = Path(str(config.results_output_path) + f"/{config.name}")
+        if '~' in str(config.experiment_path):
+            config.experiment_path = config.experiment_path.expanduser()
+        
         # Convert class to dictionary with utility method
         ConfigValidator.config_values_or_exception_dict = class_to_dict(config)
 

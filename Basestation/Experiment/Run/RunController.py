@@ -1,13 +1,9 @@
-import os
-import sys
 import time
-import subprocess
+import multiprocessing
+from multiprocessing import Event
 
-from Common.Misc.BashHeaders import BashHeaders
-from Common.Config.BasestationConfig import BasestationConfig
 from Basestation.Experiment.Run.IRunController import IRunController
 from Common.Procedures.OutputProcedure import OutputProcedure as output
-
 
 ###     =========================================================
 ###     |                                                       |
@@ -21,12 +17,20 @@ from Common.Procedures.OutputProcedure import OutputProcedure as output
 ###     |                                                       |
 ###     =========================================================
 class RunController(IRunController):
-    def do_run(self):
-        output.console_log_WARNING("Calling start_run config hook")
-        self.config.execute_script_start_run(self.run_context)
+    run_started_event = run_completed_event = run_stopped_event = Event()
 
+    def do_run(self):
+        # -- Start run
+        output.console_log_WARNING("Calling start_run config hook")
+        run_start = multiprocessing.Process(
+            target=self.config.execute_script_start_run, 
+            args=[self.run_context, self.run_started_event]
+        )
+        run_start.start()
+        self.run_started_event.wait()
+
+        # -- Start measurement
         output.console_log_WARNING("... Starting measurement ...")
-        # Record topics
         self.ros.rosbag_start_recording_topics(
             self.config.topics_to_record,               # Topics to record
             str(self.run_dir.absolute()) + '/topics',   # Path to record .bag to
@@ -34,24 +38,33 @@ class RunController(IRunController):
         )
         output.console_log_OK(" + Measurement started successfully!")
 
-        #if self.config.launch_file_path != "":
-        # If the user set a script to be run while running an experiment run, run it.
-        #self.run_runscript_if_present()
-
+        # -- Start interaction
         output.console_log_WARNING("Calling interaction config hook")
-        self.config.execute_script_interaction_during_run(self.run_context)
+        run_interac = multiprocessing.Process(
+            target=self.config.execute_script_interaction_during_run, 
+            args=[self.run_context, self.run_completed_event]
+        )
+        run_interac.start()
 
-        # TODO: Run stop should be timed (duration > 0, or programmatic: ROS Service)
-        # Set run stop, timed or programmatic
-        # self.set_run_stop()
-        # self.run_start()
+        # -- Wait for run_duration or until signalled to end
+        if self.config.run_duration_in_ms > 0:
+            start_time = time.time()
+            while (not self.run_completed_event.is_set() and self.config.run_duration_in_ms > 0) \
+                and time.time() - start_time <= self.config.run_duration_in_ms:
+                time.sleep(0.1)
+        else:
+            self.run_started_event.wait()
 
-        # Either event based, or timed based -> method returns when done
-        self.run_wait_completed()
-
-        output.console_log_WARNING("Calling stop_run config hook")
-        self.config.execute_script_stop_run(self.run_context)
-
+        # -- Stop measurement
         output.console_log_WARNING("... Stopping measurement ...")
         self.ros.rosbag_stop_recording_topics(f"rosbag_run{self.current_run}")
-        output.console_log_OK("\t Measurement stopped successfully!")
+        output.console_log_OK(" + Measurement stopped successfully!")
+
+        # -- Stop run
+        output.console_log_WARNING("Calling stop_run config hook")
+        run_stop = multiprocessing.Process(
+            target=self.config.execute_script_stop_run, 
+            args=[self.run_context, self.run_stopped_event]
+        )
+        run_stop.start()
+        self.run_stopped_event.wait()
