@@ -17,17 +17,14 @@ from Common.Procedures.OutputProcedure import OutputProcedure as output
 ###     |                                                       |
 ###     =========================================================
 class RunController(IRunController):
-    run_started_event = run_completed_event = run_stopped_event = Event()
+    run_started_event   = Event()
+    run_completed_event = Event()
+    run_stopped_event   = Event()
 
     def do_run(self):
         # -- Start run
         output.console_log_WARNING("Calling start_run config hook")
-        run_start = multiprocessing.Process(
-            target=self.config.execute_script_start_run, 
-            args=[self.run_context, self.run_started_event]
-        )
-        run_start.start()
-        self.run_started_event.wait()
+        self.config.execute_script_start_run(self.run_context)
 
         # -- Start measurement
         output.console_log_WARNING("... Starting measurement ...")
@@ -41,7 +38,7 @@ class RunController(IRunController):
         # -- Start interaction
         output.console_log_WARNING("Calling interaction config hook")
         run_interac = multiprocessing.Process(
-            target=self.config.execute_script_interaction_during_run, 
+            target=self.config.execute_script_during_run, 
             args=[self.run_context, self.run_completed_event]
         )
         run_interac.start()
@@ -49,11 +46,12 @@ class RunController(IRunController):
         # -- Wait for run_duration or until signalled to end
         if self.config.run_duration_in_ms > 0:
             start_time = time.time()
-            while (not self.run_completed_event.is_set() and self.config.run_duration_in_ms > 0) \
-                and time.time() - start_time <= self.config.run_duration_in_ms:
+            while not self.run_completed_event.is_set() and (int(round((time.time() - start_time) * 1000)) <= self.config.run_duration_in_ms):
                 time.sleep(0.1)
         else:
-            self.run_started_event.wait()
+            self.run_completed_event.wait()
+
+        output.console_log_WARNING("... Run completed ...")
 
         # -- Stop measurement
         output.console_log_WARNING("... Stopping measurement ...")
@@ -62,9 +60,4 @@ class RunController(IRunController):
 
         # -- Stop run
         output.console_log_WARNING("Calling stop_run config hook")
-        run_stop = multiprocessing.Process(
-            target=self.config.execute_script_stop_run, 
-            args=[self.run_context, self.run_stopped_event]
-        )
-        run_stop.start()
-        self.run_stopped_event.wait()
+        self.config.execute_script_stop_run(self.run_context)

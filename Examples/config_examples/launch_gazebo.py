@@ -3,6 +3,10 @@ from typing import List
 from pathlib import Path
 from multiprocessing import Event
 
+import subprocess
+import os
+import signal
+
 class RobotRunnerContext:
     run_nr:  int
     run_dir: Path
@@ -18,7 +22,7 @@ class OperationType(Enum):
 class BasestationConfig:
     # =================================================USER SPECIFIC NECESSARY CONFIG=================================================
     # Name for this experiment
-    name:                       str             = "new_robot_runner_experiment"
+    name:                       str             = "example_gazebo_launch"
     # Required ROS version for this experiment to be ran with 
     # NOTE: (e.g. ROS2 foxy or eloquent)
     # NOTE: version: 2
@@ -40,6 +44,7 @@ class BasestationConfig:
     results_output_path:        Path             = Path("~/Documents/experiments")
 
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
+    gazebo_proc = None
 
     # Dynamic configurations can be one-time satisfied here before the program takes the config as-is
     # NOTE: Setting some variable based on some criteria
@@ -58,6 +63,12 @@ class BasestationConfig:
         Activities before and after starting the run should also be performed here."""
         
         print("Config.execute_script_start_run() called!")
+        # The os.setsid() is passed in the argument preexec_fn so
+        # it's run after the fork() and before  exec() to run the shell.
+        # required for successfully killing the gazebo process and all affilliated processes
+        cmd = "gazebo --verbose /opt/ros/foxy/share/gazebo_plugins/worlds/gazebo_ros_diff_drive_demo.world"
+        self.gazebo_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
+                            shell=True, preexec_fn=os.setsid) 
 
     def execute_script_during_run(self, context: RobotRunnerContext, run_completed_event: Event) -> None:
         """Perform any activity interacting with the robotic
@@ -68,14 +79,15 @@ class BasestationConfig:
         # NOTE: Remove / comment out this line if you do not want to prematurely stop a run in case run_duration_in_ms has been set.
 
         print("Config.execute_script_interaction_during_run() called!")
-        # run_completed_event.set()     # UNCOMMENT THIS IF YOU WANT TO PREMATURELY KILL THE RUN (run_duration_in_ms > 0)
-                                        # UNCOMMENT THIS IF YOU WANT TO KILL THE RUN PROGRAMATICALLY (run_duration_in_ms == 0)
+        #run_completed_event.set()
 
     def execute_script_stop_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for stopping the run here.
         Activities before and after stopping the run should also be performed here."""
         
         print("Config.execute_script_stop_run() called!")
+        # Kill the process group (gazebo and all affilliated)
+        os.killpg(os.getpgid(self.gazebo_proc.pid), signal.SIGINT)
     
     def execute_script_after_experiment(self) -> None:
         """Perform any activity required after stopping the experiment here"""

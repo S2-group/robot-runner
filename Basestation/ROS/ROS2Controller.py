@@ -67,19 +67,3 @@ class ROS2Controller(IROSController):
         time.sleep(1) # Grace period
 
         output.console_log("Sim run successfully shutdown!")
-
-    def native_run_end(self):
-        output.console_log("Shutting down native run...")
-
-        # TODO: Communicate run_end to native
-
-        #ProcessProcedure.processes_kill_by_names(self.processes_native)
-        #ProcessProcedure.process_kill_by_cmdline("/opt/ros/")
-
-        # while ProcessProcedure.processes_are_running(self.processes_native):
-        #     output.console_log_animated("Waiting for graceful exit...")
-
-        time.sleep(1)
-
-        output.console_log("Native run successfully shutdown!")
-        pass

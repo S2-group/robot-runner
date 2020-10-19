@@ -1,6 +1,4 @@
 import time
-import multiprocessing
-from multiprocessing import Event
 
 from Common.Config.BasestationConfig import BasestationConfig
 
@@ -30,8 +28,6 @@ class ExperimentController:
     config: BasestationConfig = None
     ros: IROSController
 
-    experiment_started = experiment_ended = Event()
-
     def __init__(self, config: BasestationConfig):
         self.config = config
         self.ros = ROS1Controller() if self.config.required_ros_version == 1 else ROS2Controller()
@@ -49,12 +45,7 @@ class ExperimentController:
         
         # -- Before experiment
         output.console_log_WARNING("Calling before_experiment config hook")
-        before_exp = multiprocessing.Process(
-            target=self.config.execute_script_before_experiment, 
-            args=[self.experiment_started,]
-        )
-        before_exp.start()
-        self.experiment_started.wait()
+        self.config.execute_script_before_experiment()
 
         # -- Experiment
 
@@ -73,9 +64,4 @@ class ExperimentController:
 
         # -- After experiment
         output.console_log_WARNING("Calling after_experiment config hook")
-        after_exp = multiprocessing.Process(
-            target=self.config.execute_script_after_experiment, 
-            args=[self.experiment_ended]
-        )
-        after_exp.start()
-        self.experiment_ended.wait()
+        self.config.execute_script_after_experiment()
