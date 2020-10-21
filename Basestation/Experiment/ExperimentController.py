@@ -1,15 +1,11 @@
 import time
 
-from Common.Config.BasestationConfig import BasestationConfig
-
-from Common.Procedures.ProcessProcedure import ProcessProcedure
-from Basestation.ROS.IROSController import IROSController
-from Basestation.ROS.ROS1Controller import ROS1Controller
-from Basestation.ROS.ROS2Controller import ROS2Controller
-from Common.Procedures.OutputProcedure import OutputProcedure as output
 from Basestation.Experiment.Run.RunController import RunController
 
+from Common.Config.BasestationConfig import BasestationConfig
+from Common.Procedures.OutputProcedure import OutputProcedure as output
 from Common.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExists
+
 
 ###     =========================================================
 ###     |                                                       |
@@ -26,11 +22,9 @@ from Common.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExis
 ###     =========================================================
 class ExperimentController:
     config: BasestationConfig = None
-    ros: IROSController
 
     def __init__(self, config: BasestationConfig):
         self.config = config
-        self.ros = ROS1Controller() if self.config.required_ros_version == 1 else ROS2Controller()
 
         # TODO: Create run_schedule table and save externally. Reference and restart from crash if occurred.
         output.console_log_WARNING("Experiment run table created...")
