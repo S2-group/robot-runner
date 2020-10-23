@@ -7,9 +7,6 @@ from subprocess import Popen
 from abc import ABC, abstractmethod
 
 from Common.Procedures.ProcessProcedure import ProcessProcedure
-from Basestation.ROS.IROSController import IROSController
-from Basestation.ROS.ROS1Controller import ROS1Controller
-from Basestation.ROS.ROS2Controller import ROS2Controller
 from Common.Procedures.OutputProcedure import OutputProcedure as output
 from Common.Config.BasestationConfig import (BasestationConfig, RobotRunnerContext)
 
@@ -42,7 +39,6 @@ from Common.Config.BasestationConfig import (BasestationConfig, RobotRunnerConte
 class IRunController(ABC):
     run_dir: Path = None
     current_run: int = None
-    ros: IROSController = None
     config: BasestationConfig = None
     run_context: RobotRunnerContext = None
 
@@ -55,11 +51,10 @@ class IRunController(ABC):
     run_poll_proc: Popen = None
     block_out = open(os.devnull, 'w')  # block output from showing in terminal
 
-    def __init__(self, config: BasestationConfig, current_run: int, ros: IROSController):
+    def __init__(self, config: BasestationConfig, current_run: int):
         self.run_dir = Path(str(config.experiment_path.absolute()) + f"/run{current_run}")
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self.current_run = current_run
-        self.ros = ros
         self.config = config
         self.run_context = RobotRunnerContext(self.current_run, self.run_dir)
         print(f"\n-----------------NEW RUN [{current_run} / {self.config.number_of_runs}]-----------------\n")

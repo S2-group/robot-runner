@@ -1,4 +1,3 @@
-from Common.Procedures.OutputProcedure import OutputProcedure as output
 from Basestation.Experiment.ExperimentController import ExperimentController
 from Common.Config.BasestationConfig import BasestationConfig
 

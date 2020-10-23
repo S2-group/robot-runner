@@ -7,5 +7,5 @@ class BaseRecorderPlugin(metaclass=SingletonABCMeta):
         pass
 
     @abstractmethod
-    def stop_recording(self) -> None:
+    def stop_recording(self):
         pass

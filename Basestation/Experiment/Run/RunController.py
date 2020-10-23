@@ -24,24 +24,19 @@ class RunController(IRunController):
     def do_run(self):
         # -- Start run
         output.console_log_WARNING("Calling start_run config hook")
-        self.config.execute_script_start_run(self.run_context)
+        self.config.start_run(self.run_context)
 
         # -- Start measurement
         output.console_log_WARNING("... Starting measurement ...")
-        self.ros.rosbag_start_recording_topics(
-            self.config.topics_to_record,               # Topics to record
-            str(self.run_dir.absolute()) + '/topics',   # Path to record .bag to
-            f"rosbag_run{self.current_run}"             # Bagname to kill after run
-        )
-        output.console_log_OK(" + Measurement started successfully!")
+        self.config.start_measurement(self.run_context)
 
         # -- Start interaction
         output.console_log_WARNING("Calling interaction config hook")
-        run_interac = multiprocessing.Process(
-            target=self.config.execute_script_during_run, 
+        during_run = multiprocessing.Process(
+            target=self.config.during_run, 
             args=[self.run_context, self.run_completed_event]
         )
-        run_interac.start()
+        during_run.start()
 
         # -- Wait for run_duration or until signalled to end
         if self.config.run_duration_in_ms > 0:
@@ -55,9 +50,8 @@ class RunController(IRunController):
 
         # -- Stop measurement
         output.console_log_WARNING("... Stopping measurement ...")
-        self.ros.rosbag_stop_recording_topics(f"rosbag_run{self.current_run}")
-        output.console_log_OK(" + Measurement stopped successfully!")
+        self.config.stop_measurement(self.run_context)
 
         # -- Stop run
         output.console_log_WARNING("Calling stop_run config hook")
-        self.config.execute_script_stop_run(self.run_context)
+        self.config.stop_run(self.run_context)

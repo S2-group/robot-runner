@@ -1,7 +1,8 @@
 import time
+from typing import List
 
+from Common.ExperimentOutput.Managers.CSVExperimentOutputManager import CSVExperimentOutputManager
 from Basestation.Experiment.Run.RunController import RunController
-
 from Common.Config.BasestationConfig import BasestationConfig
 from Common.Procedures.OutputProcedure import OutputProcedure as output
 from Common.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExists
@@ -22,11 +23,11 @@ from Common.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExis
 ###     =========================================================
 class ExperimentController:
     config: BasestationConfig = None
+    run_table: List[tuple] = None
 
     def __init__(self, config: BasestationConfig):
         self.config = config
-
-        # TODO: Create run_schedule table and save externally. Reference and restart from crash if occurred.
+        CSVExperimentOutputManager().create_experiment_run_table(self.config.experiment_model)
         output.console_log_WARNING("Experiment run table created...")
 
     def do_experiment(self):
@@ -39,13 +40,21 @@ class ExperimentController:
         
         # -- Before experiment
         output.console_log_WARNING("Calling before_experiment config hook")
-        self.config.execute_script_before_experiment()
+        self.config.before_experiment()
 
         # -- Experiment
 
         current_run: int = 1
-        for current_run in range(1, self.config.number_of_runs + 1):
-            RunController(self.config, current_run, self.ros).do_run()  # Perform run
+        # TODO: Build to run on run_table
+        for variation in self.run_table:
+            pass
+            # Variation is passed to runcontroller
+            # run id, run path, etc
+            # variation is passed to config -> based on variation, user can change run accordingly.
+            # still provide time_btwn_runs etc.
+
+        for current_run in range(1, self.config.experiment_model.get_number_of_runs_per_variation + 1):
+            RunController(self.config, current_run).do_run()  # Perform run
 
             time_btwn_runs = self.config.time_between_runs_in_ms
             if time_btwn_runs > 0:
@@ -58,4 +67,4 @@ class ExperimentController:
 
         # -- After experiment
         output.console_log_WARNING("Calling after_experiment config hook")
-        self.config.execute_script_after_experiment()
+        self.config.after_experiment()

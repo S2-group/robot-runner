@@ -20,7 +20,7 @@ class OperationType(Enum):
 class BasestationConfig:
     # =================================================USER SPECIFIC NECESSARY CONFIG=================================================
     # Name for this experiment
-    name:                       str             = "new_robot_runner_experiment"
+    name:                       str             = "CSV_test"
     # NOTE: IMPORTANT! Set this to false, if the raw data measured is not required
     output_plugin_raw_data:     bool            = True
     # Required ROS version for this experiment to be ran with 
@@ -34,6 +34,7 @@ class BasestationConfig:
     # Experiment operation types
     operation_type:             OperationType   = OperationType.AUTO
     # Run settings
+    number_of_runs:             int             = 2
     run_duration_in_ms:         int             = 5000
     time_between_runs_in_ms:    int             = 1000
     # ROS Recording settings
@@ -41,17 +42,6 @@ class BasestationConfig:
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
     results_output_path:        Path             = Path("~/Documents/experiments")
-
-    experiment_model:           ExperimentModel  = ExperimentModel(
-                                                        treatments = [
-                                                            ExperimentTreatmentModel("movement", ["autonomous", "no_movement", "fixed_movement"]),
-                                                            ExperimentTreatmentModel("environment", ["empty", "cluttered"]),
-                                                            ExperimentTreatmentModel("tactic", ["baseline", "ee1", "ee2", "ee3", "ee4", "combined"])
-                                                        ], 
-                                                        number_of_runs_per_variation = 10, 
-                                                        exclude_variations = [{"no_movement", "cluttered"}]
-                                                    )
-
 
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
 
@@ -61,6 +51,19 @@ class BasestationConfig:
         """Executes immediately after program start, on config load"""
 
         print("Custom config loaded")
+
+    def get_experiment_model(self) -> ExperimentModel:
+        return ExperimentModel(
+            treatments = [
+                ExperimentTreatmentModel("movement", ["autonomous", "no_movement", "fixed_movement"]),
+                ExperimentTreatmentModel("environment", ["empty", "cluttered"]),
+                ExperimentTreatmentModel("tactic", ["baseline", "ee1", "ee2", "ee3", "ee4", "combined"])
+            ],
+            number_of_runs_per_variation = 10, 
+            exclude_variations = [{"no_movement", "cluttered"}]
+        )
+
+        # TODO: Make ExperimentModel which allows 'randomization' and 'exclusion of combinations'
 
     def before_experiment(self) -> None:
         """Perform any activity required before starting the experiment here"""
