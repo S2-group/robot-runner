@@ -52,6 +52,15 @@ class RunController(IRunController):
         output.console_log_WARNING("... Stopping measurement ...")
         self.config.stop_measurement(self.run_context)
 
+        updated_run_data = self.config.get_updated_run_data(self.run_context)
+        if updated_run_data is None:
+            row = self.run_context.run_variation
+            row['__done'] = 1
+            self.data_manager.update_row_data(row)
+        else:
+            updated_run_data['__done'] = 1
+            self.data_manager.update_row_data(updated_run_data)
+
         # -- Stop run
         output.console_log_WARNING("Calling stop_run config hook")
         self.config.stop_run(self.run_context)

@@ -53,12 +53,12 @@ class BasestationConfig:
 
         print("Custom config loaded")
 
-    def execute_script_before_experiment(self) -> None:
+    def before_experiment(self) -> None:
         """Perform any activity required before starting the experiment here"""
 
         print("Config.execute_script_before_experiment() called!")
 
-    def execute_script_start_run(self, context: RobotRunnerContext) -> None:
+    def start_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for starting the run here. 
         Activities before and after starting the run should also be performed here."""
         
@@ -70,7 +70,7 @@ class BasestationConfig:
         self.gazebo_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
                             shell=True, preexec_fn=os.setsid) 
 
-    def execute_script_during_run(self, context: RobotRunnerContext, run_completed_event: Event) -> None:
+    def during_run(self, context: RobotRunnerContext, run_completed_event: Event) -> None:
         """Perform any activity interacting with the robotic
         system in question (simulated or real-life) here."""
         # Signalling the run has been completed
@@ -81,7 +81,7 @@ class BasestationConfig:
         print("Config.execute_script_interaction_during_run() called!")
         #run_completed_event.set()
 
-    def execute_script_stop_run(self, context: RobotRunnerContext) -> None:
+    def stop_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for stopping the run here.
         Activities before and after stopping the run should also be performed here."""
         
@@ -89,7 +89,7 @@ class BasestationConfig:
         # Kill the process group (gazebo and all affilliated)
         os.killpg(os.getpgid(self.gazebo_proc.pid), signal.SIGINT)
     
-    def execute_script_after_experiment(self) -> None:
+    def after_experiment(self) -> None:
         """Perform any activity required after stopping the experiment here"""
 
         print("Config.execute_script_after_experiment() called!")

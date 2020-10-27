@@ -1,15 +1,17 @@
 from Common.ExperimentOutput.Models.ExperimentModel import ExperimentModel
-from Common.ExperimentOutput.Models.ExperimentTreatmentModel import ExperimentTreatmentModel
+from Common.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFactorModel
 from enum import Enum
-from typing import List
+from typing import Dict, List
 from pathlib import Path
 from multiprocessing import Event
 
 class RobotRunnerContext:
+    run_variation: dict
     run_nr:  int
     run_dir: Path
 
-    def __init__(self, run_nr: int, run_dir: Path):
+    def __init__(self, run_variation: dict, run_nr: int, run_dir: Path):
+        self.run_variation = run_variation
         self.run_nr = run_nr
         self.run_dir = run_dir
 
@@ -41,18 +43,6 @@ class BasestationConfig:
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
     results_output_path:        Path             = Path("~/Documents/experiments")
-
-    experiment_model:           ExperimentModel  = ExperimentModel(
-                                                        treatments = [
-                                                            ExperimentTreatmentModel("movement", ["autonomous", "no_movement", "fixed_movement"]),
-                                                            ExperimentTreatmentModel("environment", ["empty", "cluttered"]),
-                                                            ExperimentTreatmentModel("tactic", ["baseline", "ee1", "ee2", "ee3", "ee4", "combined"])
-                                                        ], 
-                                                        number_of_runs_per_variation = 10, 
-                                                        exclude_variations = [{"no_movement", "cluttered"}]
-                                                    )
-
-
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
 
     # Dynamic configurations can be one-time satisfied here before the program takes the config as-is
@@ -61,6 +51,20 @@ class BasestationConfig:
         """Executes immediately after program start, on config load"""
 
         print("Custom config loaded")
+
+    def create_run_table(self) -> List[Dict]:
+        """Create and return the run_table here. A run_table is a List (rows) of tuples (columns), 
+        representing each run robot-runner must perform"""
+        experiment_model = ExperimentModel(
+            treatments = [
+                ExperimentFactorModel("movement", ["drive", "park"]),
+                ExperimentFactorModel("environment", ["empty", "cluttered"]),
+                ExperimentFactorModel("variation_run_number", range(0, 2))
+            ],
+            exclude_variations = [{"no_movement", "cluttered"}]
+        )
+        experiment_model.create_experiment_run_table()
+        return experiment_model.get_experiment_run_table()
 
     def before_experiment(self) -> None:
         """Perform any activity required before starting the experiment here"""
@@ -97,6 +101,10 @@ class BasestationConfig:
         
         print("Config.execute_script_stop_run() called!")
     
+    def get_updated_run_data(self, context: RobotRunnerContext) -> tuple:
+        """Return the run data as a row for the output manager represented as a tuple"""
+        return None
+
     def after_experiment(self) -> None:
         """Perform any activity required after stopping the experiment here"""
 

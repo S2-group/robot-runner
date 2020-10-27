@@ -52,14 +52,6 @@ class ConfigValidator:
         ConfigValidator.__check_expression('operation_type', config.operation_type, OperationType, 
                                 (lambda a, b: not isinstance(type(a), type(b)))
                             )
-        # run_replications
-        ConfigValidator.__check_expression('number_of_runs', config.number_of_runs, int,
-                                (lambda a, b: not isinstance(a, b))
-                            )
-        ConfigValidator.__check_expression('number_of_runs', config.number_of_runs, 
-                                "number of runs must be > 0",
-                                (lambda a, b: not a > 0 if isinstance(a, int) else True)
-                            )
         # run_duration
         ConfigValidator.__check_expression('run_duration_in_ms', config.run_duration_in_ms, int,
                                 (lambda a, b: not isinstance(a, b))
