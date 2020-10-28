@@ -1,3 +1,4 @@
+from Basestation.Experiment.Restart.RestartController import RestartController
 import sys
 import time
 from typing import Dict, List
@@ -23,17 +24,24 @@ from Common.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExis
 ###     |                                                       |
 ###     =========================================================
 class ExperimentController:
-    config: BasestationConfig = None
-    run_table: List[Dict] = None
-    experiment_path_as_string: str = None
+    config: BasestationConfig                   = None
+    run_table: List[Dict]                       = None
+    restarted: bool                             = False
+    experiment_path_as_string: str              = None
+    data_manager: CSVExperimentOutputManager    = None
 
     def __init__(self, config: BasestationConfig):
         self.config = config
-        self.run_table = self.config.create_run_table()
         self.experiment_path_as_string = str(self.config.experiment_path.absolute())
+
+        self.data_manager = CSVExperimentOutputManager()
+        self.data_manager.set_experiment_output_path(self.experiment_path_as_string)
+
+        self.run_table = self.config.create_run_table()
         self.create_experiment_output_folder()
         
-        CSVExperimentOutputManager(self.experiment_path_as_string).write_run_table_to_csv(self.run_table)
+        if not self.restarted:
+            self.data_manager.write_run_table_to_csv(self.run_table)
         
         output.console_log_WARNING("Experiment run table created...")
 
@@ -45,9 +53,11 @@ class ExperimentController:
         self.config.before_experiment()
 
         # -- Experiment
-        print(self.run_table)
         for variation in self.run_table:
-            RunController(variation, self.config, (self.run_table.index(variation) + 1), (len(self.run_table) + 1)).do_run()  # Perform run
+            if variation['__done'] == 1:
+                continue
+
+            RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table)).do_run()  # Perform run
 
             time_btwn_runs = self.config.time_between_runs_in_ms
             if time_btwn_runs > 0:
@@ -64,4 +74,8 @@ class ExperimentController:
         try:
             self.config.experiment_path.mkdir(parents=True, exist_ok=False)
         except FileExistsError:
-            raise ExperimentOutputPathAlreadyExists
+            if RestartController.are_config_and_restart_csv_equal(self.config):
+                self.run_table = self.data_manager.read_run_table_from_csv()
+                self.restarted = True
+            else:
+                raise ExperimentOutputPathAlreadyExists
