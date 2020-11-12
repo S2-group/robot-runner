@@ -3,13 +3,12 @@ import traceback
 from typing import List
 import importlib.machinery
 
-from Common.CustomErrors.BaseError import BaseError
-from Common.CLIRegister.CLIRegister import CLIRegister
-from Common.Config.Validation.ConfigValidator import ConfigValidator
-from Common.CustomErrors.ConfigErrors import ConfigInvalidClassNameError
+from Backbone.CustomErrors.BaseError import BaseError
+from Backbone.CLIRegister.CLIRegister import CLIRegister
+from Backbone.Config.Validation.ConfigValidator import ConfigValidator
+from Backbone.CustomErrors.ConfigErrors import ConfigInvalidClassNameError
 
-from Robot.RobotController import RobotController
-from Basestation.BasestationController import BasestationController
+from Backbone.ExperimentOrchestrator.ExperimentController import ExperimentController
 
 def is_no_argument_given(args: List[str]): return (len(args) == 1)
 def is_config_file_given(args: List[str]): return (args[1][-3:] == '.py')
@@ -29,14 +28,10 @@ if __name__ == "__main__":
         elif is_config_file_given(sys.argv):                                # If the first arugments ends with .py -> a config file is entered
             config_file = load_and_get_config_file_as_module(sys.argv)
 
-            if hasattr(config_file, 'BasestationConfig'):
-                base_config = config_file.BasestationConfig()               # Instantiate config from injected file
-                ConfigValidator.validate_base_config(base_config)           # Validate config as a BasestationConfig
-                BasestationController(base_config).do_experiment()          # Instantiate controller with config and start experiment
-            elif hasattr(config_file, 'RobotConfig'):
-                robot_config = config_file.RobotConfig()
-                ConfigValidator.validate_robot_config(robot_config)
-                RobotController(robot_config)
+            if hasattr(config_file, 'RobotRunnerConfig'):
+                config = config_file.RobotRunnerConfig()                # Instantiate config from injected file
+                ConfigValidator.validate_config(config)                 # Validate config as a valid RobotRunnerConfig
+                ExperimentController(config).do_experiment()            # Instantiate controller with config and start experiment
             else:
                 raise ConfigInvalidClassNameError
         else:                                                               # Else, a utility command is entered
