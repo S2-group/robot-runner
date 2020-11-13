@@ -1,7 +1,7 @@
 import sys
 import traceback
 from typing import List
-import importlib.machinery
+from importlib import util
 
 from Backbone.CustomErrors.BaseError import BaseError
 from Backbone.CLIRegister.CLIRegister import CLIRegister
@@ -14,8 +14,8 @@ def is_no_argument_given(args: List[str]): return (len(args) == 1)
 def is_config_file_given(args: List[str]): return (args[1][-3:] == '.py')
 def load_and_get_config_file_as_module(args: List[str]):
     module_name = args[1].split('/')[-1].replace('.py', '')
-    spec = importlib.util.spec_from_file_location(module_name, args[1]) 
-    config_file = importlib.util.module_from_spec(spec)
+    spec = util.spec_from_file_location(module_name, args[1]) 
+    config_file = util.module_from_spec(spec)
     sys.modules[module_name] = config_file
     spec.loader.exec_module(config_file)
     return config_file

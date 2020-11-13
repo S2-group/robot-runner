@@ -1,7 +1,8 @@
-from sys import stderr
-from Common.ExperimentOutput.Models.ExperimentModel import ExperimentModel
-from Common.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFactorModel
-from enum import Enum
+from Backbone.ExperimentOutput.Models.ExperimentModel import ExperimentModel
+from Backbone.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFactorModel
+from Backbone.Config.Models.OperationType import OperationType
+from Backbone.Config.Models.RobotRunnerContext import RobotRunnerContext
+
 from typing import Dict, List
 from pathlib import Path
 from multiprocessing import Event
@@ -10,41 +11,21 @@ import subprocess
 import signal
 import os
 
-class RobotRunnerContext:
-    run_variation: tuple
-    run_nr:  int
-    run_dir: Path
-
-    def __init__(self, run_variation: tuple, run_nr: int, run_dir: Path):
-        self.run_variation = run_variation
-        self.run_nr = run_nr
-        self.run_dir = run_dir
-
-class OperationType(Enum):
-    AUTO = 1
-    SEMI = 2
-
-class BasestationConfig:
+class RobotRunnerConfig:
     # =================================================USER SPECIFIC NECESSARY CONFIG=================================================
     # Name for this experiment
     name:                       str             = "test_csv"
-    # NOTE: IMPORTANT! Set this to false, if the raw data measured is not required
-    output_plugin_raw_data:     bool            = True
     # Required ROS version for this experiment to be ran with 
     # NOTE: (e.g. ROS2 foxy or eloquent)
     # NOTE: version: 2
     # NOTE: distro: "foxy"
     required_ros_version:       int             = 2
     required_ros_distro:        str             = "foxy"
-    # Use simulator or not (gazebo)
-    use_simulator:              bool            = True
     # Experiment operation types
     operation_type:             OperationType   = OperationType.AUTO
     # Run settings
     run_duration_in_ms:         int             = 5000
     time_between_runs_in_ms:    int             = 1000
-    # ROS Recording settings
-    topics_to_record:           List[str]       = ["/record_topic", "/record_topic2"]
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
     results_output_path:        Path             = Path("~/Documents/experiments")
@@ -54,6 +35,8 @@ class BasestationConfig:
     # NOTE: Setting some variable based on some criteria
     def __init__(self):
         """Executes immediately after program start, on config load"""
+
+        # TODO: Present to Ivano -- subscription
 
         print("Custom config loaded")
 
@@ -73,7 +56,6 @@ class BasestationConfig:
 
     def before_experiment(self) -> None:
         """Perform any activity required before starting the experiment here"""
-
         print("Config.execute_script_before_experiment() called!")
 
     def start_run(self, context: RobotRunnerContext) -> None:

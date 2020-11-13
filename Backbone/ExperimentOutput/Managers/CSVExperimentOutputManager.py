@@ -1,3 +1,4 @@
+from Backbone.Progress.Models.RunProgress import RunProgress
 from Backbone.CustomErrors.ExperimentOutputErrors import ExperimentOutputFileDoesNotExistError
 from Backbone.Procedures.OutputProcedure import OutputProcedure as output
 from tempfile import NamedTemporaryFile
@@ -19,6 +20,9 @@ class CSVExperimentOutputManager(BaseExperimentOutputManager):
                         if value.isnumeric():
                             row[key] = int(value)
 
+                        if key == '__done':
+                            row[key] = RunProgress[value]
+
                     read_run_table.append(row)
             
             return read_run_table
@@ -31,6 +35,7 @@ class CSVExperimentOutputManager(BaseExperimentOutputManager):
                 writer = csv.DictWriter(myfile, fieldnames=list(run_table[0].keys()))
                 writer.writeheader()
                 for data in run_table:
+                    data['__done'] = data['__done'].name
                     writer.writerow(data)
         except:
             raise ExperimentOutputFileDoesNotExistError
@@ -42,18 +47,18 @@ class CSVExperimentOutputManager(BaseExperimentOutputManager):
     def update_row_data(self, updated_row: dict):
         tempfile = NamedTemporaryFile(mode='w', delete=False)
 
-        try:
-            with open(self._experiment_path + '/run_table.csv', 'r') as csvfile, tempfile:
-                reader = csv.DictReader(csvfile, fieldnames=list(updated_row.keys()))
-                writer = csv.DictWriter(tempfile, fieldnames=list(updated_row.keys()))
+        with open(self._experiment_path + '/run_table.csv', 'r') as csvfile, tempfile:
+            reader = csv.DictReader(csvfile, fieldnames=list(updated_row.keys()))
+            writer = csv.DictWriter(tempfile, fieldnames=list(updated_row.keys()))
 
-                for row in reader:
-                    if row['__run_id'] == updated_row['__run_id']:
-                        writer.writerow(updated_row)
-                    else:
-                        writer.writerow(row)
-        except:
-            raise ExperimentOutputFileDoesNotExistError
+            for row in reader:
+                if row['__run_id'] == updated_row['__run_id']:
+                    # When the row is updated, it is an ENUM value again.
+                    # Write as human-readable: enum_value.name
+                    updated_row['__done'] = updated_row['__done'].name
+                    writer.writerow(updated_row)
+                else:
+                    writer.writerow(row)
 
         shutil.move(tempfile.name, self._experiment_path + '/run_table.csv')
         output.console_log_WARNING(f"CSVManager: Updated row {updated_row['__run_id']}")

@@ -1,3 +1,4 @@
+from Backbone.Progress.Models.RunProgress import RunProgress
 import time
 from typing import Dict, List
 
@@ -8,8 +9,9 @@ from Backbone.ExperimentOutput.Managers.CSVExperimentOutputManager import CSVExp
 from Backbone.ExperimentOrchestrator.Run.RunController import RunController
 from Backbone.Config.RobotRunnerConfig import RobotRunnerConfig
 from Backbone.Procedures.OutputProcedure import OutputProcedure as output
-from Backbone.CustomErrors.ExperimentErrors import ExperimentOutputPathAlreadyExists
+from Backbone.CustomErrors.ExperimentOutputErrors import ExperimentOutputPathAlreadyExistsError
 from Backbone.Events.EventSubscriptionController import EventSubscriptionController
+from Backbone.CustomErrors.ProgressErrors import AllRunsCompletedOnRestartError, ProgressBaseError
 
 
 ###     =========================================================
@@ -44,6 +46,8 @@ class ExperimentController:
         
         if not self.restarted:
             self.data_manager.write_run_table_to_csv(self.run_table)
+        else:
+            output.console_log_WARNING(">> WARNING << -- Experiment is restarted!")
         
         output.console_log_WARNING("Experiment run table created...")
 
@@ -58,7 +62,7 @@ class ExperimentController:
 
         # -- Experiment
         for variation in self.run_table:
-            if variation['__done'] == 1:
+            if variation['__done'] == RunProgress.DONE:
                 continue
 
             RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table)).do_run()  # Perform run
@@ -86,5 +90,13 @@ class ExperimentController:
             if ProgressManager.are_config_and_restart_csv_equal(self.config):
                 self.run_table = self.data_manager.read_run_table_from_csv()
                 self.restarted = True
+                todo_run_found = False
+                
+                for variation in self.run_table:
+                    todo_run_found = (variation['__done'] != RunProgress.DONE)
+                    if todo_run_found: return
+
+                if self.restarted and not todo_run_found:
+                    raise AllRunsCompletedOnRestartError
             else:
-                raise ExperimentOutputPathAlreadyExists
+                raise ExperimentOutputPathAlreadyExistsError

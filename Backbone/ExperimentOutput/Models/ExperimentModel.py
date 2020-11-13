@@ -1,3 +1,4 @@
+from Backbone.Progress.Models.RunProgress import RunProgress
 import itertools
 from typing import Dict, List, Tuple
 from Backbone.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFactorModel
@@ -41,6 +42,6 @@ class ExperimentModel:
 
         for i in range(0, len(filtered_list)):
             row_list = list(filtered_list[i])
-            row_list.insert(0, f'run_{i}')   # __run_id
-            row_list.insert(1, 0)            # __done
+            row_list.insert(0, f'run_{i}')              # __run_id
+            row_list.insert(1, RunProgress.TODO)   # __done
             self.__experiment_run_table.append(dict(zip(column_names, row_list)))

@@ -1,3 +1,4 @@
+from Backbone.Procedures.ProcessProcedure import ProcessProcedure
 from Backbone.Events.Models.RobotRunnerEvents import RobotRunnerEvents
 from Backbone.Events.EventSubscriptionController import EventSubscriptionController
 from Backbone.ExperimentOutput.Models.ExperimentModel import ExperimentModel
@@ -5,6 +6,7 @@ from Backbone.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFac
 from Backbone.Config.Models.RobotRunnerContext import RobotRunnerContext
 from Backbone.Config.Models.OperationType import OperationType
 
+import time
 from typing import Dict, List
 from pathlib import Path
 from multiprocessing import Event
@@ -12,13 +14,13 @@ from multiprocessing import Event
 class RobotRunnerConfig:
     # =================================================USER SPECIFIC NECESSARY CONFIG=================================================
     # Name for this experiment
-    name:                       str             = "new_robot_runner_experiment"
+    name:                       str             = "robot_runner_mini_mission"
     # Required ROS version for this experiment to be ran with 
     # NOTE: (e.g. ROS2 foxy or eloquent)
     # NOTE: version: 2
     # NOTE: distro: "foxy"
-    required_ros_version:       int             = 2
-    required_ros_distro:        str             = "foxy"
+    required_ros_version:       int             = 1
+    required_ros_distro:        str             = "melodic"
     # Experiment operation types
     operation_type:             OperationType   = OperationType.AUTO
     # Run settings
@@ -34,77 +36,76 @@ class RobotRunnerConfig:
     def __init__(self):
         """Executes immediately after program start, on config load"""
 
-        EventSubscriptionController.subscribe_to_multiple_events([ 
-            (RobotRunnerEvents.BEFORE_EXPERIMENT, self.before_experiment), 
+        EventSubscriptionController.subscribe_to_multiple_events([
             (RobotRunnerEvents.START_RUN, self.start_run),
             (RobotRunnerEvents.START_MEASUREMENT, self.start_measurement),
-            # (RobotRunnerEvents.DURING_RUN, self.during_run),  # UNSUPPORT FOR NOW (Multiprocessing error)
+            (RobotRunnerEvents.DURING_RUN, self.during_run),
             (RobotRunnerEvents.STOP_MEASUREMENT, self.stop_measurement),
             (RobotRunnerEvents.STOP_RUN, self.stop_run),
-            (RobotRunnerEvents.POPULATE_RUN_DATA, self.populate_run_data),
-            (RobotRunnerEvents.AFTER_EXPERIMENT, self.after_experiment)
+            (RobotRunnerEvents.POPULATE_RUN_DATA, self.populate_run_data)
         ])
         
         print("Custom config loaded")
 
     def create_run_table(self) -> List[Dict]:
-        """Create and return the run_table here. A run_table is a List (rows) of tuples (columns), 
-        representing each run robot-runner must perform"""
         experiment_model = ExperimentModel(
             treatments = [
-                ExperimentFactorModel("example_factor", ['example_treatment1', 'example_treatment2'])
-            ],
-            exclude_variations = [
-                {"example_treatment1"},     # all runs having treatment example_treatment1 will be excluded
-                {"example_treatment1", "example_treatment2"} # all runs having the combination <treatment1, treatment2> will be excluded
-            ] 
+                ExperimentFactorModel("mission_task", ['computation', 'streaming', 'networking']),
+                ExperimentFactorModel("runs_per_variation", range(1, 6))
+            ]
         )
+
         experiment_model.create_experiment_run_table()
         return experiment_model.get_experiment_run_table()
 
-    def before_experiment(self) -> None:
-        """Perform any activity required before starting the experiment here"""
-
-        print("Config.before_experiment() called!")
-
     def start_run(self, context: RobotRunnerContext) -> None:
-        """Perform any activity required for starting the run here. 
-        Activities before and after starting the run should also be performed here."""
-        
         print("Config.start_run() called!")
 
     def start_measurement(self, context: RobotRunnerContext) -> None:
         print("Config.start_measurement called!")
 
     def during_run(self, context: RobotRunnerContext, run_completed_event: Event) -> None:
-        """Perform any activity interacting with the robotic
-        system in question (simulated or real-life) here."""
-        # Signalling the run has been completed
-        # If run_duration_in_ms has been set to 0; use this signal to let robot-runner know the run has been completed.
-        # If run_duration_in_ms has been set > 0; use this signal to prematurely stop the run (do not wait until run_duration has been elapsed)
-        # NOTE: Remove / comment out this line if you do not want to prematurely stop a run in case run_duration_in_ms has been set.
+        def perform_operation(operation):
+            if operation == 'computation':
+                pass    # 10 seconds of computation
+            elif operation == 'networking':
+                pass    # 10 seconds of networking
+            elif operation == 'streaming':
+                pass    # 10 seconds of streaming
+            else:
+                return # error!
+        
+        variation = context.run_variation
+        operation = variation[2] # computation, networking, streaming
 
-        print("Config.during_run() called!")
-        # run_completed_event.set()     # UNCOMMENT THIS IF YOU WANT TO PREMATURELY KILL THE RUN (run_duration_in_ms > 0)
-                                        # UNCOMMENT THIS IF YOU WANT TO KILL THE RUN PROGRAMATICALLY (run_duration_in_ms == 0)
+        # =========== MISSION =========== 
+        time.sleep(5)
+
+        # self.__cmd_pub.publish(cmd) # drive forward for 10 seconds
+        # self.stop()
+
+        time.sleep(5)
+        perform_operation(operation)    # 10 seconds
+        time.sleep(5)
+        perform_operation(operation)    # 10 seconds
+        time.sleep(5)
+        perform_operation(operation)    # 10 seconds
+        time.sleep(5)
+
+        # rotate 180 degrees
+        # self.__cmd_pub.publish(cmd) # drive forward for 10 seconds
+        # self.stop()
+        time.sleep(5)
+        # =========== MISSION =========== 
 
     def stop_measurement(self, context: RobotRunnerContext) -> None:
         print("Config.stop_measurement called!")
 
     def stop_run(self, context: RobotRunnerContext) -> None:
-        """Perform any activity required for stopping the run here.
-        Activities before and after stopping the run should also be performed here."""
-        
         print("Config.stop_run() called!")
     
     def populate_run_data(self, context: RobotRunnerContext) -> tuple:
-        """Return the run data as a row for the output manager represented as a tuple"""
         return None
-
-    def after_experiment(self) -> None:
-        """Perform any activity required after stopping the experiment here"""
-
-        print("Config.after_experiment() called!")
 
     # ===============================================DO NOT ALTER BELOW THIS LINE=================================================
     # NOTE: Do not alter these values

@@ -5,13 +5,13 @@ class ConfigBaseError(BaseError):
     def __init__(self, text: str):
         super().__init__(text)
 
-class ConfigInvalidError(BaseError):
+class ConfigInvalidError(ConfigBaseError):
     def __init__(self):
         super().__init__("Config found to be invalid, please refer to the config attribute table.")
 
 class ConfigInvalidClassNameError(ConfigBaseError):
     def __init__(self):
-        super().__init__("The config file specified does not have a valid config class name as expected (RobotConfig / BasestationConfig)")
+        super().__init__("The config file specified does not have a valid config class name as expected (RobotRunnerConfig)")
 
 class ConfigAttributeInvalidError(ConfigBaseError):
     def __init__(self, attribute_in_question, found, expected):
