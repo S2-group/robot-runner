@@ -8,7 +8,7 @@ from rospy.timer import Rate
 from Backbone.Architecture.Singleton import Singleton
 
 from UserConfig.mini_mission.modules.utilties.Utilities import rotation_is_close
-from UserConfig.mini_mission.modules.sensors.odom.controllers.OdomSensor import OdomSensor
+from UserConfig.mini_mission.modules.sensors.OdomSensor import OdomSensor
 from UserConfig.mini_mission.modules.movement.RotationDirection import RotationDirection
 
 class MovementController(metaclass=Singleton):
@@ -62,6 +62,7 @@ class MovementController(metaclass=Singleton):
         cmd = Twist()
         cmd.linear.x = speed
         cmd.angular.z = self.calculate_self_steering_angular_vel(heading, yaw)
+
         self.publish(cmd)
 
     def drive_to_heading_with_speed_for_seconds(self, heading: float, speed: float, seconds: int) -> None:

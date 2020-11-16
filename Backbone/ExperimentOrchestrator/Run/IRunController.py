@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from subprocess import Popen
 from abc import ABC, abstractmethod
+from multiprocessing import Event
 
 from Backbone.Config.RobotRunnerConfig import RobotRunnerConfig
 from Backbone.Config.Models.RobotRunnerContext import RobotRunnerContext
@@ -51,6 +52,8 @@ class IRunController(ABC):
     run_poll_proc: Popen = None
     block_out = open(os.devnull, 'w')  # block output from showing in terminal
 
+    run_completed_event: Event
+
     def __init__(self, variation: tuple, config: RobotRunnerConfig, current_run: int, total_runs: int):
         self.run_dir = Path(str(config.experiment_path.absolute()) + f"/{variation['__run_id']}")
         self.run_dir.mkdir(parents=True, exist_ok=True)
@@ -60,6 +63,8 @@ class IRunController(ABC):
         self.current_run = current_run
         self.run_context = RobotRunnerContext(self.variation, self.current_run, self.run_dir)
         self.data_manager = CSVExperimentOutputManager(str(self.config.experiment_path.absolute()))
+
+        self.run_completed_event = Event()
 
         print(f"\n-----------------NEW RUN [{current_run} / {total_runs}]-----------------\n")
 

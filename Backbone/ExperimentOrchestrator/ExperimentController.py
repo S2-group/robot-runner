@@ -1,6 +1,7 @@
 from Backbone.Progress.Models.RunProgress import RunProgress
 import time
 from typing import Dict, List
+import multiprocessing
 
 from Backbone.Config.Models.OperationType import OperationType
 from Backbone.Events.Models.RobotRunnerEvents import RobotRunnerEvents
@@ -64,8 +65,14 @@ class ExperimentController:
         for variation in self.run_table:
             if variation['__done'] == RunProgress.DONE:
                 continue
-
-            RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table)).do_run()  # Perform run
+            
+            run_controller = RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table))
+            perform_run = multiprocessing.Process(
+                target=run_controller.do_run,
+                args=[]
+            )
+            perform_run.start()
+            perform_run.join()
 
             time_btwn_runs = self.config.time_between_runs_in_ms
             if time_btwn_runs > 0:

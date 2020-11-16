@@ -1,6 +1,6 @@
 from Backbone.Events.Models.RobotRunnerEvents import RobotRunnerEvents
 from Backbone.Events.EventSubscriptionController import EventSubscriptionController
-from Backbone.ExperimentOutput.Models.ExperimentModel import ExperimentModel
+from Backbone.ExperimentOutput.Models.RunTableModel import RunTableModel
 from Backbone.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFactorModel
 from Backbone.Config.Models.RobotRunnerContext import RobotRunnerContext
 from Backbone.Config.Models.OperationType import OperationType
@@ -50,8 +50,8 @@ class RobotRunnerConfig:
     def create_run_table(self) -> List[Dict]:
         """Create and return the run_table here. A run_table is a List (rows) of tuples (columns), 
         representing each run robot-runner must perform"""
-        experiment_model = ExperimentModel(
-            treatments = [
+        run_table = RunTableModel(
+            factors = [
                 ExperimentFactorModel("example_factor", ['example_treatment1', 'example_treatment2'])
             ],
             exclude_variations = [
@@ -59,8 +59,8 @@ class RobotRunnerConfig:
                 {"example_treatment1", "example_treatment2"} # all runs having the combination <treatment1, treatment2> will be excluded
             ] 
         )
-        experiment_model.create_experiment_run_table()
-        return experiment_model.get_experiment_run_table()
+        run_table.create_experiment_run_table()
+        return run_table.get_experiment_run_table()
 
     def before_experiment(self) -> None:
         """Perform any activity required before starting the experiment here"""

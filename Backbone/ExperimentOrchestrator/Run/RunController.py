@@ -1,6 +1,7 @@
 from Backbone.Progress.Models.RunProgress import RunProgress
 from Backbone.Events.Models.RobotRunnerEvents import RobotRunnerEvents
 from Backbone.Events.EventSubscriptionController import EventSubscriptionController
+from Backbone.Architecture.Processify import processify
 import time
 import multiprocessing
 from multiprocessing import Event
@@ -22,20 +23,7 @@ from Backbone.Config.RobotRunnerConfig import RobotRunnerConfig
 ###     |                                                       |
 ###     =========================================================
 class RunController(IRunController):
-    run_started_event   = Event()
-    run_completed_event = Event()
-    run_stopped_event   = Event()
-
-    def wait_for_duration(self, event_is_active: bool):
-        start_time = time.time()
-
-        while (int(round((time.time() - start_time) * 1000)) <= self.config.run_duration_in_ms):
-            if event_is_active:
-               if self.run_completed_event.is_set():
-                   break
-
-            time.sleep(0.1)
-
+    @processify
     def do_run(self):
         # -- Start run
         output.console_log_WARNING("Calling start_run config hook")
@@ -48,21 +36,8 @@ class RunController(IRunController):
         # -- Start interaction
         output.console_log_WARNING("Calling interaction config hook")
 
-        during_run_callback = EventSubscriptionController.get_event_callback(RobotRunnerEvents.DURING_RUN)
-        if during_run_callback is not None:
-            during_run = multiprocessing.Process(
-                target=during_run_callback,
-                args=[self.run_context, self.run_completed_event]
-            )
-            during_run.start()
-
-            if self.config.run_duration_in_ms > 0:
-                self.wait_for_duration(True)
-        else:
-            if self.config.run_duration_in_ms > 0:
-                self.wait_for_duration(False)
-
-        output.console_log_WARNING("... Run completed ...")
+        EventSubscriptionController.raise_event(RobotRunnerEvents.DURING_RUN, self.run_context)
+        output.console_log_OK("... Run completed ...")
 
         # -- Stop measurement
         output.console_log_WARNING("... Stopping measurement ...")
