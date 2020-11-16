@@ -5,10 +5,11 @@ from geometry_msgs.msg import Twist
 from rospy.topics import Publisher
 from rospy.timer import Rate
 
-from common.modules.misc.Utilities import rotation_is_close
-from common.architectural.Singleton import Singleton
-from common.modules.sensors.odom.controllers.OdomSensor import OdomSensor
-from common.modules.movement.models.RotationDirection import RotationDirection
+from Backbone.Architecture.Singleton import Singleton
+
+from UserConfig.mini_mission.modules.utilties.Utilities import rotation_is_close
+from UserConfig.mini_mission.modules.sensors.odom.controllers.OdomSensor import OdomSensor
+from UserConfig.mini_mission.modules.movement.RotationDirection import RotationDirection
 
 class MovementController(metaclass=Singleton):
     # Controllers
@@ -71,6 +72,51 @@ class MovementController(metaclass=Singleton):
             cmd.linear.x = speed
             cmd.angular.z = self.calculate_self_steering_angular_vel(heading, yaw)
             self.publish(cmd)
+
+    def turn_full_rotation(self, direction: RotationDirection) -> None:
+        print("=== TURNING FULL ROTATION ===")
+        cmd = Twist()
+
+        self.stop()
+
+        roll = pitch = yaw = 0.0
+        while yaw == 0.0:
+            (roll, pitch, yaw) = self.odom_controller.get_odometry_as_tuple()
+
+        old_heading = yaw
+        old_time = time.time()
+
+        while True:
+            (roll, pitch, yaw) = self.odom_controller.get_odometry_as_tuple()
+
+            speed = self.rotation_base_speed
+
+            if (time.time() - old_time > self.full_rotation_time_threshold) and \
+            ((yaw > old_heading - self.rotation_to_target_threshold and yaw <= old_heading) or \
+            (yaw >= old_heading and yaw <  old_heading + self.rotation_to_target_threshold)):
+                speed = speed * (old_heading - yaw)
+            else:             
+                if direction == RotationDirection.CLCKWISE:
+                    speed = speed * -1
+
+            if(speed < 0):
+                speed -= self.rotation_minimal_speed
+            else:
+                speed += self.rotation_minimal_speed
+
+            cmd.angular.z = speed
+
+            # VERBOSE:
+            print(f"Speed= {speed} | Target={old_heading} | Current={yaw} | Approx={rotation_is_close(old_heading, yaw)}")
+
+            self.publish(cmd)
+            self.ros_rate.sleep()
+
+            if (time.time() - old_time > self.full_rotation_time_threshold) and rotation_is_close(old_heading, yaw):
+                break
+
+        self.stop()
+        print("=== COMPLETED FULL ROTATION ===")
 
     # turn_degrees must be in radians (90 degrees = math.pi / 2 etc)
     def turn_in_degrees(self, heading: float, turn_degrees: int, direction: RotationDirection) -> None:
