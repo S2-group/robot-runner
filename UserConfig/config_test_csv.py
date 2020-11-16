@@ -1,4 +1,4 @@
-from Backbone.ExperimentOutput.Models.ExperimentModel import ExperimentModel
+from Backbone.ExperimentOutput.Models.ExperimentModel import RunTableModel
 from Backbone.ExperimentOutput.Models.ExperimentFactorModel import ExperimentFactorModel
 from Backbone.Config.Models.OperationType import OperationType
 from Backbone.Config.Models.RobotRunnerContext import RobotRunnerContext
@@ -43,7 +43,7 @@ class RobotRunnerConfig:
     def create_run_table(self) -> List[Dict]:
         """Create and return the run_table here. A run_table is a List (rows) of tuples (columns), 
         representing each run robot-runner must perform"""
-        experiment_model = ExperimentModel(
+        experiment_model = RunTableModel(
             treatments = [
                 ExperimentFactorModel("movement", ["drive", "park"]),
                 ExperimentFactorModel("environment", ["empty", "cluttered"]),
