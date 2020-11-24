@@ -3,12 +3,12 @@ import traceback
 from typing import List
 from importlib import util
 
-from Backbone.CustomErrors.BaseError import BaseError
-from Backbone.CLIRegister.CLIRegister import CLIRegister
-from Backbone.Config.Validation.ConfigValidator import ConfigValidator
-from Backbone.CustomErrors.ConfigErrors import ConfigInvalidClassNameError
+from ConfigValidator.CustomErrors.BaseError import BaseError
+from ConfigValidator.CLIRegister.CLIRegister import CLIRegister
+from ConfigValidator.Config.Validation.ConfigValidator import ConfigValidator
+from ConfigValidator.CustomErrors.ConfigErrors import ConfigInvalidClassNameError
 
-from Backbone.ExperimentOrchestrator.ExperimentController import ExperimentController
+from ExperimentOrchestrator.Experiment.ExperimentController import ExperimentController
 
 def is_no_argument_given(args: List[str]): return (len(args) == 1)
 def is_config_file_given(args: List[str]): return (args[1][-3:] == '.py')

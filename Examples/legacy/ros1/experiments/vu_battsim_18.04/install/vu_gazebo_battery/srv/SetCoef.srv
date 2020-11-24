@@ -1,4 +1,0 @@
-float64 constant_coef
-float64 linear_coef
----
-bool result
