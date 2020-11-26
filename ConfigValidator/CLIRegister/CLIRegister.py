@@ -28,7 +28,7 @@ class ConfigCreate:
         try:
             destination = ""
             if args == None:
-                destination = "./robot-runner/Experiments/"
+                destination = "./robot-runner/experiments/"
             else:
                 if len(args) == 3:
                     destination = args[2]
@@ -62,7 +62,7 @@ class Prepare:
 
     @staticmethod
     def description_short() -> str:
-        return "Prepare system -- Install all dependencies"
+        return "(WIP) Prepare system -- Install all dependencies"
 
     @staticmethod
     def description_long() -> str:

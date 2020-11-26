@@ -40,7 +40,6 @@ class RobotRunnerConfig:
     # Experiment operation types
     operation_type:             OperationType   = OperationType.SEMI
     # Run settings
-    run_duration_in_ms:         int             = 0
     time_between_runs_in_ms:    int             = 0
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime

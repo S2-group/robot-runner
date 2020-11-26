@@ -49,20 +49,17 @@ class ConfigValidator:
         installed_ros_distro    = subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])
 
         # required_ros_version
-        ConfigValidator.__check_expression('required_ros_version', installed_ros_version, config.required_ros_version,
-                                (lambda a, b: a != b)
-                            )
-        # required_ros_distro
-        ConfigValidator.__check_expression('required_ros_version', installed_ros_distro, config.required_ros_distro,
-                                (lambda a, b: a != b)
-                            )
+        if config.required_ros_version is not None or config.required_ros_distro is not None:
+            ConfigValidator.__check_expression('required_ros_version', installed_ros_version, config.required_ros_version,
+                                    (lambda a, b: a != b)
+                                )
+            # required_ros_distro
+            ConfigValidator.__check_expression('required_ros_version', installed_ros_distro, config.required_ros_distro,
+                                    (lambda a, b: a != b)
+                                )
         # operation_type
         ConfigValidator.__check_expression('operation_type', config.operation_type, OperationType, 
                                 (lambda a, b: not isinstance(type(a), type(b)))
-                            )
-        # run_duration
-        ConfigValidator.__check_expression('run_duration_in_ms', config.run_duration_in_ms, int,
-                                (lambda a, b: not isinstance(a, b))
                             )
         # time_between_runs_in_ms
         ConfigValidator.__check_expression('time_between_runs_in_ms', config.time_between_runs_in_ms, int,
