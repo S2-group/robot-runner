@@ -17,7 +17,7 @@ class ConfigCreate:
 
     @staticmethod
     def description_short() -> str:
-        return "Creates a config file in the `robot-runner/Experiments', or user-specified, directory"
+        return "Creates a config file in the `experiments', or user-specified, directory"
 
     @staticmethod
     def description_long() -> str:
@@ -28,7 +28,7 @@ class ConfigCreate:
         try:
             destination = ""
             if args == None:
-                destination = "./robot-runner/experiments/"
+                destination = "./experiments/"
             else:
                 if len(args) == 3:
                     destination = args[2]
