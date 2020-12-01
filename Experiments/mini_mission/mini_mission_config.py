@@ -42,7 +42,7 @@ class RobotRunnerConfig:
     def __init__(self):
         """Executes immediately after program start, on config load"""
         self.turtlebot3 = BasicTurtleBot3()
-        self.ina219 = INA219Profiler('D:\DATA.TXT')
+        self.ina219 = INA219Profiler('D:\DATA.TXT') # Change to your specific path (linux / windows, specific path and sd_card name)
 
         EventSubscriptionController.subscribe_to_multiple_events([
             (RobotRunnerEvents.START_RUN,           self.start_run),
