@@ -8,7 +8,7 @@ from ExperimentOrchestrator.Misc.DictConversion import class_to_dict
 from ExperimentOrchestrator.Misc.PathValidation import is_path_exists_or_creatable_portable
 from ConfigValidator.Config.RobotRunnerConfig import RobotRunnerConfig
 from ConfigValidator.Config.Models.OperationType import OperationType
-from ConfigValidator.CustomErrors.ConfigErrors import (ConfigInvalidError, ConfigAttributeInvalidError)
+from ConfigValidator.CustomErrors.ConfigErrors import (ConfigInvalidError, ConfigAttributeInvalidError, ConfigROSMandatoryNotInstalledError)
 
 class ConfigValidator:
     config_values_or_exception_dict: dict = {}
@@ -44,12 +44,16 @@ class ConfigValidator:
         # Convert class to dictionary with utility method
         ConfigValidator.config_values_or_exception_dict = class_to_dict(config)
 
-        # Mandatory fields check
-        installed_ros_version   = int(os.environ['ROS_VERSION'])
-        installed_ros_distro    = subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])
-
         # required_ros_version
         if config.required_ros_version is not None or config.required_ros_distro is not None:
+            # Mandatory fields check
+            try:
+                installed_ros_version   = int(os.environ['ROS_VERSION'])
+                installed_ros_distro    = subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])
+            except KeyError:
+                raise ConfigROSMandatoryNotInstalledError
+
+            # required_ros_version
             ConfigValidator.__check_expression('required_ros_version', installed_ros_version, config.required_ros_version,
                                     (lambda a, b: a != b)
                                 )
@@ -57,6 +61,7 @@ class ConfigValidator:
             ConfigValidator.__check_expression('required_ros_version', installed_ros_distro, config.required_ros_distro,
                                     (lambda a, b: a != b)
                                 )
+
         # operation_type
         ConfigValidator.__check_expression('operation_type', config.operation_type, OperationType, 
                                 (lambda a, b: not isinstance(type(a), type(b)))

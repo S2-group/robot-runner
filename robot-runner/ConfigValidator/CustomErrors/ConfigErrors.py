@@ -11,7 +11,7 @@ class ConfigInvalidError(ConfigBaseError):
 
 class ConfigInvalidClassNameError(ConfigBaseError):
     def __init__(self):
-        super().__init__("The config file specified does not have a valid config class name as expected (RobotRunnerConfig)")
+        super().__init__("The config file specified does not have a valid config class name as expected (RobotRunnerConfig).")
 
 class ConfigAttributeInvalidError(ConfigBaseError):
     def __init__(self, attribute_in_question, found, expected):
@@ -19,3 +19,7 @@ class ConfigAttributeInvalidError(ConfigBaseError):
                             BashHeaders.UNDERLINE + attribute_in_question + BashHeaders.ENDC + BashHeaders.FAIL + "\n" +
                             "%-*s  %s\n" % (10, "FOUND:", found) +
                             "%-*s  %s" % (10, "EXPECTED:", expected) + BashHeaders.ENDC)
+                
+class ConfigROSMandatoryNotInstalledError(ConfigBaseError):
+    def __init__(self) -> None:
+        super().__init__("ROS is set as mandatory for this experiment, but ROS is not installed.")
