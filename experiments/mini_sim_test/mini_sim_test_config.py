@@ -20,15 +20,15 @@ class RobotRunnerConfig:
     # NOTE: (e.g. ROS2 foxy or eloquent)
     # NOTE: version: 2
     # NOTE: distro: "foxy"
-    required_ros_version:       int             = 2
-    required_ros_distro:        str             = "foxy"
+    required_ros_version:       int             = any
+    required_ros_distro:        str             = any
     # Experiment operation types
     operation_type:             OperationType   = OperationType.AUTO
     # Run settings
     time_between_runs_in_ms:    int             = 1000
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
-    results_output_path:        Path             = Path("~/Documents/experiments")
+    results_output_path:        Path            = Path("~/Documents/experiments")
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
 
     gazebo_proc = None
@@ -41,7 +41,8 @@ class RobotRunnerConfig:
         EventSubscriptionController.subscribe_to_multiple_events([ 
             (RobotRunnerEvents.START_RUN,           self.start_run),
             (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
-            (RobotRunnerEvents.STOP_RUN,            self.stop_run)
+            (RobotRunnerEvents.STOP_RUN,            self.stop_run),
+            (RobotRunnerEvents.POPULATE_RUN_DATA,   self.populate)
         ])
 
     def create_run_table(self) -> List[Dict]:
@@ -49,12 +50,10 @@ class RobotRunnerConfig:
         representing each run robot-runner must perform"""
         run_table = RunTableModel(
             factors = [
-                FactorModel("example_factor", ['example_treatment1', 'example_treatment2'])
+                FactorModel("example_factor", ['example_treatment1', 'example_treatment2']),
+                FactorModel("nr_of_runs", range(0, 2))
             ],
-            exclude_variations = [
-                {"example_treatment1"},     # all runs having treatment example_treatment1 will be excluded
-                {"example_treatment1", "example_treatment2"} # all runs having the combination <treatment1, treatment2> will be excluded
-            ] 
+            data_columns=['test']
         )
         run_table.create_experiment_run_table()
         return run_table.get_experiment_run_table()
@@ -71,13 +70,18 @@ class RobotRunnerConfig:
                             shell=True, preexec_fn=os.setsid)
 
     def launch_mission(self, context: RobotRunnerContext):
-        time.sleep(10)
+        time.sleep(2)
 
     def stop_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for stopping the run here.
         Activities before and after stopping the run should also be performed here."""
         
         os.killpg(os.getpgid(self.gazebo_proc.pid), signal.SIGINT)
+
+    def populate(self, context: RobotRunnerContext) -> tuple:
+        variation = context.run_variation
+        variation['test'] = 'happy days'
+        return variation
 
     # ===============================================DO NOT ALTER BELOW THIS LINE=================================================
     # NOTE: Do not alter these values

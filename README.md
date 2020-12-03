@@ -67,8 +67,8 @@ An experiment configuration can be defined using the provided experiment paramet
 
 Supporting information:
 - **name**: The name of the experiment, which is the name used for the experiment output folder, which will be created in the *results_output_path*.
-- **required_ros_version**: If ROS is used in the experiment, the experiment can be defined as to be dependent on that ROS version using this paramater. If ROS is not used, the value can be set to **None**.
-- **required_ros_distro**: This is a further specification of the abovementioned, it therefore has the same function and can also be discard by setting it to **None**.
+- **required_ros_version**: If ROS is used in the experiment, the experiment can be defined as to be dependent on that ROS version using this paramater. If ROS is not used, the value can be set to **None**. If ROS is used, but the version does not matter, the value can be set to **any**. If the ROS version is set to **any**, the ros distribution is automatically not checked anymore as it is not relevant anymore.
+- **required_ros_distro**: This is a further specification of the abovementioned, it therefore has the same function and can also be discard by setting it to **None** (not required) or set to **any** (any distribution of a certain version can be used).
 - **operation_type**: If set to **AUTO**, the experiment will continue with the next run (after *time_between_runs_in_ms* milliseconds) automatically without waiting for any other stimuli. If set to **SEMI**, the experiment will only continue (after waiting *time_between_runs_in_ms* milliseconds), if the callback for the event *CONTINUE* is returned.
 - **time_between_runs_in_ms**: The time Robot Runner will wait after a run completes, before continuing with the orchestration. This can be essential to accommodate for cooldown periods on some systems.
 - **results_output_path**: The path in which Robot Runner will create an experiment folder according to the experiment name.

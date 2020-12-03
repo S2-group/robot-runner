@@ -8,7 +8,7 @@ from ExperimentOrchestrator.Misc.DictConversion import class_to_dict
 from ExperimentOrchestrator.Misc.PathValidation import is_path_exists_or_creatable_portable
 from ConfigValidator.Config.RobotRunnerConfig import RobotRunnerConfig
 from ConfigValidator.Config.Models.OperationType import OperationType
-from ConfigValidator.CustomErrors.ConfigErrors import (ConfigInvalidError, ConfigAttributeInvalidError, ConfigROSMandatoryNotInstalledError)
+from ConfigValidator.CustomErrors.ConfigErrors import (ConfigInvalidError, ConfigAttributeInvalidError)
 
 class ConfigValidator:
     config_values_or_exception_dict: dict = {}
@@ -35,7 +35,6 @@ class ConfigValidator:
                         .replace('b', '') \
                         .replace("'", "")
 
-
         # Runtime set experiment_path
         config.experiment_path = Path(str(config.results_output_path) + f"/{config.name}")
         if '~' in str(config.experiment_path):
@@ -45,22 +44,29 @@ class ConfigValidator:
         ConfigValidator.config_values_or_exception_dict = class_to_dict(config)
 
         # required_ros_version
-        if config.required_ros_version is not None or config.required_ros_distro is not None:
-            # Mandatory fields check
+        if config.required_ros_version is not None:                                                                             # ROS is required (not None)
             try:
-                installed_ros_version   = int(os.environ['ROS_VERSION'])
-                installed_ros_distro    = subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])
+                installed_ros_version = int(os.environ['ROS_VERSION'])                                                          # Get system variable ROS_VERSION
             except KeyError:
-                raise ConfigROSMandatoryNotInstalledError
+                installed_ros_version = 'not_installed'                                                                         # If not installed, set to not_installed
 
-            # required_ros_version
-            ConfigValidator.__check_expression('required_ros_version', installed_ros_version, config.required_ros_version,
-                                    (lambda a, b: a != b)
-                                )
-            # required_ros_distro
-            ConfigValidator.__check_expression('required_ros_version', installed_ros_distro, config.required_ros_distro,
-                                    (lambda a, b: a != b)
-                                )
+            if config.required_ros_version is not any or installed_ros_version == 'not_installed':                              # In case a specific ROS version is required (not any) check found vs expected.
+                # required_ros_version                                                                                          # In case ROS is not_installed but ROS was required (not None), check vs expected and raise error.
+                ConfigValidator.__check_expression('required_ros_version', installed_ros_version, config.required_ros_version,
+                                        (lambda a, b: a != b)
+                                    )
+            
+            if config.required_ros_distro is not None:                                                                          # ROS is required (not None)
+                try:
+                    installed_ros_distro = subprocess_check_output_friendly_string(['printenv','ROS_DISTRO'])                   # Get system variable ROS_DISTRO
+                except:
+                    installed_ros_distro = 'not_installed'                                                                      # If not installed, set to not_installed
+
+                if config.required_ros_distro is not any or installed_ros_distro == 'not_installed':                            # In case a specific ROS distribution is required (not any) check found vs expected
+                    # required_ros_distro                                                                                       # In case ROS is not_installed but ROS was required (not None), check vs expected and raise error.
+                    ConfigValidator.__check_expression('required_ros_version', installed_ros_distro, config.required_ros_distro,
+                                            (lambda a, b: a != b)
+                                        )
 
         # operation_type
         ConfigValidator.__check_expression('operation_type', config.operation_type, OperationType, 

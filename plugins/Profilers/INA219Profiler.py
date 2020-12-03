@@ -1,9 +1,9 @@
-from ConfigValidator.Config.Models.RobotRunnerContext import RobotRunnerContext
 import csv
 import time
 
 from pathlib import Path
 from shutil import copyfile
+from ConfigValidator.Config.Models.RobotRunnerContext import RobotRunnerContext
 from ProgressManager.Output.OutputProcedure import OutputProcedure as output
 
 class INA219Profiler:

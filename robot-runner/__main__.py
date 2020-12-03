@@ -7,7 +7,6 @@ from ConfigValidator.CustomErrors.BaseError import BaseError
 from ConfigValidator.CLIRegister.CLIRegister import CLIRegister
 from ConfigValidator.Config.Validation.ConfigValidator import ConfigValidator
 from ConfigValidator.CustomErrors.ConfigErrors import ConfigInvalidClassNameError
-
 from ExperimentOrchestrator.Experiment.ExperimentController import ExperimentController
 
 def is_no_argument_given(args: List[str]): return (len(args) == 1)
@@ -29,9 +28,9 @@ if __name__ == "__main__":
             config_file = load_and_get_config_file_as_module(sys.argv)
 
             if hasattr(config_file, 'RobotRunnerConfig'):
-                config = config_file.RobotRunnerConfig()                # Instantiate config from injected file
-                ConfigValidator.validate_config(config)                 # Validate config as a valid RobotRunnerConfig
-                ExperimentController(config).do_experiment()            # Instantiate controller with config and start experiment
+                config = config_file.RobotRunnerConfig()                    # Instantiate config from injected file
+                ConfigValidator.validate_config(config)                     # Validate config as a valid RobotRunnerConfig
+                ExperimentController(config).do_experiment()                # Instantiate controller with config and start experiment
             else:
                 raise ConfigInvalidClassNameError
         else:                                                               # Else, a utility command is entered

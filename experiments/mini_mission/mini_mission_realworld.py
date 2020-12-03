@@ -23,8 +23,8 @@ class RobotRunnerConfig:
     # NOTE: (e.g. ROS2 foxy or eloquent)
     # NOTE: version: 2
     # NOTE: distro: "foxy"
-    required_ros_version:       int             = 1
-    required_ros_distro:        str             = "melodic"
+    required_ros_version:       int             = any
+    required_ros_distro:        str             = any
     # Experiment operation types
     operation_type:             OperationType   = OperationType.SEMI
     # Run settings
