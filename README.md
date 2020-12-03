@@ -1,7 +1,7 @@
 # Robot-Runner
 Robot Runner (RR) is a tool to automatically execute measurement-based experiments on robotics software.
 
-The following scientific paper gives an overview about the main components, plugins, and configurations of Robot Runner (as of end-2020): [Robot Runner ICSE 2021 submission](https://github.com/S2-group/robot-runner/tree/master/documentation)
+The following scientific paper gives an overview about the main components, plugins, and configurations of Robot Runner (please, consider the paper as **confidential**): [Robot Runner ICSE 2021 submission](https://github.com/S2-group/robot-runner/tree/master/documentation). 
 
 A short video, giving a brief explanation of Robot Runner, can be seen here: [YouTube Video](https://www.youtube.com/watch?v=le-SAXI2k1E&feature=youtu.be)
 
