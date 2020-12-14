@@ -51,7 +51,6 @@ class RobotRunnerConfig:
             (RobotRunnerEvents.START_MEASUREMENT,   self.start_measurement),
             (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
             (RobotRunnerEvents.STOP_MEASUREMENT,    self.stop_measurement),
-            (RobotRunnerEvents.STOP_RUN,            self.stop_run),
             (RobotRunnerEvents.POPULATE_RUN_DATA,   self.populate_run_data),
             (RobotRunnerEvents.CONTINUE,            self.continue_to_next_run)
         ])
@@ -63,7 +62,9 @@ class RobotRunnerConfig:
         representing each run robot-runner must perform"""
         run_table = RunTableModel(
             factors = [
-                FactorModel("logging", ['ON', 'OFF'])
+                FactorModel("logging", ['ON', 'OFF']),
+                FactorModel("mission_type", ['computation', 'networking']),
+                FactorModel("run_number", range(1, 11))
             ]
         )
         run_table.create_experiment_run_table()
@@ -108,12 +109,13 @@ class RobotRunnerConfig:
         
     def stop_measurement(self, context: RobotRunnerContext) -> None:
         self.network_profiler.stop_sniffing()
-        self.topic_subscriber.unregister_from_multiple_subscriptions(self.topic_handlers)
 
-    def stop_run(self, context: RobotRunnerContext) -> None:
-        print("Config.stop_run() called!")
+        logging = context.run_variation['logging']
+        if logging == 'ON':
+            self.topic_subscriber.unregister_from_multiple_subscriptions(self.topic_handlers)
     
     def populate_run_data(self, context: RobotRunnerContext) -> tuple:
+        # persist aggregate of traffic volume of sniffed data?
         return None
 
     def continue_to_next_run(self, context: RobotRunnerContext) -> None:
