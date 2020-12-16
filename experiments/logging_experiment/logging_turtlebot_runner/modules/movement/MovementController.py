@@ -5,13 +5,11 @@ from geometry_msgs.msg import Twist
 from rospy.topics import Publisher
 from rospy.timer import Rate
 
-from Backbone.Architecture.Singleton import Singleton
-
-from modules.utilties.Utilities import rotation_is_close
+from modules.utilities.Utilities import rotation_is_close
 from modules.sensors.OdomSensor import OdomSensor
 from modules.movement.RotationDirection import RotationDirection
 
-class MovementController(metaclass=Singleton):
+class MovementController:
     # Controllers
     odom_controller: OdomSensor = None
 

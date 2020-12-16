@@ -30,7 +30,6 @@ class Mission:
         self.odom_controller = OdomSensor()
         self.ros_rate = Rate(10)
         self.mvmnt_controller = MovementController(self.ros_rate)
-
         self.__operation = operation
 
     def perform_mission(self):
@@ -60,8 +59,6 @@ class Mission:
                 self.__networking_stop()
 
         # =========== MISSION =========== 
-        time.sleep(5)
-
         drive_forward_10_seconds()
 
         time.sleep(5)
@@ -76,8 +73,6 @@ class Mission:
 
         rotate_180_degrees()
         drive_forward_10_seconds()
-
-        time.sleep(5)
         # =========== MISSION =========== 
 
     def __computation_start(self):

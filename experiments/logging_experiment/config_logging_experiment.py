@@ -6,8 +6,9 @@ from ConfigValidator.Config.Models.FactorModel import FactorModel
 from ConfigValidator.Config.Models.RobotRunnerContext import RobotRunnerContext
 from ConfigValidator.Config.Models.OperationType import OperationType
 
-from plugins.Profilers.NetworkProfiler import NetworkProfiler
-from plugins.Systems.TopicSubscriber import TopicSubscriber
+from Plugins.Profilers.INA219Profiler import INA219Profiler
+from Plugins.Profilers.NetworkProfiler import NetworkProfiler
+from Plugins.Systems.TopicSubscriber import TopicSubscriber
 
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import BatteryState, LaserScan, Imu, JointState, MagneticField
@@ -17,6 +18,8 @@ from tf2_msgs.msg import TFMessage
 
 from typing import Dict, List
 from pathlib import Path
+
+import time
 
 class RobotRunnerConfig:
     # =================================================USER SPECIFIC NECESSARY CONFIG=================================================
@@ -37,6 +40,7 @@ class RobotRunnerConfig:
     results_output_path:        Path             = Path("~/Documents/experiments")
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
 
+    ina219_profiler: INA219Profiler = None
     network_profiler: NetworkProfiler = None
     topic_subscriber: TopicSubscriber = None
     topic_handlers: List[Subscriber] = None
@@ -47,11 +51,11 @@ class RobotRunnerConfig:
         """Executes immediately after program start, on config load"""
 
         EventSubscriptionController.subscribe_to_multiple_events([ 
+            (RobotRunnerEvents.BEFORE_RUN,          self.before_run),
             (RobotRunnerEvents.START_RUN,           self.start_run),
             (RobotRunnerEvents.START_MEASUREMENT,   self.start_measurement),
             (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
             (RobotRunnerEvents.STOP_MEASUREMENT,    self.stop_measurement),
-            (RobotRunnerEvents.POPULATE_RUN_DATA,   self.populate_run_data),
             (RobotRunnerEvents.CONTINUE,            self.continue_to_next_run)
         ])
         
@@ -64,22 +68,26 @@ class RobotRunnerConfig:
             factors = [
                 FactorModel("logging", ['ON', 'OFF']),
                 FactorModel("mission_type", ['computation', 'networking']),
-                FactorModel("run_number", range(1, 11))
+                FactorModel("run_number", range(1, 7))
             ]
         )
         run_table.create_experiment_run_table()
         return run_table.get_experiment_run_table()
 
+    def before_run(self) -> None:
+        input('\n\n>> To start run, press ENTER. <<\n\n')
+
     def start_run(self, context: RobotRunnerContext) -> None:
+        self.ina219_profiler = INA219Profiler("/media/swanborn/SD_CARD/DATA.txt")
         self.network_profiler = NetworkProfiler()
         self.topic_subscriber = TopicSubscriber()
 
     def start_measurement(self, context: RobotRunnerContext) -> None:
         self.network_profiler.start_sniffing_to_file_between_robot_and_remotepc(
             context=context, 
-            network_interface='enp0s31f6', 
-            robot_ip_addr='192.168.1.185', 
-            remotepc_ip_addr='192.168.1.102', 
+            network_interface='wlp5s0',
+            robot_ip_addr='10.42.0.110', 
+            remotepc_ip_addr='10.42.0.1', 
             output_file_name='wireshark_dump.pcap'
         )
 
@@ -105,7 +113,9 @@ class RobotRunnerConfig:
                 topic_datatype_map=topics_datatypes_map, 
                 callback=empty_callback_handler
             )
-        
+
+        print("waiting for experiment to finish...")
+        time.sleep(80)
         
     def stop_measurement(self, context: RobotRunnerContext) -> None:
         self.network_profiler.stop_sniffing()
@@ -113,12 +123,11 @@ class RobotRunnerConfig:
         logging = context.run_variation['logging']
         if logging == 'ON':
             self.topic_subscriber.unregister_from_multiple_subscriptions(self.topic_handlers)
-    
-    def populate_run_data(self, context: RobotRunnerContext) -> tuple:
-        # persist aggregate of traffic volume of sniffed data?
-        return None
 
-    def continue_to_next_run(self, context: RobotRunnerContext) -> None:
+        energy_data = self.ina219_profiler.halt_and_collect_measures_from_sd_card_and_return_data()
+        self.ina219_profiler.move_data_file_to_run_folder(context, 'energy_data.txt')
+
+    def continue_to_next_run(self) -> None:
         input('\n\n>> To continue with the next run, press ENTER. <<\n\n')
 
     # ===============================================DO NOT ALTER BELOW THIS LINE=================================================

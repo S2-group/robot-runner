@@ -63,6 +63,8 @@ class ExperimentController:
             if variation['__done'] == RunProgress.DONE:
                 continue
             
+            EventSubscriptionController.raise_event(RobotRunnerEvents.BEFORE_RUN)
+
             run_controller = RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table))
             perform_run = multiprocessing.Process(
                 target=run_controller.do_run,
