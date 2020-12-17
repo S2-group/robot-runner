@@ -34,6 +34,7 @@ class RobotRunnerConfig:
 
         EventSubscriptionController.subscribe_to_multiple_events([ 
             (RobotRunnerEvents.BEFORE_EXPERIMENT,   self.before_experiment), 
+            (RobotRunnerEvents.BEFORE_RUN,          self.before_run),
             (RobotRunnerEvents.START_RUN,           self.start_run),
             (RobotRunnerEvents.START_MEASUREMENT,   self.start_measurement),
             (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
@@ -65,6 +66,10 @@ class RobotRunnerConfig:
 
         print("Config.before_experiment() called!")
 
+    def before_run(self) -> None:
+        """Perform any activity required before starting a run, no context is available 
+        here as the run is not yet active (BEFORE RUN)"""
+
     def start_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for starting the run here. 
         Activities before and after starting the run should also be performed here."""
@@ -72,6 +77,7 @@ class RobotRunnerConfig:
         print("Config.start_run() called!")
 
     def start_measurement(self, context: RobotRunnerContext) -> None:
+        """Perform any activity required for starting measurements."""
         print("Config.start_measurement called!")
 
     def launch_mission(self, context: RobotRunnerContext) -> None:
@@ -81,6 +87,7 @@ class RobotRunnerConfig:
         print("Config.launch_mission() called!")
 
     def stop_measurement(self, context: RobotRunnerContext) -> None:
+        """Perform any activity here required for stopping measurements."""
         print("Config.stop_measurement called!")
 
     def stop_run(self, context: RobotRunnerContext) -> None:

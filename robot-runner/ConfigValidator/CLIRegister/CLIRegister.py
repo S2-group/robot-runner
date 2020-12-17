@@ -1,3 +1,4 @@
+import os
 import uuid
 import inspect
 from typing import List
@@ -28,7 +29,10 @@ class ConfigCreate:
         try:
             destination = ""
             if args == None:
-                destination = "./experiments/"
+                filepath = __file__.split('/')
+                filepath.pop()
+                filepath = '/'.join(filepath) + "/../../../experiments/"
+                destination = os.path.abspath(filepath)
             else:
                 if len(args) == 3:
                     destination = args[2]

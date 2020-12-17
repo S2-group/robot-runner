@@ -1,3 +1,4 @@
+import rospy
 from rospy.topics import Subscriber
 from EventManager.Models.RobotRunnerEvents import RobotRunnerEvents
 from EventManager.EventSubscriptionController import EventSubscriptionController

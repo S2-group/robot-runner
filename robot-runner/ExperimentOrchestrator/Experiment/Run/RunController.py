@@ -5,17 +5,6 @@ from ExperimentOrchestrator.Architecture.Processify import processify
 from ExperimentOrchestrator.Experiment.Run.IRunController import IRunController
 from ProgressManager.Output.OutputProcedure import OutputProcedure as output
 
-###     =========================================================
-###     |                                                       |
-###     |                  RunController                        |
-###     |       - Define how to perform a run                   |
-###     |       - Mostly use predefined, generic functions      |
-###     |         as defined in the abstract parent             |
-###     |                                                       |
-###     |       * Any function which is implementation          |
-###     |         specific should be declared here              |
-###     |                                                       |
-###     =========================================================
 class RunController(IRunController):
     @processify
     def do_run(self):
