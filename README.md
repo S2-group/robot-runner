@@ -1,11 +1,28 @@
 # Robot-Runner
 Robot Runner (RR) is a tool to automatically execute measurement-based experiments on robotics software.
 
-The following scientific paper gives an overview about the main components, plugins, and configurations of Robot Runner (please, consider the paper as **confidential**): [Robot Runner ICSE 2021 submission](https://github.com/S2-group/robot-runner/tree/master/documentation). 
+The following scientific paper gives an overview about the main components, plugins, and configurations of Robot Runner (please, consider the paper as **confidential**): [ICSE 2021 tool demo](https://github.com/S2-group/robot-runner/tree/master/documentation/ICSE_2021.pdf). 
 
 A short video, giving a brief explanation of Robot Runner, can be seen here: [YouTube Video](https://www.youtube.com/watch?v=le-SAXI2k1E&feature=youtu.be)
 
-In this README, the necessary steps to start using Robot Runner are detailed.
+## How to cite Robot Runner
+
+If Robot Runner is helping your research, consider to cite it as follows, thank you!
+
+``` 
+@inproceedings{ICSE_2021,
+  title={{Robot Runner: A Tool for Automatically Executing Experiments on Robotics Software}},
+  author={Stan Swanborn and Ivano Malavolta},
+  booktitle = {Proceedings of the ACM/IEEE 43rd International Conference on Software Engineering},
+  year={2021},
+  url= {https://github.com/S2-group/robot-runner/tree/master/documentation/ICSE_2021.pdf},
+  organization={ACM}
+}
+```
+
+## Overview
+
+The steps to start using Robot Runner are detailed below.
 
 As visualized below, Robot Runner consists of the following components:
 - **Experiment orchestrator**: Is in charge of executing the whole experiment according to the experiment configuration provided by the user.
@@ -17,7 +34,6 @@ As visualized below, Robot Runner consists of the following components:
 <img src="./documentation/overview.png" alt="Overview of Robot Runner" width="500"/>
 </p>
 
-## Brief overview
 Robot Runner is developed to be entirely independent from any communicational means or robotic system.
 This means specifically; that Robot Runner can be used with any robotic system, or any simulation software, using any form of communication (e.g. ROS1, ROS2, TCP Sockets, etc.).
 
