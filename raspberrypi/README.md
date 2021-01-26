@@ -72,8 +72,35 @@ $ bash /opt/ros/eloquent/setup.bash
 3) Run the takeoff and landing script:
 
 ```bash
-$ python3 ~/check-tello.py
+$ ~/check-tello.sh
 ```
+The drone will take off, hover for a few seconds, and then land.
+
+The Raspberry terminal should return something like the following:
+
+```
+Tello: 16:51:56.579:  Info: start video thread
+Tello: 16:51:56.579:  Info: send connection request (cmd="conn_req:9617")
+Tello: 16:51:56.579:  Info: video receive buffer size = 425984
+Tello: 16:51:56.582:  Info: state transit State::disconnected -> State::connecting
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI:  0 | CAM:  0 | MODE:  1
+Tello: 16:51:56.636:  Info: connected. (port=9617)
+Tello: 16:51:56.636:  Info: send_time (cmd=0x46 seq=0x01e4)
+Tello: 16:51:56.636:  Info: state transit State::connecting -> State::connected
+Tello: 16:51:56.637:  Info: set altitude limit 30m
+Tello: 16:51:56.637:  Info: takeoff (cmd=0x54 seq=0x01e4)
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI:  0 | CAM:  0 | MODE:  1
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI:  0 | CAM:  0 | MODE: 41
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI:  0 | CAM:  0 | MODE: 41
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI:  0 | CAM:  0 | MODE: 41
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
+ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
+```
+
+## DJ Tello ROS Commands
+
+...
 
 ## Check Turtlebot
 
