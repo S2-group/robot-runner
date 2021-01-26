@@ -109,7 +109,7 @@ ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
 
 ---
 # Todo
-
+ - DJ Tello ROS commands;
  - Add ROS1 support;
  - Write some ROS tests (rostest) for validation;
  - Test with TurtleBot3.
