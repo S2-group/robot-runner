@@ -30,7 +30,7 @@ Edit the configuration file.
 $ sudo nano /etc/netplan/50-cloud-init.yaml
 ```
 
-Set the right WiFi parameters.
+Set up WiFi parameters:
 
 ```file
 ...
@@ -46,6 +46,17 @@ network:
             access-points:
                 "YOUR-SSID-NAME":
                     password: "YOUR-NETWORK-PASSWORD"
+            dhcp4: true
+```
+
+... for Open WiFi (No Password)
+
+```
+    wifis:
+        wlan0:
+            optional: true
+            access-points:
+                "YOUR-SSID-NAME": {}
             dhcp4: true
 ```
 
