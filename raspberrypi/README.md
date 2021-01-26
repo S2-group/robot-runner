@@ -123,7 +123,8 @@ ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
  - DJ Tello ROS commands;
  - Add ROS1 support;
  - Write some ROS tests (rostest) for validation;
- - Test with TurtleBot3.
+ - Test with TurtleBot;
+ - Customize splash.
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
