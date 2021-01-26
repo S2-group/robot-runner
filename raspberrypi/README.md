@@ -35,11 +35,11 @@ Set the right WiFi parameters.
 ```file
 ...
 network:
-    version: 2
     ethernets:
         eth0:
             dhcp4: false
             addresses: [192.168.200.200/24]
+    version: 2
     wifis:
         wlan0:
             optional: true
@@ -68,7 +68,7 @@ $ bash /opt/ros/eloquent/setup.bash
 ## Check DJ Tello
 
 1) Turn the drone ON and wait for the yellow blinking light;
-2) ...
+2) Connect to its WiFi network (see the WiFi configuration section);
 3) Run the takeoff and landing script:
 
 ```bash
