@@ -76,7 +76,7 @@ $ ~/check-tello.sh
 ```
 The drone will take off, hover for a few seconds, and then land.
 
-The Raspberry terminal should return something like the following:
+Raspberry terminal should report something like the following:
 
 ```
 Tello: 16:51:56.579:  Info: start video thread
@@ -96,6 +96,7 @@ ALT:  0 | SPD:  0 | BAT: 39 | WIFI:  0 | CAM:  0 | MODE: 41
 ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
 ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
 ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
+...
 ```
 
 ## DJ Tello ROS Commands
