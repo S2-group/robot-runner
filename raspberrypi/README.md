@@ -68,13 +68,89 @@ $ sudo netplan apply
 ---
 # Howto
 
-## Setup the ROS environment:
+## Setup the ROS1 environment:
 
-Already in the .bashrc
+Setup environment variables:
+
+```bash
+$ bash /opt/ros/melodic/setup.bash
+```
+
+Check the variables:
+
+```bash
+$ printenv | grep -i ROS
+```
+
+You should see this:
+
+```
+ROS_ETC_DIR=/opt/ros/melodic/etc/ros
+ROS_ROOT=/opt/ros/melodic/share/ros
+ROS_MASTER_URI=http://localhost:11311
+ROS_VERSION=1
+ROS_PYTHON_VERSION=2
+ROS_PACKAGE_PATH=/opt/ros/melodic/share
+ROSLISP_PACKAGE_DIRECTORIES=
+ROS_DISTRO=melodic
+```
+
+Run master node:
+
+```bash
+$ roscore &
+```
+
+Run a simple example:
+
+```bash
+$ rosrun rospy_tutorials talker chatter:=/wg/chatter
+```
+
+You should get this:
+
+```
+[INFO] [1611755100.147060]: hello world 1611755100.15
+[INFO] [1611755100.258993]: hello world 1611755100.26
+[INFO] [1611755100.347802]: hello world 1611755100.35
+[INFO] [1611755100.447843]: hello world 1611755100.45
+[INFO] [1611755100.547811]: hello world 1611755100.55
+[INFO] [1611755100.647949]: hello world 1611755100.65
+[INFO] [1611755100.747753]: hello world 1611755100.75
+...
+```
+## Setup the ROS2 environment:
+
+If ROS1 is running, kill the master node.
+
+```bash
+$ pkill roscore
+```
+
+Setup environment variables:
 
 ```bash
 $ bash /opt/ros/eloquent/setup.bash
 ```
+
+Check the variables:
+
+```bash
+$ printenv | grep -i ROS
+```
+
+You should see this:
+
+```
+ROS_VERSION=2
+ROS_LOCALHOST_ONLY=0
+ROS_PYTHON_VERSION=3
+ROS_DISTRO=eloquent
+```
+
+Run a simple example:
+
+
 
 ## Check DJ Tello
 
