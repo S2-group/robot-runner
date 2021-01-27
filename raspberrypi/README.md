@@ -150,7 +150,20 @@ ROS_DISTRO=eloquent
 
 Run a simple example:
 
+```bash
+$ ros2 topic pub /chatter std_msgs/String "{data: 'Hello there'}"
+```
 
+You should get this:
+
+```
+publisher: beginning loop
+publishing #1: std_msgs.msg.String(data='Hello there')
+
+publishing #2: std_msgs.msg.String(data='Hello there')
+
+publishing #3: std_msgs.msg.String(data='Hello there')
+```
 
 ## Check DJ Tello
 
