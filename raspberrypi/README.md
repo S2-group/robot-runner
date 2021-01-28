@@ -171,7 +171,11 @@ publishing #2: std_msgs.msg.String(data='Hello there')
 publishing #3: std_msgs.msg.String(data='Hello there')
 ```
 
-## Check DJ Tello
+## Check DJ Tello (TELLO > WIFI -- ETHERNET < ROS)
+
+Raspberry connects to TELLO WiFi, while ROS runs on ethernet network. So far, you must write your own Python scripts by using [TelloPy library] to interact to Tello, and manage to link [rospy] (for ROS communicaton) and TelloPy. Not a big deal at all!
+
+Anyway, we'll be dropping here a simple example.
 
 1) Turn the drone ON and wait for the yellow blinking light;
 2) Connect to its WiFi network (see the WiFi configuration section);
@@ -205,24 +209,24 @@ ALT:  0 | SPD:  0 | BAT: 39 | WIFI: 90 | CAM:  0 | MODE: 41
 ...
 ```
 
-## DJ Tello ROS Commands
+### DJ Tello Example
 
-...
+Not available yet. TODO by Michel.
 
 ## Check Turtlebot
 
+TODO by Ivano/VU Team
 ...
 
 ---
 # Todo
- - DJ Tello ROS commands;
- - Add ROS1 support;
- - Write some ROS tests (rostest) for validation;
- - Test with TurtleBot;
- - Customize splash.
+ - DJ Tello and ROS;
+ - TurtleBot and ROS;
+ - Customize splash (fancy stuff).
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
 
    [Robot-Runner]: <https://github.com/S2-group/robot-runner>
-
+   [TelloPy library]: <https://github.com/hanyazou/TelloPy>
+   [rospy]: <http://wiki.ros.org/rospy>
