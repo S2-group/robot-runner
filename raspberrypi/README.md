@@ -19,7 +19,7 @@ Automate them with [Robot-Runner].
 * Username: ubuntu
 * Password: s2group
 
-## Remote (SSH)
+## Remote - Ethernet Default IP (SSH)
 ```bash
 $ ssh s2group@192.168.200.200
 ```
@@ -172,9 +172,9 @@ publishing #2: std_msgs.msg.String(data='Hello there')
 publishing #3: std_msgs.msg.String(data='Hello there')
 ```
 
-## Check DJ Tello (TELLO > WIFI -- ETHERNET < ROS)
+## Check DJ Tello (TELLO > WIFI -- RaspberryPy -- ETHERNET < ROS)
 
-Raspberry connects to TELLO WiFi, while ROS runs on the ethernet network. So far, you must write your own Python scripts by using [TelloPy library] to interact with Tello and manage to link [rospy] (for ROS communication) and TelloPy. Not a big deal at all!
+Raspberry WiFi connects to TELLO (AP Mode), while all the ROS communication goes on rasp Ethernet network. So far, you must write your own Python scripts by using [TelloPy library] to interact with Tello and manage to link [rospy] (for ROS communication) and TelloPy. Not a big deal at all!
 
 Anyway, we'll be dropping here a simple example.
 
