@@ -232,7 +232,3 @@ To be done by VU Team (Ivano's students)
    [Robot-Runner]: <https://github.com/S2-group/robot-runner>
    [TelloPy library]: <https://github.com/hanyazou/TelloPy>
    [rospy]: <http://wiki.ros.org/rospy>
-<<<<<<< HEAD
-
-=======
->>>>>>> 527382e60e46dea7ea2e8aa115440f6449ea9326
