@@ -95,10 +95,16 @@ ROSLISP_PACKAGE_DIRECTORIES=
 ROS_DISTRO=melodic
 ```
 
-Run master node:
+Run master node (if you run on standalone mode)...
 
 ```bash
 $ roscore &
+```
+
+otherwise, you set up ROS master node?
+
+```bash
+export ROS_MASTER_URI=http://<master_host>:<master_port>
 ```
 
 Run a simple example:
