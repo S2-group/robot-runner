@@ -8,8 +8,8 @@ from ConfigValidator.Config.Models.OperationType import OperationType
 
 from ProgressManager.RunTable.Models.RunProgress import RunProgress
 
-from plugins.Systems.TurtleBot3.BasicTurtleBot3 import BasicTurtleBot3
-from plugins.Profilers.INA219Profiler import INA219Profiler
+from Plugins.Systems.TurtleBot3.BasicTurtleBot3 import BasicTurtleBot3
+from Plugins.Profilers.INA219Profiler import INA219Profiler
 
 import pandas as pd
 from typing import Dict, List
@@ -42,7 +42,7 @@ class RobotRunnerConfig:
     def __init__(self):
         """Executes immediately after program start, on config load"""
         self.turtlebot3 = BasicTurtleBot3()
-        self.ina219 = INA219Profiler('D:\DATA.TXT') # Change to your specific path (linux / windows, specific path and sd_card name)
+        self.ina219 = INA219Profiler('/sdb/DATA.TXT') # Change to your specific path (linux / windows, specific path and sd_card name)
 
         EventSubscriptionController.subscribe_to_multiple_events([
             (RobotRunnerEvents.START_RUN,           self.start_run),

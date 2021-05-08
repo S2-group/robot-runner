@@ -2,7 +2,7 @@ import rospy
 from rospy.topics import Subscriber
 from sensor_msgs.msg import BatteryState
 
-from Backbone.Architecture.Singleton import Singleton
+from ExperimentOrchestrator.Architecture.Singleton import Singleton
 
 class BatterySensor(metaclass=Singleton):
     __battery_sub: Subscriber

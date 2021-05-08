@@ -7,11 +7,11 @@ from geometry_msgs.msg import Twist
 
 from ConfigValidator.Config.Models.RobotRunnerContext import RobotRunnerContext
 
-from plugins.Systems.TurtleBot3.modules.sensors.CameraSensor import CameraSensor
-from plugins.Systems.TurtleBot3.modules.recording.MetricsRecorder import MetricsRecorder
-from plugins.Systems.TurtleBot3.modules.movement.MovementController import MovementController
-from plugins.Systems.TurtleBot3.modules.movement.RotationDirection import RotationDirection
-from plugins.Systems.TurtleBot3.modules.sensors.OdomSensor import OdomSensor
+from Plugins.Systems.TurtleBot3.modules.sensors.CameraSensor import CameraSensor
+from Plugins.Systems.TurtleBot3.modules.recording.MetricsRecorder import MetricsRecorder
+from Plugins.Systems.TurtleBot3.modules.movement.MovementController import MovementController
+from Plugins.Systems.TurtleBot3.modules.movement.RotationDirection import RotationDirection
+from Plugins.Systems.TurtleBot3.modules.sensors.OdomSensor import OdomSensor
 
 class BasicTurtleBot3:
     metrics_recorder: MetricsRecorder

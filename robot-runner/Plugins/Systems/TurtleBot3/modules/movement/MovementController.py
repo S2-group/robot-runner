@@ -5,11 +5,11 @@ from geometry_msgs.msg import Twist
 from rospy.topics import Publisher
 from rospy.timer import Rate
 
-from Backbone.Architecture.Singleton import Singleton
+from ExperimentOrchestrator.Architecture.Singleton import Singleton
 
-from UserConfig.mini_mission.modules.utilties.Utilities import rotation_is_close
-from UserConfig.mini_mission.modules.sensors.OdomSensor import OdomSensor
-from UserConfig.mini_mission.modules.movement.RotationDirection import RotationDirection
+from Plugins.Systems.TurtleBot3.modules.utilties.Utilities import rotation_is_close
+from Plugins.Systems.TurtleBot3.modules.sensors.OdomSensor import OdomSensor
+from Plugins.Systems.TurtleBot3.modules.movement.RotationDirection import RotationDirection
 
 class MovementController(metaclass=Singleton):
     # Controllers

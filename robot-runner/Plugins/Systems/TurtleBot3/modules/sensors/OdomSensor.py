@@ -4,7 +4,7 @@ from rospy.topics import Subscriber
 from nav_msgs.msg import Odometry
 from squaternion import Quaternion
 
-from Backbone.Architecture.Singleton import Singleton
+from ExperimentOrchestrator.Architecture.Singleton import Singleton
 
 class OdomSensor(metaclass=Singleton):
     __odom_sub: Subscriber
