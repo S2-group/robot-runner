@@ -8,8 +8,8 @@ from ConfigValidator.Config.Models.OperationType import OperationType
 
 from ProgressManager.RunTable.Models.RunProgress import RunProgress
 
-from plugins.Systems.TurtleBot3.BasicTurtleBot3 import BasicTurtleBot3
-from plugins.Profilers.INA219Profiler import INA219Profiler
+from Plugins.Systems.TurtleBot3.BasicTurtleBot3 import BasicTurtleBot3
+from Plugins.Profilers.INA219Profiler import INA219Profiler
 
 import pandas as pd
 from typing import Dict, List

@@ -1,6 +1,6 @@
-from UserConfig.mini_mission.modules.sensors.CPUSensor import CPUSensor
-from UserConfig.mini_mission.modules.sensors.RAMSensor import RAMSensor
-from UserConfig.mini_mission.modules.sensors.BatterySensor import BatterySensor
+from Plugins.Systems.TurtleBot3.modules.sensors.CPUSensor import CPUSensor
+from Plugins.Systems.TurtleBot3.modules.sensors.RAMSensor import RAMSensor
+from Plugins.Systems.TurtleBot3.modules.sensors.BatterySensor import BatterySensor
 
 import threading
 import time

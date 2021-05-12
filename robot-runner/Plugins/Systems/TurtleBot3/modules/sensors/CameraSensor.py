@@ -2,7 +2,7 @@ import rospy
 from rospy import ServiceProxy
 from std_srvs.srv import (Empty, EmptyRequest, EmptyResponse)
 
-from Backbone.Architecture.Singleton import Singleton
+from ExperimentOrchestrator.Architecture.Singleton import Singleton
 
 class CameraSensor(metaclass=Singleton):
     __spawn_service_proxy: ServiceProxy

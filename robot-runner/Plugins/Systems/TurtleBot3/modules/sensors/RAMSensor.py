@@ -2,7 +2,7 @@ import rospy
 from std_msgs.msg import Float64
 from rospy import Subscriber
 
-from Backbone.Architecture.Singleton import Singleton
+from ExperimentOrchestrator.Architecture.Singleton import Singleton
 
 class RAMSensor(metaclass=Singleton):
     __ram_sub: Subscriber
