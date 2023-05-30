@@ -180,3 +180,6 @@ Robot Runner offers extensive supporting infrastructure, such as:
 - **ROS Dependency Requirements**: As mentioned before, Robot Runner offers the user the possibility, if ROS is used and a dependency on a certain version exists, to state it as such and make sure the experiment can only be ran if those dependencies are met.
 - **Plugins**: Robot Runner offers reusable plugins across missions, which can be used to further abstract and simplify experiment configurations. For example, the *INA219Profiler* exists, which offers a comprehensive abstraction around energy related data gathered from an [INA219](https://www.ti.com/lit/ds/symlink/ina219.pdf?ts=1606371123053&ref_url=https%253A%252F%252Fwww.google.com%252F) sensor.
 - **Docker**: Dockerfiles are available [here](https://github.com/S2-group/ros-configurations/tree/main/docker) which are created so the user can build either a ROS1 or ROS2 supporting Docker container in which robot-runner is able to run and perform missions.
+
+### Publications using Robot Runner
+- Milica Dordevic, Michel Albonico, Grace Lewis, Ivano Malavolta, Patricia Lago (2023). Computation Offloading for Ground Robotic Systems Communicating over WiFi - An Empirical Exploration on Performance and Energy Trade-offs. Empirical Software Engineering journal -- [PDF](http://www.ivanomalavolta.com/files/papers/EMSE_2023.pdf)
