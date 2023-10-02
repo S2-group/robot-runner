@@ -1,0 +1,10 @@
+__run_id,__done,mission_task,runs_per_variation,avg_cpu,avg_ram,avg_power
+run_0,DONE,gazebo,1,66.7151515151515,24.57171717171717,58.53440818181817
+run_1,DONE,gazebo,2,66.689898989899,24.622727272727275,59.09175909090911
+run_2,DONE,gazebo,3,67.5520202020202,24.74646464646465,58.28645964646463
+run_3,DONE,gazebo,4,65.86363636363636,25.065151515151513,58.29527717171716
+run_4,TODO,gazebo,5, , , 
+run_5,TODO,gazebo,6, , , 
+run_6,TODO,gazebo,7, , , 
+run_7,TODO,gazebo,8, , , 
+run_8,TODO,gazebo,9, , , 

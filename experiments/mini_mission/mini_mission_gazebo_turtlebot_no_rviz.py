@@ -25,7 +25,7 @@ class RobotRunnerConfig:
         # convert time to date and time
         name = name + "_" + time.strftime("%Y%m%d-%H%M%S")
 
-    # Required ROS version for this experiment to be ran with
+    # Required ROS version for this experiment to be ran with 
     # NOTE: (e.g. ROS2 foxy or eloquent)
     # NOTE: version: 2
     # NOTE: distro: "foxy"
@@ -67,7 +67,7 @@ class RobotRunnerConfig:
                 FactorModel("mission_task", ['gazebo']),
                 FactorModel("runs_per_variation", range(1, 2))
             ],
-            data_columns=["avg_cpu", "avg_ram", "avg_power"]
+            data_columns=["avg_cpu", "avg_ram", "avg_power",]
         )
 
         run_table.create_experiment_run_table()
@@ -80,10 +80,9 @@ class RobotRunnerConfig:
 
     def start_measurement(self, context: RobotRunnerContext) -> None:
         self.turtlebot3.start_measurement_mission()
-        # ros2 subscription to /odom and sum the msg count
 
     def launch_mission(self, context: RobotRunnerContext) -> RunProgress:
-        # self.turtlebot3.launch_mini_mission_real_world(context)
+        self.turtlebot3.launch_mini_mission_real_world(context)
         pass
 
     def stop_measurement(self, context: RobotRunnerContext) -> None:
@@ -110,7 +109,11 @@ class RobotRunnerConfig:
         print(df)
         variation['avg_cpu'] = df['cpu'].mean()
         variation['avg_ram'] = df['ram'].mean()
+        # variation['avg_power'] = df['bat'].mean()
+        # duration = pd.to_datetime(df['timestamp'].iloc[-1]) - pd.to_datetime(df['timestamp'].iloc[0])
+        # duration_in_s = duration.total_seconds()
         variation['avg_power'] = df['bat'].mean()
+        # variation['msg_count'] = df['msg_count'].mean() * duration_in_s
         print(variation)
 
         return variation
