@@ -258,7 +258,7 @@ Robot Runner offers a list of self-contained experiment samples in the `experime
     - mini_sim_test:        Description and README TBA.
     - mini_test:            Description and README TBA.
     - logging_experiemnt:   Description and README TBA.
-    - distributed_client:   Description and README TBA.
+    - distributed_client:   A simple RR running distributed (with README file).
 ```
 
 

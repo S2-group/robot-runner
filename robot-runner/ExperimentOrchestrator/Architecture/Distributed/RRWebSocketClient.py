@@ -29,8 +29,11 @@ class RRWebSocketClient:
                                 callable_method = data.get("method")
                                 print(f'Method to be called: {callable_method}')
                                 # Call Method
-                                #
-                                #
+                                method = getattr(self, callable_method)
+                                if callable(method):
+                                    method()
+                                else:
+                                    print('The method is not callable!')
                             else:
                                 print("Invalid request! Nothing to do!")
                     except json.JSONDecodeError as jsonerror:

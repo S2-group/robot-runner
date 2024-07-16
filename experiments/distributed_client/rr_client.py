@@ -4,9 +4,8 @@ from ExperimentOrchestrator.Architecture.Distributed.RRWebSocketClient import RR
 class RRClient(RRWebSocketClient):
     
     # overrides before_experiment from abstract class
-    def remote_method():
+    def remote_method(self):
         print('Running before experiment remotelly!')
-
         # Your code here
 
 async def main():

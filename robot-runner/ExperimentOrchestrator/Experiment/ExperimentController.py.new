@@ -1,0 +1,118 @@
+import asyncio
+import time
+from typing import Dict, List
+from concurrent.futures import ThreadPoolExecutor
+from ProgressManager.RunTable.Models.RunProgress import RunProgress
+from ConfigValidator.Config.Models.OperationType import OperationType
+from EventManager.Models.RobotRunnerEvents import RobotRunnerEvents
+from ProgressManager.RunTable.RunTableManager import RunTableManager
+from ProgressManager.Output.CSVOutputManager import CSVOutputManager
+from ExperimentOrchestrator.Experiment.Run.RunController import RunController
+from ConfigValidator.Config.RobotRunnerConfig import RobotRunnerConfig
+from ProgressManager.Output.OutputProcedure import OutputProcedure as output
+from ConfigValidator.CustomErrors.ExperimentOutputErrors import ExperimentOutputPathAlreadyExistsError
+from EventManager.EventSubscriptionController import EventSubscriptionController
+from ConfigValidator.CustomErrors.ProgressErrors import AllRunsCompletedOnRestartError
+from ExperimentOrchestrator.Architecture.Distributed.RRWebSocketServer import RRWebSocketServer
+from websockets.server import serve
+
+class ExperimentController:
+    config: RobotRunnerConfig = None
+    run_table: List[Dict] = None
+    restarted: bool = False
+    experiment_path_as_string: str = None
+    data_manager: CSVOutputManager = None
+    rr_server: RRWebSocketServer = None
+    ws_server: serve = None
+    server_ip: str = None
+    server_port: int = None
+
+    def __init__(self, config: RobotRunnerConfig):
+        self.server_ip = "server.robot-runner"
+        self.server_port = 8765
+
+        self.config = config
+        self.experiment_path_as_string = str(self.config.experiment_path.absolute())
+
+        self.data_manager = CSVOutputManager()
+        self.data_manager.set_experiment_output_path(self.experiment_path_as_string)
+        self.run_table = self.config.create_run_table()
+        self.create_experiment_output_folder()
+        
+        if not self.restarted:
+            self.data_manager.write_run_table_to_csv(self.run_table)
+        else:
+            output.console_log_WARNING(">> WARNING << -- Experiment is restarted!")
+        
+        output.console_log_WARNING("Experiment run table created...")
+
+    async def run_async_in_thread(self, coro, *args):
+        """Function to run an asyncio coroutine in a thread using ThreadPoolExecutor."""
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor() as executor:
+            await loop.run_in_executor(executor, lambda: asyncio.run(coro(*args)))
+
+    async def do_experiment(self):
+        clients = self.config.distributed_clients
+        experiment_args = [None]
+
+        if clients is not None:
+            self.rr_server = RRWebSocketServer(self.server_ip, self.server_port)
+            experiment_args.append(self.rr_server)
+            self.ws_server = await self.rr_server.start_server()
+            output.console_log_OK(f'Distributed execution with {clients} clients.')
+            clients = int(clients)
+            output.console_log_OK(f'Waiting for the {clients} clients to connect!')
+            while await self.rr_server.count_connected_clients() < clients:
+                await asyncio.sleep(1)
+        else:
+            experiment_args.append(None)
+            output.console_log_OK("Local execution - NO CLIENTS")   
+
+        output.console_log_OK("Experiment setup completed...")
+        output.console_log_WARNING("Calling before_experiment config hook")
+        args = [RobotRunnerEvents.BEFORE_EXPERIMENT]
+        args.extend(experiment_args)
+        await EventSubscriptionController.raise_event(*args)
+
+        for variation in self.run_table:
+            if variation['__done'] == RunProgress.DONE:
+                continue
+            args = [RobotRunnerEvents.BEFORE_RUN]
+            args.extend(experiment_args)
+            await EventSubscriptionController.raise_event(*args)
+
+            run_controller = RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table))
+            await self.run_async_in_thread(run_controller.do_run, self.rr_server)
+
+            time_btwn_runs = self.config.time_between_runs_in_ms
+            if time_btwn_runs > 0:
+                output.console_log_bold(f"Run fully ended, waiting for: {time_btwn_runs}ms == {time_btwn_runs / 1000}s")
+                time.sleep(time_btwn_runs / 1000)
+
+            if self.config.operation_type is OperationType.SEMI:
+                await EventSubscriptionController.raise_event(RobotRunnerEvents.CONTINUE)
+        
+        output.console_log_OK("Experiment completed...")
+        output.console_log_WARNING("Calling after_experiment config hook")
+        args = [RobotRunnerEvents.AFTER_EXPERIMENT]
+        args.extend(experiment_args)
+        await EventSubscriptionController.raise_event(*args)
+        await self.rr_server.send_kill_signal()
+
+    def create_experiment_output_folder(self):
+        try:
+            self.config.experiment_path.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            if RunTableManager.are_config_and_restart_csv_equal(self.config):
+                self.run_table = self.data_manager.read_run_table_from_csv()
+                self.restarted = True
+                todo_run_found = False
+                for variation in self.run_table:
+                    todo_run_found = (variation['__done'] != RunProgress.DONE)
+                    if todo_run_found:
+                        return
+                if self.restarted and not todo_run_found:
+                    raise AllRunsCompletedOnRestartError
+            else:
+                raise ExperimentOutputPathAlreadyExistsError
