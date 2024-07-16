@@ -90,14 +90,15 @@ Supporting information:
 - **operation_type**: If set to **AUTO**, the experiment will continue with the next run (after *time_between_runs_in_ms* milliseconds) automatically without waiting for any other stimuli. If set to **SEMI**, the experiment will only continue (after waiting *time_between_runs_in_ms* milliseconds), if the callback for the event *CONTINUE* is returned.
 - **time_between_runs_in_ms**: The time Robot Runner will wait after a run completes, before continuing with the orchestration. This can be essential to accommodate for cooldown periods on some systems.
 - **results_output_path**: The path in which Robot Runner will create an experiment folder according to the experiment name.
+- **distributed_clients**: When set, RR waits until the specified number of remote clients connects (see Distributed RR section).
 
 **The events**
 ```python
     def __init__(self):
         """Executes immediately after program start, on config load"""
         EventSubscriptionController.subscribe_to_multiple_events_multiple_callbacks([ 
-            (RobotRunnerEvents.BEFORE_EXPERIMENT,   [self.before_experiment_clients, self.before_experiment]), # multi callbacks (not parallel YET)
-            (RobotRunnerEvents.BEFORE_RUN,          [self.before_run]),                                              # single callback
+            (RobotRunnerEvents.BEFORE_EXPERIMENT,   [self.before_experiment, self.before_experiment_second]), # multi callbacks (not parallel YET)
+            (RobotRunnerEvents.BEFORE_RUN,          [self.before_run]),                                       # single callback
             (RobotRunnerEvents.START_RUN,           [self.start_run]),
             (RobotRunnerEvents.START_MEASUREMENT,   [self.start_measurement]),
             (RobotRunnerEvents.LAUNCH_MISSION,      [self.launch_mission]),
@@ -106,6 +107,11 @@ Supporting information:
             (RobotRunnerEvents.POPULATE_RUN_DATA,   [self.populate_run_data]),
             (RobotRunnerEvents.AFTER_EXPERIMENT,    [self.after_experiment])                           
         ])
+
+    # Remote calls (only use when distributed_clients is set)
+        # EventSubscriptionController.subscribe_to_multiple_events_multiple_remote_calls([
+        #     (RobotRunnerEvents.BEFORE_EXPERIMENT, [('remote_before_experiment_method', ['c1'])]),
+        # ])
 
     def create_run_table(self) -> List[Dict]:
         """Create and return the run_table here. A run_table is a List (rows) of dictionaries (columns), 
@@ -123,11 +129,14 @@ Supporting information:
         run_table.create_experiment_run_table()
         return run_table.get_experiment_run_table()
 
-    def before_experiment_clients(self) -> None:
+    def before_experiment(self) -> None:
         """Perform any activity related to client interactions required before starting the experiment here"""
 
-    def before_experiment(self) -> None:
-        """Perform any local activity required before starting the experiment here"""
+    def before_experiment_second(self) -> None:
+        """Perform any further activity related to client interactions required before starting the experiment here"""
+
+    def before_run(self) -> None:
+        """Perform any local activity required before running the experiment here"""
 
     def start_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for starting the run here. 
@@ -156,7 +165,7 @@ Supporting information:
     def after_experiment(self) -> None:
         """Perform any activity required after stopping the experiment here"""
 ```
-### Performing the experiment
+### Performing the experiment locally
 Once the experiment has been defined by the user, as business logic setup in the shown event callbacks above, the experiment can be performed by Robot Runner. To do this, the user runs the following command:
 ```bash
 python3.8 robot-runner/ experiment_config.py
@@ -169,15 +178,20 @@ After which Robot Runner will:
 - Create the run table (.csv), and persist it in the experiment folder
 - Run the experiment on a per-run basis, going over each run with its specified treatments in the run table.
 
-### Running RR Distributed
 
-This is still an undergoing implementation. BE CAREFUL! For enabling a distributed deployment, first thing to do is to set the number of required clients in the `distributed_client` configuration parameter. For instance, if you want two clients, the configuration value should be set as following:
+### Performing a simple distributed experiment
+
+**ATTENTION**: This is still being implementated.
+
+Here, we explain how to make use of RR orchestration for distributed scenarios. For instance, when multiple machines make part of the experiment and the tasks to be executed on them must synchronized with RR events.
+
+ For enabling a distributed RR orchestration, we must first set the number of required remote/distributed clients as the `distributed_client` configuration parameter. Let us keep it simple and consider only 1 client:
 
 ```python
-    distributed_clients:        int             = 2
+    distributed_clients:        int             = 1
 ```
 
-Add the following lines to your `/etc/hosts` files (in all the machines where RR will run), changing the IPs according to your scenario:
+Then, add the following lines to your `/etc/hosts` file (repeat this on all the machines over which RR is distributed - in our case, the local machine and the remote client), changing the IPs according to your network configuration:
 
 ```bash
     sudo bash -c 'echo "server.robot-runner\t10.10.10.100" >> /etc/hosts'
@@ -185,29 +199,68 @@ Add the following lines to your `/etc/hosts` files (in all the machines where RR
     sudo bash -c 'echo "client2.robot-runner\t10.10.10.102" >> /etc/hosts'
 ```
 
-Now, for each client (which must have a replica of the local robot-runner folder), enter the robot-runner folder and use the following command, paying attention to the client name, which must be distinct:
-```bash
-    TBA
+Now, in the RR configuration file, uncomment the lines that subscribe remote method to events:
+
+```python
+        EventSubscriptionController.subscribe_to_multiple_events_multiple_remote_calls([
+            (RobotRunnerEvents.BEFORE_EXPERIMENT, [('remote_before_experiment_method', ['c1'])]),
+        ])
 ```
 
-As soon as all the total of connected clients is equal to the set parameter, RR starts running the experiment.
+In our example, the subscription means that when the `BEFORE_EXPERIMENT` event happens, the client `c1` receives a message from the local RR (which we may call RR Server) instructing it to run the method `remote_before_experiment_method`, which must be implemented on the client side. If you want to run the method in different clients, just add the other client IDs to the list (last argument).
 
-In the current stage, client code and remote calls must be programmed manually. The only feature that RR enables is the client-server infrastruture. 
+On the client side (in the RR folder), implement your client - which implements the interface `RRWebSocketClient` - with the `remote_before_experiment_method` method:
 
-#### Programming the RR Client
+```python
+import asyncio
+from ExperimentOrchestrator.Architecture.Distributed.RRWebSocketClient import RRWebSocketClient
 
-TBA
+class RRClient(RRWebSocketClient):
+    
+    # overrides before_experiment from abstract class
+    def remote_before_experiment_method():
+        print('Running before experiment remotelly!')
+        # Your code here
 
-### Remote Calls to the Client
+    async def main():
+        server_address = "ws://server.robot-runner:8765"
+        client_id = "c1" # Change according to your needs.
+        client = RRClient(server_address, client_id)
+        await client.register()
 
-TBA
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        asyncio.run(main())
+    else:
+        loop.create_task(main())
+```
+
+Besides the methods to be synchronized, the only part that we must change in this code is the `client_id` which must be unique for each client. This is the third argument set in the RR configuration file.
+
+Now, everything is set for RR to run in a distributed manner. For the local RR, we use the same command as when running locally:
+
+```bash
+   python3 robot-runner/ experiment_config.py
+```
+
+The RR will wait until the number of clients set in the configuration file connect. For that, at each client, enter the `robot-runner` folder and use the following command (considering `rr_client.py` is how you saved your client code):
+
+```bash
+    PYTHONPATH=robot-runner/ python3 rr_client.py
+```
 
 ### Examples
-Robot Runner offer a simple example for a ROS1 based robotic system.
-The experiment was performed on a ROBOTIS TurtleBot3 specifically.
-The example experiment is called 'mini-mission' and can be found in the *robot-runner/experiments/mini-mission/* folder.
+Robot Runner offers a list of self-contained experiment samples in the `experiments` folder.
 
-The mini-mission, its execution and its output is explained in the video referenced at the beginning of this README.
+```
+    - mini_mission:         Description and README TBA.
+    - mini_sim_test:        Description and README TBA.
+    - mini_test:            Description and README TBA.
+    - logging_experiemnt:   Description and README TBA.
+    - distributed_client:   Description and README TBA.
+```
+
 
 ### Supporting Features
 Robot Runner offers extensive supporting infrastructure, such as:
