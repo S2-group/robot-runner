@@ -26,6 +26,8 @@ class RobotRunnerConfig:
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
     results_output_path:        Path             = Path("~/Documents/experiments")
+    # Number of clients: the orchestrator only starts once all the clients connect. For standalone, use None as value.
+    distributed_clients:        int             = None
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
 
     # Dynamic configurations can be one-time satisfied here before the program takes the config as-is

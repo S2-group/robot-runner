@@ -79,7 +79,8 @@ An experiment configuration can be defined using the provided experiment paramet
     required_ros_distro:        str             = "foxy"
     operation_type:             OperationType   = OperationType.AUTO
     time_between_runs_in_ms:    int             = 1000
-    results_output_path:        Path             = Path("~/Documents/experiments")
+    results_output_path:        Path            = Path("~/Documents/experiments")
+    distributed_clients:        int             = None
 ```
 
 Supporting information:
@@ -94,16 +95,16 @@ Supporting information:
 ```python
     def __init__(self):
         """Executes immediately after program start, on config load"""
-        EventSubscriptionController.subscribe_to_multiple_events([ 
-            (RobotRunnerEvents.BEFORE_EXPERIMENT,   self.before_experiment), 
-            (RobotRunnerEvents.START_RUN,           self.start_run),
-            (RobotRunnerEvents.START_MEASUREMENT,   self.start_measurement),
-            (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
-            (RobotRunnerEvents.STOP_MEASUREMENT,    self.stop_measurement),
-            (RobotRunnerEvents.STOP_RUN,            self.stop_run),
-            (RobotRunnerEvents.CONTINUE,            self.continue_experiment)
-            (RobotRunnerEvents.POPULATE_RUN_DATA,   self.populate_run_data),
-            (RobotRunnerEvents.AFTER_EXPERIMENT,    self.after_experiment)
+        EventSubscriptionController.subscribe_to_multiple_events_multiple_callbacks([ 
+            (RobotRunnerEvents.BEFORE_EXPERIMENT,   [self.before_experiment_clients, self.before_experiment]), # multi callbacks (not parallel YET)
+            (RobotRunnerEvents.BEFORE_RUN,          [self.before_run]),                                              # single callback
+            (RobotRunnerEvents.START_RUN,           [self.start_run]),
+            (RobotRunnerEvents.START_MEASUREMENT,   [self.start_measurement]),
+            (RobotRunnerEvents.LAUNCH_MISSION,      [self.launch_mission]),
+            (RobotRunnerEvents.STOP_MEASUREMENT,    [self.stop_measurement]),
+            (RobotRunnerEvents.STOP_RUN,            [self.stop_run]),
+            (RobotRunnerEvents.POPULATE_RUN_DATA,   [self.populate_run_data]),
+            (RobotRunnerEvents.AFTER_EXPERIMENT,    [self.after_experiment])                           
         ])
 
     def create_run_table(self) -> List[Dict]:
@@ -122,8 +123,11 @@ Supporting information:
         run_table.create_experiment_run_table()
         return run_table.get_experiment_run_table()
 
+    def before_experiment_clients(self) -> None:
+        """Perform any activity related to client interactions required before starting the experiment here"""
+
     def before_experiment(self) -> None:
-        """Perform any activity required before starting the experiment here"""
+        """Perform any local activity required before starting the experiment here"""
 
     def start_run(self, context: RobotRunnerContext) -> None:
         """Perform any activity required for starting the run here. 
@@ -164,6 +168,39 @@ After which Robot Runner will:
 - Create the experiment folder
 - Create the run table (.csv), and persist it in the experiment folder
 - Run the experiment on a per-run basis, going over each run with its specified treatments in the run table.
+
+### Running RR Distributed
+
+This is still an undergoing implementation. BE CAREFUL! For enabling a distributed deployment, first thing to do is to set the number of required clients in the `distributed_client` configuration parameter. For instance, if you want two clients, the configuration value should be set as following:
+
+```python
+    distributed_clients:        int             = 2
+```
+
+Add the following lines to your `/etc/hosts` files (in all the machines where RR will run), changing the IPs according to your scenario:
+
+```bash
+    sudo bash -c 'echo "server.robot-runner\t10.10.10.100" >> /etc/hosts'
+    sudo bash -c 'echo "client1.robot-runner\t10.10.10.101" >> /etc/hosts'
+    sudo bash -c 'echo "client2.robot-runner\t10.10.10.102" >> /etc/hosts'
+```
+
+Now, for each client (which must have a replica of the local robot-runner folder), enter the robot-runner folder and use the following command, paying attention to the client name, which must be distinct:
+```bash
+    TBA
+```
+
+As soon as all the total of connected clients is equal to the set parameter, RR starts running the experiment.
+
+In the current stage, client code and remote calls must be programmed manually. The only feature that RR enables is the client-server infrastruture. 
+
+#### Programming the RR Client
+
+TBA
+
+### Remote Calls to the Client
+
+TBA
 
 ### Examples
 Robot Runner offer a simple example for a ROS1 based robotic system.

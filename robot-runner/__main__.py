@@ -2,6 +2,7 @@ import sys
 import traceback
 from typing import List
 from importlib import util
+import asyncio
 
 from ConfigValidator.CustomErrors.BaseError import BaseError
 from ConfigValidator.CLIRegister.CLIRegister import CLIRegister
@@ -19,7 +20,8 @@ def load_and_get_config_file_as_module(args: List[str]):
     spec.loader.exec_module(config_file)
     return config_file
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
+async def main():
     try: 
         if is_no_argument_given(sys.argv):
             sys.argv.append('help')
@@ -30,7 +32,7 @@ if __name__ == "__main__":
             if hasattr(config_file, 'RobotRunnerConfig'):
                 config = config_file.RobotRunnerConfig()                    # Instantiate config from injected file
                 ConfigValidator.validate_config(config)                     # Validate config as a valid RobotRunnerConfig
-                ExperimentController(config).do_experiment()                # Instantiate controller with config and start experiment
+                await ExperimentController(config).do_experiment()                # Instantiate controller with config and start experiment
             else:
                 raise ConfigInvalidClassNameError
         else:                                                               # Else, a utility command is entered
@@ -39,3 +41,6 @@ if __name__ == "__main__":
         print(f"\n{e}")
     except:                                                                 # All non-covered errors are displayed normally
         traceback.print_exc()
+
+if __name__ == '__main__':
+    asyncio.run(main())

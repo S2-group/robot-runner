@@ -25,6 +25,9 @@ class RobotRunnerConfig:
     # Path to store results at
     # NOTE: Path does not need to exist, will be appended with 'name' as specified in this config and created on runtime
     results_output_path:        Path             = Path("~/Documents/experiments")
+    # Distributed RR
+    # NOTE: For standalone mode, set distributed_clients to None.
+    distributed_clients:        int              = None
     # =================================================USER SPECIFIC UNNECESSARY CONFIG===============================================
 
     # Dynamic configurations can be one-time satisfied here before the program takes the config as-is
@@ -32,16 +35,30 @@ class RobotRunnerConfig:
     def __init__(self):
         """Executes immediately after program start, on config load"""
 
-        EventSubscriptionController.subscribe_to_multiple_events([ 
-            (RobotRunnerEvents.BEFORE_EXPERIMENT,   self.before_experiment), 
-            (RobotRunnerEvents.BEFORE_RUN,          self.before_run),
-            (RobotRunnerEvents.START_RUN,           self.start_run),
-            (RobotRunnerEvents.START_MEASUREMENT,   self.start_measurement),
-            (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
-            (RobotRunnerEvents.STOP_MEASUREMENT,    self.stop_measurement),
-            (RobotRunnerEvents.STOP_RUN,            self.stop_run),
-            (RobotRunnerEvents.POPULATE_RUN_DATA,   self.populate_run_data),
-            (RobotRunnerEvents.AFTER_EXPERIMENT,    self.after_experiment)
+        # EventSubscriptionController.subscribe_to_multiple_events([ 
+        #     (RobotRunnerEvents.BEFORE_EXPERIMENT,   self.before_experiment), 
+        #     (RobotRunnerEvents.BEFORE_RUN,          self.before_run),
+        #     (RobotRunnerEvents.START_RUN,           self.start_run),
+        #     (RobotRunnerEvents.START_MEASUREMENT,   self.start_measurement),
+        #     (RobotRunnerEvents.LAUNCH_MISSION,      self.launch_mission),
+        #     (RobotRunnerEvents.STOP_MEASUREMENT,    self.stop_measurement),
+        #     (RobotRunnerEvents.STOP_RUN,            self.stop_run),
+        #     (RobotRunnerEvents.POPULATE_RUN_DATA,   self.populate_run_data),
+        #     (RobotRunnerEvents.AFTER_EXPERIMENT,    self.after_experiment)
+        # ])
+        # The subscribe_to_multiple_events has been deprecated. It still works for a matter of compatibility with old projects.
+
+        # New subscription call
+        EventSubscriptionController.subscribe_to_multiple_events_multiple_callbacks([ 
+            (RobotRunnerEvents.BEFORE_EXPERIMENT,   [self.before_experiment_clients, self.before_experiment_local]), # multi callbacks
+            (RobotRunnerEvents.BEFORE_RUN,          [self.before_run]),                                      # single callback
+            (RobotRunnerEvents.START_RUN,           [self.start_run]),
+            (RobotRunnerEvents.START_MEASUREMENT,   [self.start_measurement]),
+            (RobotRunnerEvents.LAUNCH_MISSION,      [self.launch_mission]),
+            (RobotRunnerEvents.STOP_MEASUREMENT,    [self.stop_measurement]),
+            (RobotRunnerEvents.STOP_RUN,            [self.stop_run]),
+            (RobotRunnerEvents.POPULATE_RUN_DATA,   [self.populate_run_data]),
+            (RobotRunnerEvents.AFTER_EXPERIMENT,    [self.after_experiment])                           
         ])
         
         print("Custom config loaded")
@@ -61,8 +78,14 @@ class RobotRunnerConfig:
         run_table.create_experiment_run_table()
         return run_table.get_experiment_run_table()
 
-    def before_experiment(self) -> None:
+    def before_experiment_clients(self) -> None:
         """Perform any activity required before starting the experiment here"""
+
+        print("Config.before_experiment() called!")
+
+    def before_experiment_local(self) -> None:
+        print("Config.before_experiment_local() called!")
+
 
         print("Config.before_experiment() called!")
 

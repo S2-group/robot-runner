@@ -5,6 +5,7 @@ from multiprocessing import Event
 
 from ConfigValidator.Config.RobotRunnerConfig import RobotRunnerConfig
 from ConfigValidator.Config.Models.RobotRunnerContext import RobotRunnerContext
+from ExperimentOrchestrator.Architecture.Distributed.RRWebSocketServer import RRWebSocketServer
 
 class IRunController(ABC):
     run_dir: Path = None
@@ -13,8 +14,9 @@ class IRunController(ABC):
     config: RobotRunnerConfig = None
     run_context: RobotRunnerContext = None
     data_manager: CSVOutputManager = None
+    rr_server: RRWebSocketServer = None
 
-    def __init__(self, variation: tuple, config: RobotRunnerConfig, current_run: int, total_runs: int):
+    def __init__(self, variation: tuple, config: RobotRunnerConfig, current_run: int, total_runs: int, rr_server: RRWebSocketServer):
         self.run_dir = Path(str(config.experiment_path.absolute()) + f"/{variation['__run_id']}")
         self.run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -23,6 +25,8 @@ class IRunController(ABC):
         self.current_run = current_run
         self.run_context = RobotRunnerContext(self.variation, self.current_run, self.run_dir)
         self.data_manager = CSVOutputManager(str(self.config.experiment_path.absolute()))
+
+        self.rr_server = rr_server
 
         self.run_completed_event = Event()
 

@@ -1,3 +1,5 @@
+import asyncio
+
 from ProgressManager.RunTable.Models.RunProgress import RunProgress
 from EventManager.Models.RobotRunnerEvents import RobotRunnerEvents
 from EventManager.EventSubscriptionController import EventSubscriptionController
@@ -10,22 +12,26 @@ class RunController(IRunController):
     def do_run(self):
         # -- Start run
         output.console_log_WARNING("Calling start_run config hook")
+        asyncio.run(EventSubscriptionController.raise_remote_event(RobotRunnerEvents.START_RUN, self.rr_server))
         EventSubscriptionController.raise_event(RobotRunnerEvents.START_RUN, self.run_context)
 
         # -- Start measurement
         output.console_log_WARNING("... Starting measurement ...")
+        asyncio.run(EventSubscriptionController.raise_remote_event(RobotRunnerEvents.START_MEASUREMENT, self.rr_server))
         EventSubscriptionController.raise_event(RobotRunnerEvents.START_MEASUREMENT, self.run_context)
 
         # -- Start interaction
         output.console_log_WARNING("Calling interaction config hook")
-
+        asyncio.run(EventSubscriptionController.raise_remote_event(RobotRunnerEvents.LAUNCH_MISSION, self.rr_server))
         EventSubscriptionController.raise_event(RobotRunnerEvents.LAUNCH_MISSION, self.run_context)
         output.console_log_OK("... Run completed ...")
 
         # -- Stop measurement
         output.console_log_WARNING("... Stopping measurement ...")
+        asyncio.run(EventSubscriptionController.raise_remote_event(RobotRunnerEvents.STOP_MEASUREMENT, self.rr_server))
         EventSubscriptionController.raise_event(RobotRunnerEvents.STOP_MEASUREMENT, self.run_context)
 
+        asyncio.run(EventSubscriptionController.raise_remote_event(RobotRunnerEvents.POPULATE_RUN_DATA, self.rr_server))
         updated_run_data = EventSubscriptionController.raise_event(RobotRunnerEvents.POPULATE_RUN_DATA, self.run_context)
         if updated_run_data is None:
             row = self.run_context.run_variation
@@ -37,4 +43,5 @@ class RunController(IRunController):
 
         # -- Stop run
         output.console_log_WARNING("Calling stop_run config hook")
+        asyncio.run(EventSubscriptionController.raise_remote_event(RobotRunnerEvents.STOP_RUN, self.rr_server))
         EventSubscriptionController.raise_event(RobotRunnerEvents.STOP_RUN, self.run_context)
