@@ -212,28 +212,26 @@ In our example, the subscription means that when the `BEFORE_EXPERIMENT` event h
 On the client side (in the RR folder), implement your client - which implements the interface `RRWebSocketClient` - with the `remote_before_experiment_method` method:
 
 ```python
-import asyncio
+import json
+import websocket
+import rel
+
 from ExperimentOrchestrator.Architecture.Distributed.RRWebSocketClient import RRWebSocketClient
 
-class RRClient(RRWebSocketClient):
+class RL4GreenROS_RR_Client(RRWebSocketClient):
     
-    # overrides before_experiment from abstract class
-    def remote_before_experiment_method():
-        print('Running before experiment remotelly!')
+    def remote_before_experiment_method(self):
+        print('Remote before experiment!')
         # Your code here
 
-    async def main():
-        server_address = "ws://server.robot-runner:8765"
-        client_id = "c1" # Change according to your needs.
-        client = RRClient(server_address, client_id)
-        await client.register()
-
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        asyncio.run(main())
-    else:
-        loop.create_task(main())
+if __name__ == "__main__":
+    client_id="nav2"
+    websocket.enableTrace(False)
+    ws_client = RL4GreenROS_RR_Client("ws://server.robot-runner:8765")
+    ws_client.run_forever()
+    ws_client.register(client_id)
+    rel.signal(2, rel.abort) 
+    rel.dispatch()
 ```
 
 Besides the methods to be synchronized, the only part that we must change in this code is the `client_id` which must be unique for each client. This is the third argument set in the RR configuration file.

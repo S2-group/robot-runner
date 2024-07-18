@@ -22,8 +22,9 @@ class RRWebSocketServer:
         await asyncio.gather(*[client.send(message) for client in self.connected_clients.values()])
 
     async def remote_call(self, message, client_ids):
+
         selected_clients = [client for client_id, client in self.connected_clients.items() if client_id in client_ids]
-        call_message = json.dumps({"type": "call", "method": message})
+        call_message = json.dumps({'type': 'call', 'method': message})
         await asyncio.gather(*[client.send(call_message) for client in selected_clients])
 
     async def send_to_clients(self, message, client_ids):

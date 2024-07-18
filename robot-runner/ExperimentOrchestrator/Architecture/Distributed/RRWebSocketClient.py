@@ -1,45 +1,43 @@
-from abc import abstractmethod
-import sys
-import websockets
 import json
+import websocket
+from websocket import create_connection
+import rel
 
 class RRWebSocketClient:
-    def __init__(self, server_address, client_id):
+
+    def __init__(self, server_address):
         self.server_address = server_address
-        self.client_id = client_id
-        self.kill_signal_received = False
+        self.kill_signal_received = False    
         
-    async def register(self):
-        async with websockets.connect(self.server_address) as websocket:
-            registration_data = {
+        self.ws = websocket.WebSocketApp(server_address,
+                                         on_open=self.on_open,
+                                         on_message=self.on_message,
+                                         on_error=self.on_error,
+                                         on_close=self.on_close)
+                
+    def register(self, client_id):
+        registration_data = {
                 "type": "register",
-                "client_id": self.client_id
+                "client_id": client_id  
             }
-            await websocket.send(json.dumps(registration_data))
-            while not self.kill_signal_received:
-                try:
-                    message = await websocket.recv()
-                    try:
-                        if message == "kill":
-                            self.kill_signal_received = True
-                            print("Received kill signal. Terminating client.")
-                        else:
-                            data = json.loads(message)
-                            if data.get("type") == "call":
-                                callable_method = data.get("method")
-                                print(f'Method to be called: {callable_method}')
-                                # Call Method
-                                method = getattr(self, callable_method)
-                                if callable(method):
-                                    method()
-                                else:
-                                    print('The method is not callable!')
-                            else:
-                                print("Invalid request! Nothing to do!")
-                    except json.JSONDecodeError as jsonerror:
-                            print("Invalid request or JSON format issue.")
-                            print(message)
-                except websockets.exceptions.ConnectionClosedError as conerror:
-                    print("Connection closed by the server!")
-                    sys.exit(0)
-                    
+        self.ws.send(json.dumps(registration_data))
+    
+    def on_message(self, ws, message):
+        pass
+
+    def on_error(self, ws, error):
+        print(error)
+
+    def on_close(self, ws, close_status_code, close_msg):
+        print("Connection closed!")
+
+    def on_open(self, ws):
+        print("Connection open!")
+
+    def run_forever(self):
+        self.ws.run_forever(dispatcher=rel, reconnect=5)
+
+    def clean_docker(self):
+        print('Cleaning Docker!')
+        # Your code here
+    
