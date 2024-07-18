@@ -23,7 +23,18 @@ class RRWebSocketClient:
         self.ws.send(json.dumps(registration_data))
     
     def on_message(self, ws, message):
-        pass
+        try:
+            data = json.loads(message)
+            if data.get("type") == "call":
+                callable_method = data.get("method")
+                print(f'Method to be called: {callable_method}')
+                method = getattr(self, callable_method, None)
+                if callable(method):
+                    method()
+                else:
+                    print('Method is not callable!')
+        except:
+            print('Something went wrong!')
 
     def on_error(self, ws, error):
         print(error)
