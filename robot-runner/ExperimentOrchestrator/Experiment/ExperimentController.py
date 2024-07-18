@@ -63,14 +63,19 @@ class ExperimentController:
 
     def experimentation(self, variation):
         run_controller = RunController(variation, self.config, (self.run_table.index(variation) + 1), len(self.run_table), self.rr_server)
-        perform_run = multiprocessing.Process(
-            target=run_controller.do_run,
-            args=[]
-        )
+        
+        # BREAKING WITH asyncio
+        
+        # perform_run = multiprocessing.Process(
+        #     target=run_controller.do_run,
+        #     args=[]
+        # )
 
-        perform_run.start()
-        perform_run.join()
+        # perform_run.start()
+        # perform_run.join()
 
+        run_controller.do_run()
+        #
         time_btwn_runs = self.config.time_between_runs_in_ms
         if time_btwn_runs > 0:
             output.console_log_bold(f"Run fully ended, waiting for: {time_btwn_runs}ms == {time_btwn_runs / 1000}s")
@@ -95,7 +100,7 @@ class ExperimentController:
         output.console_log_OK("Experiment setup completed...")
         
         # -- Before experiment
-        output.console_log_WARNING("Calling before_experiment config hook")
+        # output.console_log_WARNING("Calling before_experiment config hook")
         
         await EventSubscriptionController.raise_remote_event(RobotRunnerEvents.BEFORE_EXPERIMENT, self.rr_server)
         EventSubscriptionController.raise_event(RobotRunnerEvents.BEFORE_EXPERIMENT)

@@ -7,6 +7,12 @@ class RRWebSocketServer:
         self.host = host
         self.port = int(port)
         self.connected_clients = {}
+        self.responses = asyncio.Queue()
+
+    async def handle_incoming_message(self, client, message):
+        data = json.loads(message)
+        if data.get('type') == 'response' and data.get('status') == 'completed':
+            await self.responses.put(True)
 
     async def handle_client_message(self, websocket, message):
         data = json.loads(message)
@@ -17,6 +23,8 @@ class RRWebSocketServer:
                 print(f"Client {client_id} registered.")
         elif data.get("type") == "kill":
             await self.send_kill_signal()
+        elif data.get('type') == 'response' and data.get('status') == 'completed':
+            await self.responses.put(True)
 
     async def broadcast(self, message):
         await asyncio.gather(*[client.send(message) for client in self.connected_clients.values()])
@@ -26,6 +34,9 @@ class RRWebSocketServer:
         selected_clients = [client for client_id, client in self.connected_clients.items() if client_id in client_ids]
         call_message = json.dumps({'type': 'call', 'method': message})
         await asyncio.gather(*[client.send(call_message) for client in selected_clients])
+
+        for _ in selected_clients:
+            await self.responses.get()
 
     async def send_to_clients(self, message, client_ids):
         selected_clients = [client for client_id, client in self.connected_clients.items() if client_id in client_ids]

@@ -4,6 +4,7 @@ from typing import Callable, List, Tuple
 from EventManager.Models.RobotRunnerEvents import RobotRunnerEvents
 from ExperimentOrchestrator.Architecture.Distributed.RRWebSocketServer import RRWebSocketServer
 from ConfigValidator.Config.Models.RobotRunnerContext import RobotRunnerContext
+from ProgressManager.Output.OutputProcedure import OutputProcedure as output
 
 class EventSubscriptionController:
     __call_back_register = dict()
@@ -43,6 +44,9 @@ class EventSubscriptionController:
             event_callbacks = EventSubscriptionController.__call_back_register[event]
         except KeyError:
             return None
+        
+        if len(event_callbacks) > 0:
+            output.console_log_WARNING(f'Calling {event.name} LOCAL config hook')
 
         for event_callback in event_callbacks:
             if robot_runner_context:
@@ -56,9 +60,12 @@ class EventSubscriptionController:
                 
         try:
             event_remote_calls = EventSubscriptionController.__remote_call_register[event]
-            print(event_remote_calls)
+            # print(event_remote_calls)
         except KeyError:
             return None
+        
+        if len(event_remote_calls) > 0:
+            output.console_log_WARNING(f'Calling {event.name} REMOTE config hook')
         
         for remote_call in event_remote_calls:
             remote_call_clients = []
